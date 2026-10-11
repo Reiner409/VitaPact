@@ -1,0 +1,26 @@
+{
+  "weekend": {
+    "friends": {
+      "01": "Looks like {{name}} had a bit of an uphill week. This weekend {{stake}} is on {{name}}. Here's to the next one!",
+      "02": "Busy week for {{name}}? Happens to all of us. This weekend it's {{name}}'s turn to bring {{stake}}, and a great excuse to get together.",
+      "03": "This weekend's turn goes to {{name}}: {{stake}} on the table, plenty of laughs, and on Monday we all start again together.",
+      "04": "The weekend is here and {{stake}} is on {{name}}. The whole group has your back!",
+      "05": "{{name}} is treating everyone to {{stake}} this weekend. Raise a glass to {{name}}, and to the week ahead!",
+      "06": "Some weeks are lighter than others. This one, {{name}} brings {{stake}} and we all bring the good company.",
+      "07": "Heads up: {{name}} is on {{stake}} duty this weekend. Save a seat and say thanks!",
+      "08": "This weekend {{name}} hosts with {{stake}}. Show up, cheer loudly, and keep each other going.",
+      "09": "A small detour for {{name}} this week, nothing more. {{stake}} is on {{name}} this weekend, and Monday is a fresh page for everyone.",
+      "10": "Good news for the group: {{stake}} is on {{name}} this weekend. Even better news: we're all in this together.",
+      "11": "{{name}} picked up this weekend's treat: {{stake}}. A perfect reason to meet up and recharge.",
+      "12": "Life got busy for {{name}} this week, and that's okay. This weekend {{stake}} is on {{name}}, and from here we keep going together."
+    },
+    "payer": {
+      "01": "This week went the way it went, and that happens to everyone. {{stake}} is on you this weekend, {{name}}: enjoy the evening. Next weekend it's someone else's turn, guaranteed.",
+      "02": "It's your turn to bring {{stake}}, {{name}}, but remember why we're here: to feel good together. Monday is a fresh start, one step at a time.",
+      "03": "Hey {{name}}, this weekend you're treating everyone to {{stake}}. No pressure at all: everyone's just glad to spend time with you.",
+      "04": "{{stake}} is on you this weekend, {{name}}. Go easy on yourself: you sent your week in, and that already counts.",
+      "05": "Your turn to host with {{stake}}, {{name}}. Hard weeks happen to all of us, and the group is right here with you.",
+      "06": "Hey {{name}}, you're bringing {{stake}} this weekend. Think of it as a thank-you to the group and a reason to laugh together. You've got this, one day at a time."
+    }
+  }
+}
