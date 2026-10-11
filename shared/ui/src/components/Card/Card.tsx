@@ -1,6 +1,7 @@
 import { Paper } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { tokens, type PillarColorName } from '../../tokens';
+import { accentColor } from '../pillarLook';
 import { touchTarget } from '../touchTarget';
 
 export type CardAccent = PillarColorName | 'primary';
@@ -18,9 +19,6 @@ export interface CardProps {
    */
   onClick?: () => void;
 }
-
-const accentColor = (accent: CardAccent) =>
-  accent === 'primary' ? 'var(--vp-color-primary)' : `var(--vp-color-pillar-${accent})`;
 
 const background: Record<CardTone, string> = {
   surface: 'var(--vp-color-surface)',

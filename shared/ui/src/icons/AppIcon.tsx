@@ -3,6 +3,7 @@ import {
   CalendarDays,
   CircleAlert,
   CircleCheck,
+  CircleDot,
   Dumbbell,
   ImageUp,
   Info,
@@ -29,6 +30,8 @@ export const appIcons = {
   training: Dumbbell,
   food: Salad,
   sun: Sun,
+  /** Any pillar without an icon of its own, e.g. a new one (RF-23). */
+  pillar: CircleDot,
   weighIn: Scale,
   info: Info,
   warning: TriangleAlert,
