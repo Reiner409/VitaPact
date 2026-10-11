@@ -37,6 +37,10 @@ describe('F1-01 Tauri shell', () => {
       expect(ALLOWED_PERMISSIONS).toContain(permission);
   });
 
+  it('F1-07 lets image files dropped on the window reach the page on Windows', () => {
+    expect(config.app.windows[0].dragDropEnabled).toBe(false);
+  });
+
   it('RNF-11 keeps the WebView origin fixed so local data survives updates', () => {
     // Switching to https://tauri.localhost would open an empty IndexedDB.
     expect(config.app.windows[0].useHttpsScheme).toBe(false);
