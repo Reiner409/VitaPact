@@ -6,7 +6,6 @@ export { NavItem, type NavItemProps } from './components/NavItem/NavItem';
 export { PageHeader, type PageHeaderProps } from './components/PageHeader/PageHeader';
 export {
   NumberField,
-  numberUnits,
   type NumberFieldProps,
   type NumberUnit,
 } from './components/NumberField/NumberField';

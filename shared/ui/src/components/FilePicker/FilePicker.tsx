@@ -40,7 +40,7 @@ function useDropZone(accept: (file: File | undefined) => void) {
 }
 
 const zoneStyle = (dragging: boolean, hasError: boolean) => ({
-  border: `${tokens.focus.width}px dashed var(--vp-color-${hasError ? 'danger' : 'border'})`,
+  border: `${tokens.border.strongWidth}px dashed var(--vp-color-${hasError ? 'danger' : 'border'})`,
   backgroundColor: `var(--vp-color-${dragging ? 'primary-soft' : 'surface'})`,
 });
 

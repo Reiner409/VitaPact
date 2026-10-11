@@ -1,5 +1,6 @@
 import { Select as MantineSelect } from '@mantine/core';
 import { fieldErrorProps, fieldStyles, optional } from '../fieldProps';
+import { touchTarget } from '../touchTarget';
 
 export interface SelectOption {
   value: string;
@@ -40,7 +41,7 @@ export function Select({
       {...optional('placeholder', placeholder)}
       {...optional('error', error)}
       errorProps={fieldErrorProps}
-      styles={fieldStyles}
+      styles={{ ...fieldStyles, option: { minHeight: touchTarget.minHeight } }}
     />
   );
 }

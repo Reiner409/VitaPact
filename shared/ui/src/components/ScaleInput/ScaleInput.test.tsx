@@ -59,6 +59,12 @@ describe('F2-17 ScaleInput', () => {
     expect(dot(3)).toHaveFocus();
   });
 
+  it('RNF-10 is reached with Tab on the first dot when empty', async () => {
+    renderScale();
+    await userEvent.tab();
+    expect(dot(1)).toHaveFocus();
+  });
+
   it('RNF-10 moves and selects with the arrow keys', async () => {
     const onValue = renderScale(3);
     await userEvent.tab();

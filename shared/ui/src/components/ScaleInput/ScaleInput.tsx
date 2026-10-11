@@ -45,7 +45,7 @@ export function ScaleInput({ label, value, onChange, getValueLabel }: ScaleInput
 
   return (
     <div>
-      <Text id={labelId} fw={500} mb={tokens.space[1]}>
+      <Text id={labelId} fw={tokens.font.weight.medium} mb={tokens.space[1]}>
         {label}
       </Text>
       <Group role="radiogroup" aria-labelledby={labelId} gap={0} onKeyDown={onKeyDown}>
@@ -79,7 +79,7 @@ function ScaleDot({ filled }: { filled: boolean }) {
         width: size,
         height: size,
         borderRadius: '50%',
-        border: `${tokens.focus.width}px solid var(--vp-color-primary-strong)`,
+        border: `${tokens.border.strongWidth}px solid var(--vp-color-primary-strong)`,
         backgroundColor: filled ? 'var(--vp-color-primary-strong)' : 'var(--vp-color-surface)',
         transition: `background-color var(--vp-motion-fast) ${tokens.motion.easing}`,
       }}

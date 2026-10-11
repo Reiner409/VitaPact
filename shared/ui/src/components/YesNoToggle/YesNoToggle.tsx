@@ -21,18 +21,18 @@ export function YesNoToggle({ label, yesLabel, noLabel, value, onChange }: YesNo
   ];
   return (
     <div>
-      <Text id={labelId} fw={500} mb={tokens.space[1]}>
+      <Text id={labelId} fw={tokens.font.weight.medium} mb={tokens.space[1]}>
         {label}
       </Text>
       <Group role="group" aria-labelledby={labelId} gap="xs">
         {choices.map(({ answer, text }) => (
           <Button
-            key={text}
+            key={String(answer)}
             type="button"
             variant={value === answer ? 'filled' : 'outline'}
             aria-pressed={value === answer}
             onClick={() => onChange(answer)}
-            fw={500}
+            fw={tokens.font.weight.medium}
             style={{ minHeight: touchTarget.minHeight }}
           >
             {text}

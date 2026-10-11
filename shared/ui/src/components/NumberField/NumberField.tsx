@@ -17,7 +17,7 @@ export interface NumberFieldProps {
 }
 
 /** Step and decimals of each unit (section 6.2): hours by 0.5, minutes by 5, kg by 0.1. */
-export const numberUnits: Record<NumberUnit, { step: number; decimals: number }> = {
+const numberUnits: Record<NumberUnit, { step: number; decimals: number }> = {
   hours: { step: 0.5, decimals: 1 },
   minutes: { step: 5, decimals: 0 },
   kg: { step: 0.1, decimals: 1 },
@@ -49,7 +49,7 @@ export function NumberField({
       {...optional('max', max)}
       {...optional('description', description)}
       {...optional('error', error)}
-      clampBehavior="strict"
+      clampBehavior="blur"
       allowNegative={false}
       hideControls
       inputMode="decimal"

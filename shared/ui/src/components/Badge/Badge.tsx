@@ -1,5 +1,6 @@
 import { Badge as MantineBadge } from '@mantine/core';
 import type { ReactNode } from 'react';
+import { tokens } from '../../tokens';
 
 export type BadgeVariant = 'neutral' | 'comeback' | 'waiting';
 
@@ -24,11 +25,11 @@ export function Badge({ children, variant = 'neutral' }: BadgeProps) {
       radius="xl"
       size="lg"
       tt="none"
-      fw={500}
+      fw={tokens.font.weight.medium}
       style={{
         backgroundColor: background,
         color,
-        border: '1px solid var(--vp-color-border)',
+        border: `${tokens.border.width}px solid var(--vp-color-border)`,
       }}
     >
       {children}

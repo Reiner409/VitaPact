@@ -44,6 +44,15 @@ describe('F2-17 Select', () => {
     expect(onChange).toHaveBeenLastCalledWith('office');
   });
 
+  it('RNF-10 every option keeps a 44 px target', async () => {
+    renderWithTheme(<Select label="Group" options={options} value={null} onChange={vi.fn()} />);
+    await userEvent.click(screen.getByRole('combobox', { name: 'Group' }));
+    // The dropdown is still in its opening transition, which jsdom never finishes.
+    for (const option of screen.getAllByRole('option', { hidden: true })) {
+      expect(option).toHaveStyle({ minHeight: '44px' });
+    }
+  });
+
   it('RNF-10 shows the error under the field and announces it', () => {
     renderWithTheme(
       <Select label="Group" options={options} value={null} onChange={vi.fn()} error="Choose one" />,

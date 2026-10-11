@@ -86,6 +86,16 @@ describe('F2-17 ChipGroup, multiple', () => {
     expect(onValue).toHaveBeenLastCalledWith(['mobility']);
   });
 
+  it('RNF-10 every chip keeps a 44 px target', () => {
+    renderWithTheme(<Multiple onValue={vi.fn()} />);
+    for (const name of ['Strength', 'Cardio', 'Mobility']) {
+      const chip = document.querySelector(
+        `label[for="${screen.getByRole('checkbox', { name }).id}"]`,
+      );
+      expect(chip).toHaveStyle({ minHeight: '44px' });
+    }
+  });
+
   it('RNF-10 toggles with the keyboard', async () => {
     const onValue = vi.fn();
     renderWithTheme(<Multiple onValue={onValue} />);

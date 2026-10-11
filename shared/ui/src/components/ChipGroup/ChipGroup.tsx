@@ -32,7 +32,7 @@ export function ChipGroup(props: ChipGroupProps) {
   const labelId = useId();
   return (
     <div>
-      <Text id={labelId} fw={500} mb={tokens.space[1]}>
+      <Text id={labelId} fw={tokens.font.weight.medium} mb={tokens.space[1]}>
         {props.label}
       </Text>
       <Group role={props.multiple ? 'group' : 'radiogroup'} aria-labelledby={labelId} gap="xs">
