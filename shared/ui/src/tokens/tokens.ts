@@ -31,6 +31,7 @@ export const tokens = {
     modal: '0 8px 24px rgba(47, 59, 47, 0.12)',
   },
   motion: { fast: 150, base: 250, easing: 'ease-out' },
+  timing: { toast: 4000 },
   focus: { width: 2, offset: 2, color: color.primaryStrong },
   layout: {
     sidebarWidth: 240,
@@ -47,6 +48,7 @@ export const tokens = {
     h2: { size: 18, lineHeight: 26, weight: 600 },
     body: { size: 14, lineHeight: 20, weight: 400 },
     small: { size: 12, lineHeight: 16, weight: 500 },
+    weight: { regular: 400, medium: 500, semibold: 600 },
   },
   icon: { size: 20, stroke: 1.75 },
 } as const;

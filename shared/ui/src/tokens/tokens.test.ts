@@ -46,6 +46,10 @@ describe('Section 6.1 size tokens', () => {
     expect(tokens.motion).toEqual({ fast: 150, base: 250, easing: 'ease-out' });
   });
 
+  it('a toast stays on screen for 4 seconds (section 6.2)', () => {
+    expect(tokens.timing.toast).toBe(4000);
+  });
+
   it('focus ring is 2 px primaryStrong with 2 px offset', () => {
     expect(tokens.focus).toEqual({ width: 2, offset: 2, color: tokens.color.primaryStrong });
   });
@@ -75,6 +79,10 @@ describe('Section 6.1 typography tokens', () => {
     ['small', 12, 16, 500],
   ] as const)('font.%s is %d/%d px weight %d', (name, size, lineHeight, weight) => {
     expect(tokens.font[name]).toEqual({ size, lineHeight, weight });
+  });
+
+  it('font weights are regular 400, medium 500 for buttons and labels, semibold 600', () => {
+    expect(tokens.font.weight).toEqual({ regular: 400, medium: 500, semibold: 600 });
   });
 
   it('uses the bundled Inter font with tabular numbers', () => {
