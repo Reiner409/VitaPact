@@ -32,6 +32,7 @@ export const tokens = {
   },
   motion: { fast: 150, base: 250, easing: 'ease-out' },
   timing: { toast: 4000 },
+  border: { width: 1, strongWidth: 2 },
   focus: { width: 2, offset: 2, color: color.primaryStrong },
   layout: {
     sidebarWidth: 240,
