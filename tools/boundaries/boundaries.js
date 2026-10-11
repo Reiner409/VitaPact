@@ -40,6 +40,24 @@ export const BOUNDARY_RULES = [
   },
   {
     appliesTo: /./,
+    forbidden: /^dexie$/,
+    unless: /^core\/storage$/,
+    message: 'Only core/src/storage may import Dexie; use the functions it exports.',
+  },
+  {
+    appliesTo: /./,
+    forbidden: /^(qrcode|jsqr)$/,
+    unless: /^core\/report$/,
+    message: 'Only core/src/report may create or read QR codes.',
+  },
+  {
+    appliesTo: /./,
+    forbidden: /^chart\.js(\/|$)/,
+    unless: /^shared\/ui$/,
+    message: 'Only shared/ui may import Chart.js; use TrendChart from @vitapact/ui.',
+  },
+  {
+    appliesTo: /./,
     forbidden: /^@vitapact\/[^/]+\/src(\/|$)/,
     message: 'Import a package through its public entry point, never from its src folder.',
   },

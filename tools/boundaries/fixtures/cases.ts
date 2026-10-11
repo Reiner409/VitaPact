@@ -93,9 +93,26 @@ export const forbiddenImports = [
     file: 'screens/today/src/bad.ts',
     code: "export const load = () => import('@mantine/core');",
   },
+  {
+    rule: 'Dexie only in core/storage',
+    file: 'core/src/scoring/bad.ts',
+    code: "import Dexie from 'dexie';",
+  },
+  {
+    rule: 'QR libraries only in core/report',
+    file: 'core/src/groups/bad.ts',
+    code: "import jsQR from 'jsqr';",
+  },
+  {
+    rule: 'Chart.js only in shared/ui',
+    file: 'screens/week/src/bad.ts',
+    code: "import { Chart } from 'chart.js';",
+  },
 ];
 
 export const allowedImports = [
+  { file: 'core/src/report/ok.ts', code: "import QRCode from 'qrcode';" },
+  { file: 'shared/ui/src/ok.ts', code: "import { Chart } from 'chart.js';" },
   { file: 'shared/ui/src/ok.tsx', code: "import { Button } from '@mantine/core';" },
   { file: 'shared/ui/src/ok.tsx', code: "import { Sun } from 'lucide-react';" },
   { file: 'shared/i18n/src/ok.ts', code: "import i18next from 'i18next';" },

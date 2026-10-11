@@ -55,6 +55,10 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
   provisional version in F1-01. F2-16 owns them now and may change their look freely, but keeps
   the props used by `app/src/App.tsx`, or asks Setup to update the app in the same review.
 
+- **G3.10** Third-party libraries have one home each: Dexie in `core/src/storage`, `qrcode` and
+  `jsqr` in `core/src/report`, Chart.js in `shared/ui`. They are already declared, so a task never
+  needs to edit `core/package.json`; a new library goes through the reviewer.
+
 ## 4. Visual design
 
 - **G4.1** Every colour, size, radius, shadow and duration comes from
