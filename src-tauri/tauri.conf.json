@@ -18,11 +18,13 @@
         "width": 1200,
         "height": 800,
         "minWidth": 1024,
-        "minHeight": 700
+        "minHeight": 700,
+        "useHttpsScheme": false
       }
     ],
     "security": {
       "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src ipc: http://ipc.localhost; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; base-uri 'none'; form-action 'none'",
+      "dangerousDisableAssetCspModification": ["style-src"],
       "freezePrototype": true,
       "capabilities": ["default"]
     }
@@ -42,7 +44,9 @@
       "icons/icon.ico"
     ],
     "windows": {
-      "webviewInstallMode": { "type": "downloadBootstrapper" },
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      },
       "nsis": {
         "installMode": "currentUser"
       }

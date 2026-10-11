@@ -37,6 +37,11 @@ describe('F1-01 Tauri shell', () => {
       expect(ALLOWED_PERMISSIONS).toContain(permission);
   });
 
+  it('RNF-11 keeps the WebView origin fixed so local data survives updates', () => {
+    // Switching to https://tauri.localhost would open an empty IndexedDB.
+    expect(config.app.windows[0].useHttpsScheme).toBe(false);
+  });
+
   it('applies the default capability only', () => {
     expect(config.app.security.capabilities).toEqual(['default']);
   });
@@ -45,5 +50,10 @@ describe('F1-01 Tauri shell', () => {
 describe('F1-07 RNF-01 Content Security Policy', () => {
   it('Tauri uses the shared policy', () => {
     expect(config.app.security.csp).toBe(CONTENT_SECURITY_POLICY);
+  });
+
+  it('lets Mantine inline styles through: Tauri adds no nonce to style-src', () => {
+    // A nonce in style-src makes the browser ignore 'unsafe-inline', which Mantine needs.
+    expect(config.app.security.dangerousDisableAssetCspModification).toEqual(['style-src']);
   });
 });
