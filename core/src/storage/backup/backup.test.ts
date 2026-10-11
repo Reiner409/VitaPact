@@ -283,7 +283,7 @@ describe('RF-19 import of an earlier version', () => {
   it('migrates a file from an earlier version before writing it', async () => {
     const db = await openTestDatabase();
 
-    expect(await importData(db, await olderFile(), testHistory)).toEqual({ ok: true });
+    expect(await importData(db, await olderFile(), { history: testHistory })).toEqual({ ok: true });
 
     expect(await getProfile(db)).toEqual(sampleProfile);
   });
@@ -302,7 +302,7 @@ describe('RF-19 import of an earlier version', () => {
       ],
     };
 
-    expect(await importData(db, await olderFile(), failing)).toEqual({
+    expect(await importData(db, await olderFile(), { history: failing })).toEqual({
       ok: false,
       reason: 'damaged',
     });
@@ -312,7 +312,7 @@ describe('RF-19 import of an earlier version', () => {
     const db = await openTestDatabase();
     const noUpgrades = { ...testHistory, upgrades: [] };
 
-    expect(await importData(db, await olderFile(), noUpgrades)).toEqual({
+    expect(await importData(db, await olderFile(), { history: noUpgrades })).toEqual({
       ok: false,
       reason: 'unknownVersion',
     });
@@ -348,6 +348,17 @@ describe('RF-19 signing keys on import', () => {
 
     expect(outcome).toEqual({ ok: false, reason: 'otherUser' });
     expect(await snapshot(db)).toEqual(before);
+  });
+
+  it("imports another user's file after a second confirmation, dropping the device keys", async () => {
+    const { db } = await deviceWithKeys({ ...sampleProfile, userId: 'someone-else' });
+    const source = await openTestDatabase();
+    await saveProfile(source, sampleProfile);
+    const text = await exportData(source, EXPORTED_AT);
+
+    expect(await importData(db, text, { allowOtherUser: true })).toEqual({ ok: true });
+
+    expect(await getProfile(db)).toEqual(sampleProfile);
   });
 
   it("accepts another user's file on a device that has no keys yet", async () => {

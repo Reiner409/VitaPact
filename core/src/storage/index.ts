@@ -30,5 +30,6 @@ export type {
   BackupHistory,
   BackupTables,
   BackupUpgrade,
+  ImportOptions,
   ImportOutcome,
 } from './backup/backup';

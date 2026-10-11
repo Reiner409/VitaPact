@@ -116,48 +116,63 @@ function areValid(tables: BackupTables): boolean {
   return tablesValid && tables.profile.length <= 1;
 }
 
+export interface ImportOptions {
+  /** Set after the user confirmed a second time that this device's signing key may be lost. */
+  allowOtherUser?: boolean;
+  history?: BackupHistory;
+}
+
 /**
  * This device's identity is never silently replaced: a file must carry a profile when the device
- * has one, and once the device signs reports it accepts only its own user's backup.
+ * has one, and another user's file needs the user's explicit second confirmation once the device
+ * signs reports.
  */
 function identityConflict(
   current: Profile | undefined,
   imported: Profile[],
+  allowOtherUser: boolean,
 ): ImportOutcome | undefined {
   if (!current) return undefined;
   if (imported.length !== 1) return DAMAGED;
-  const [importedProfile] = imported;
-  if (current.signingKeys && importedProfile?.userId !== current.userId) return OTHER_USER;
+  const otherUser = imported[0]?.userId !== current.userId;
+  if (current.signingKeys && otherUser && !allowOtherUser) return OTHER_USER;
   return undefined;
 }
 
 /**
- * The file never holds signing keys. Restoring on the device that made it keeps the device's keys;
- * on a new device the profile has none, F2-09 creates new ones and friends see a key change.
+ * The file never holds signing keys. Restoring the same user keeps the device's keys; another
+ * user, or a new device, starts without keys, F2-09 creates new ones and friends see a key change.
  */
-async function replaceAllData(db: VitaPactDatabase, tables: BackupTables): Promise<ImportOutcome> {
+async function replaceAllData(
+  db: VitaPactDatabase,
+  tables: BackupTables,
+  allowOtherUser: boolean,
+): Promise<ImportOutcome> {
   return db.transaction('rw', TABLE_NAMES, async () => {
     const current = await db.profile.toCollection().first();
     const imported = tables.profile as Profile[];
-    const conflict = identityConflict(current, imported);
+    const conflict = identityConflict(current, imported, allowOtherUser);
     if (conflict) return conflict;
     for (const name of TABLE_NAMES) await db.table(name).clear();
     for (const name of TABLE_NAMES) await db.table(name).bulkPut(tables[name]);
+    const [importedProfile] = imported;
     const signingKeys = current?.signingKeys;
-    if (signingKeys && imported[0]) await db.profile.put({ ...imported[0], signingKeys });
+    if (signingKeys && importedProfile?.userId === current?.userId) {
+      await db.profile.put({ ...importedProfile, signingKeys });
+    }
     return { ok: true } as const;
   });
 }
 
 /**
  * Replaces all data with the content of a backup file, but only after the whole file is checked:
- * a damaged, oversized or unknown file, or another user's file, leaves the current data untouched
- * (RF-19).
+ * a damaged, oversized or unknown file, or another user's file without confirmation, leaves the
+ * current data untouched (RF-19).
  */
 export async function importData(
   db: VitaPactDatabase,
   text: string,
-  history: BackupHistory = BACKUP_HISTORY,
+  { allowOtherUser = false, history = BACKUP_HISTORY }: ImportOptions = {},
 ): Promise<ImportOutcome> {
   if (text.length > MAX_BACKUP_LENGTH) return DAMAGED;
   const file = parseJson(text);
@@ -166,5 +181,5 @@ export async function importData(
   const tables = safelyUpgraded(file, history);
   if (isOutcome(tables)) return tables;
   if (!areValid(tables)) return DAMAGED;
-  return replaceAllData(db, tables);
+  return replaceAllData(db, tables, allowOtherUser);
 }
