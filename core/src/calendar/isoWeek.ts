@@ -1,4 +1,11 @@
-import { addDays, daysBetween, formatDate, isoWeekday, type CalendarDate } from './calendarDate';
+import {
+  addDays,
+  daysBetween,
+  formatDate,
+  isoWeekday,
+  pad,
+  type CalendarDate,
+} from './calendarDate';
 
 /** An ISO 8601 week, Monday to Sunday, as `YYYY-Www` (e.g. `2026-W41`). */
 export type IsoWeek = string;
@@ -11,7 +18,7 @@ function thursdayOf(day: CalendarDate): CalendarDate {
 }
 
 function formatWeek(year: number, week: number): IsoWeek {
-  return `${String(year).padStart(4, '0')}-W${String(week).padStart(2, '0')}`;
+  return `${pad(year, 4)}-W${pad(week, 2)}`;
 }
 
 export function isoWeekOf(day: CalendarDate): IsoWeek {
