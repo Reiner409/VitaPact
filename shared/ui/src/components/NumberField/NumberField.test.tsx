@@ -73,8 +73,10 @@ describe('F2-17 NumberField limits', () => {
   it('keeps a typed value above the maximum so the screen can flag it', async () => {
     const { field, onValue } = renderField({ unit: 'hours', max: 24 });
     await userEvent.type(field, '99');
+    await userEvent.tab();
     expect(field).toHaveValue('99');
     expect(onValue).toHaveBeenLastCalledWith(99);
+    expect(onValue).not.toHaveBeenCalledWith(24);
   });
 
   it('reports an emptied field as null', async () => {

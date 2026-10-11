@@ -49,7 +49,7 @@ export function NumberField({
       {...optional('max', max)}
       {...optional('description', description)}
       {...optional('error', error)}
-      clampBehavior="blur"
+      clampBehavior="none"
       allowNegative={false}
       hideControls
       inputMode="decimal"
