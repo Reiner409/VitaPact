@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v5
         with:
           node-version: 22.22
@@ -37,7 +37,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
       - name: End-to-end tests (network guard on, RNF-01)
         run: pnpm test:e2e
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: playwright-report
@@ -50,7 +50,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v5
         with:
           node-version: 22.22
@@ -64,12 +64,12 @@ jobs:
         run: pnpm tauri build
       - name: Installer under 15 MB (RNF-09)
         run: pnpm check:installer-size src-tauri/target/release/bundle
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: vitapact-setup-${{ github.sha }}
           path: src-tauri/target/release/bundle/nsis/*.exe
           if-no-files-found: error
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: vitapact-portable-${{ github.sha }}
           path: src-tauri/target/release/vitapact.exe
