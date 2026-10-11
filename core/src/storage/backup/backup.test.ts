@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { MAX_WEIGHT_KG, MIN_WEIGHT_KG } from '../../calendar';
 import type { VitaPactDatabase } from '../database';
 import { saveDailyEntry } from '../daily-entries';
 import { saveFriendReport } from '../friends';
@@ -240,6 +241,15 @@ describe('RF-19 import validation against hostile files', () => {
     }));
 
     await expectDamaged(JSON.stringify(file));
+  });
+
+  it('rejects a weigh-in outside the weight range the app accepts', async () => {
+    for (const weightKg of [MIN_WEIGHT_KG - 0.1, MAX_WEIGHT_KG + 0.1, -70]) {
+      const file = JSON.parse(await validText());
+      file.tables.weighIns[0].weightKg = weightKg;
+
+      await expectDamaged(JSON.stringify(file));
+    }
   });
 
   it('rejects negative goals and a report filed under another friend', async () => {

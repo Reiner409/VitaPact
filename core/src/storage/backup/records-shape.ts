@@ -1,3 +1,4 @@
+import { MAX_WEIGHT_KG, MIN_WEIGHT_KG } from '../../calendar';
 import { isNote } from '../notes/note-shape';
 import { PROFILE_ID } from '../records';
 import type { TableName } from '../schema';
@@ -49,9 +50,12 @@ const isDailyEntry = shape({
   updatedAt: isString,
 });
 
+const isWeighInWeight: Check = (value) =>
+  isNumber(value) && (value as number) >= MIN_WEIGHT_KG && (value as number) <= MAX_WEIGHT_KG;
+
 const isWeighIn = shape({
   week: isWeek,
-  weightKg: isNumber,
+  weightKg: isWeighInWeight,
   measuredOn: isDate,
   fastingConfirmed: isBoolean,
 });
