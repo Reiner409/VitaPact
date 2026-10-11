@@ -24,13 +24,15 @@ interface ScorePart {
 }
 
 export function weekScore(input: WeekScoreInput, options: ScoreOptions = {}): number {
-  if (input.days.length > DAYS_IN_A_WEEK) throw new Error('A week has at most 7 logged days');
+  if (input.days.length > DAYS_IN_A_WEEK) {
+    throw new RangeError(`A week has at most 7 logged days, got ${input.days.length}`);
+  }
   const { weights = scoreWeights, pillars = pillarRegistry } = options;
   return toScore([
     { weight: weights.logging, progress: input.days.length / DAYS_IN_A_WEEK },
     { weight: weights.weighIn, progress: input.weighedIn ? 1 : 0 },
     ...pillars.list().map((pillar) => ({
-      weight: weights.pillars[pillar.id] ?? 0,
+      weight: ownValue(weights.pillars, pillar.id) ?? 0,
       progress: pillarWeekProgress(pillar, input),
     })),
   ]);
@@ -42,7 +44,7 @@ export function dayScore(day: DayValues, goals: Goals, options: ScoreOptions = {
   return toScore([
     { weight: weights.logging, progress: 1 },
     ...pillars.list().map((pillar) => ({
-      weight: weights.pillars[pillar.id] ?? 0,
+      weight: ownValue(weights.pillars, pillar.id) ?? 0,
       progress: pillarDayProgress(pillar, day, goals),
     })),
   ]);
@@ -72,7 +74,12 @@ function isDayOnGoal(pillar: Pillar, day: DayValues, goals: Goals): boolean {
 }
 
 function goalOf(pillar: Pillar, goals: Goals): number {
-  return goals[pillar.id] ?? pillar.goal.default;
+  return ownValue(goals, pillar.id) ?? pillar.goal.default;
+}
+
+/** Goals come from storage, so a key such as `constructor` must not reach the prototype. */
+function ownValue(record: Readonly<Record<string, number>>, key: string): number | undefined {
+  return Object.hasOwn(record, key) ? record[key] : undefined;
 }
 
 function toScore(parts: readonly ScorePart[]): number {
