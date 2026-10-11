@@ -6,7 +6,7 @@ Rules are numbered so reviews can cite them; never renumber, retire a rule by st
 
 ## 1. How a task runs
 
-1. **Read** this file, `CLAUDE.md` and your task in the task list (`piano/task-list.md`).
+1. **Read** this file, `CLAUDE.md` and your task in `docs/tasks.md`; the requirements are in `docs/requirements.md`.
 2. **Red.** Write the tests first. Each test title names the requirement it verifies, e.g.
    `describe('RF-03 daily check-in', ...)` (RNF-14). Run them and see them fail.
 3. **Green.** Write the simplest code that passes.
