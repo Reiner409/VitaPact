@@ -1,4 +1,5 @@
 import { MINUTES_IN_A_DAY } from './limits';
+import { reachesGoal } from './goals';
 import type { Pillar } from './types';
 
 export const sunPillar: Pillar = {
@@ -10,5 +11,5 @@ export const sunPillar: Pillar = {
   ],
   summaryField: 'minutes',
   goal: { cadence: 'daily', default: 20, min: 5, max: 240, step: 5, editable: true },
-  isOnGoal: (values, goal) => typeof values.minutes === 'number' && values.minutes >= goal,
+  isOnGoal: reachesGoal('minutes'),
 };

@@ -39,6 +39,10 @@ describe('RF-03 sleep pillar', () => {
     expect(errorCodes(sleepPillar, {})).toEqual(['hours:required', 'quality:required']);
   });
 
+  it('rejects a field the pillar does not have', () => {
+    expect(errorCodes(sleepPillar, { hours: 8, quality: 4, naps: 1 })).toEqual(['naps:unexpected']);
+  });
+
   it('is on goal when the hours reach the goal', () => {
     expect(sleepPillar.isOnGoal({ hours: 7.5, quality: 1 }, 7.5)).toBe(true);
     expect(sleepPillar.isOnGoal({ hours: 7, quality: 5 }, 7.5)).toBe(false);
@@ -78,6 +82,13 @@ describe('RF-03 training pillar', () => {
     ]);
   });
 
+  it('rejects type and minutes on a day without training', () => {
+    expect(errorCodes(trainingPillar, { trained: false, type: 'gym', minutes: 30 })).toEqual([
+      'type:unexpected',
+      'minutes:unexpected',
+    ]);
+  });
+
   it('rejects a yes/no answer that is not a boolean', () => {
     expect(errorCodes(trainingPillar, { trained: 'yes' })).toEqual(['trained:type']);
   });
@@ -94,8 +105,13 @@ describe('RF-03 D6 eating pillar', () => {
     expect(validatePillarValues(foodPillar, { rating })).toEqual([]);
   });
 
-  it.each([0, 6, 3.5, '4'])('rejects a rating of %s', (rating) => {
-    expect(errorCodes(foodPillar, { rating })).toHaveLength(1);
+  it.each([
+    [0, 'rating:range'],
+    [6, 'rating:range'],
+    [3.5, 'rating:step'],
+    ['4', 'rating:type'],
+  ])('rejects a rating of %s', (rating, error) => {
+    expect(errorCodes(foodPillar, { rating })).toEqual([error]);
   });
 
   it('is on goal with a rating of 4 or 5 (section 9, cleanOk)', () => {

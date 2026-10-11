@@ -11,12 +11,20 @@ import type {
 } from './types';
 
 export function validatePillarValues(pillar: Pillar, values: PillarValues): FieldError[] {
-  return pillar.fields
-    .filter((field) => isAsked(field, values))
-    .flatMap((field) => {
-      const code = fieldErrorCode(field, values[field.key]);
-      return code ? [{ field: field.key, code }] : [];
-    });
+  const askedFields = pillar.fields.filter((field) => isAsked(field, values));
+  const askedKeys = new Set(askedFields.map((field) => field.key));
+  const fieldErrors = askedFields.flatMap((field) => {
+    const code = fieldErrorCode(field, values[field.key]);
+    return code ? [{ field: field.key, code }] : [];
+  });
+  return [...fieldErrors, ...unexpectedFieldErrors(values, askedKeys)];
+}
+
+/** A value that was not asked for, such as minutes on a day without training, would skew the totals. */
+function unexpectedFieldErrors(values: PillarValues, askedKeys: ReadonlySet<string>): FieldError[] {
+  return Object.entries(values)
+    .filter(([key, value]) => value !== undefined && !askedKeys.has(key))
+    .map(([key]) => ({ field: key, code: 'unexpected' }));
 }
 
 function isAsked(field: PillarField, values: PillarValues): boolean {
