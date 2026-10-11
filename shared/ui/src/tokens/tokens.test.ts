@@ -46,6 +46,10 @@ describe('Section 6.1 size tokens', () => {
     expect(tokens.motion).toEqual({ fast: 150, base: 250, easing: 'ease-out' });
   });
 
+  it('a toast stays on screen for 4 seconds (section 6.2)', () => {
+    expect(tokens.timing.toast).toBe(4000);
+  });
+
   it('borders are 1 px, 2 px where they must stand out', () => {
     expect(tokens.border).toEqual({ width: 1, strongWidth: 2 });
   });
