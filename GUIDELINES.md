@@ -47,7 +47,8 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
   `@vitapact/core/<module>` through its `index.ts`. Modules import each other through that index
   (`../calendar`), never through deep files. `core/src/report` never reaches storage or anything
   named notes (RNF-02): it receives the week summary as input. Notes code lives in
-  `storage/notes` and `crypto/notes`, never in a module's `index.ts`.
+  `storage/notes` and `crypto/notes`, never in a module's `index.ts`; the Noteboard imports it as
+  `@vitapact/core/storage/notes` and `@vitapact/core/crypto/notes`.
 - **G3.7** Import other packages by their `@vitapact/...` name and public entry point, never by
   a relative path or a `/src/` deep import.
 - **G3.8** Each package declares its own dependencies in its `package.json` (pnpm is strict).
