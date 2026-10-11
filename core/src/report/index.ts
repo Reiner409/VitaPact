@@ -3,10 +3,7 @@ export {
   REPORT_IMAGE_WIDTH,
   drawReportImage,
   layoutReportImage,
-  readReportImage,
-  renderReportPng,
   type PillarColor,
-  type QrReadResult,
   type ReportCard,
   type ReportColor,
   type ReportDrawingContext,
@@ -15,4 +12,4 @@ export {
   type ReportIndicator,
   type ReportPixels,
 } from './image';
-export { readQrCode } from './qr';
+export { imageSizeLimits, readQrCode, type QrReadError, type QrReadResult } from './qr';

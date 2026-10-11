@@ -1,6 +1,6 @@
-import { encodeQr, readQrCode, type QrModules, type QrReadResult, type ReportPixels } from './qr';
+import { encodeQr, type QrModules, type ReportPixels } from './qr';
 
-export type { QrReadResult, ReportPixels };
+export type { ReportPixels };
 
 export const REPORT_IMAGE_WIDTH = 1080;
 export const REPORT_IMAGE_HEIGHT = 1350;
@@ -16,6 +16,22 @@ const QR_QUIET_MODULES = 4;
 const MIN_MODULE_PIXELS = 5;
 const INDICATOR_GAP = 24;
 const MOTTO_BASELINE = 1300;
+
+/** Text baselines and bar tops, from the top of the image down. */
+const ROW = {
+  nickname: 120,
+  week: 180,
+  score: 330,
+  verdict: 400,
+  indicatorBar: 450,
+  indicatorLabel: 505,
+  indicatorValue: 550,
+  weight: 610,
+} as const;
+const INDICATOR_BAR_HEIGHT = 10;
+/** Baselines of the owner lines, measured from the bottom of the QR code. */
+const OWNER_LINE_OFFSET = 50;
+const USER_ID_LINE_OFFSET = 92;
 
 export type PillarColor = 'sleep' | 'training' | 'food' | 'sun';
 
@@ -107,15 +123,26 @@ function indicatorItems(indicators: readonly ReportIndicator[]): ReportImageItem
     const bar: RectItem = {
       kind: 'rect',
       x: x - width / 2,
-      y: 450,
+      y: ROW.indicatorBar,
       width,
-      height: 10,
+      height: INDICATOR_BAR_HEIGHT,
       color: pillar,
     };
     return [
       bar,
-      { ...centredText(label, 505, { size: 28, bold: false, color: 'textMuted' }, width), x },
-      { ...centredText(value, 550, { size: 30, bold: true, color: 'text' }, width), x },
+      {
+        ...centredText(
+          label,
+          ROW.indicatorLabel,
+          { size: 28, bold: false, color: 'textMuted' },
+          width,
+        ),
+        x,
+      },
+      {
+        ...centredText(value, ROW.indicatorValue, { size: 30, bold: true, color: 'text' }, width),
+        x,
+      },
     ];
   });
 }
@@ -132,12 +159,16 @@ function qrItem(content: Uint8Array): QrItem {
 
 function ownerItems(card: ReportCard, qrBottom: number): TextItem[] {
   return [
-    centredText(`${card.nickname} · ${card.periodLabel}`, qrBottom + 50, {
+    centredText(`${card.nickname} · ${card.periodLabel}`, qrBottom + OWNER_LINE_OFFSET, {
       size: 30,
       bold: true,
       color: 'text',
     }),
-    centredText(card.userId, qrBottom + 92, { size: 26, bold: false, color: 'textMuted' }),
+    centredText(card.userId, qrBottom + USER_ID_LINE_OFFSET, {
+      size: 26,
+      bold: false,
+      color: 'textMuted',
+    }),
     centredText(card.motto, MOTTO_BASELINE, { size: 30, bold: true, color: 'primary' }),
   ];
 }
@@ -154,14 +185,14 @@ export function layoutReportImage(card: ReportCard): ReportImageItem[] {
       height: REPORT_IMAGE_HEIGHT,
       color: 'background',
     },
-    centredText(card.nickname, 120, { size: 64, bold: true, color: 'text' }),
-    centredText(card.weekLabel, 180, { size: 34, bold: false, color: 'textMuted' }),
-    centredText(card.scoreLabel, 330, { size: 150, bold: true, color: 'primary' }),
-    centredText(card.verdictLabel, 400, { size: 44, bold: true, color: 'text' }),
+    centredText(card.nickname, ROW.nickname, { size: 64, bold: true, color: 'text' }),
+    centredText(card.weekLabel, ROW.week, { size: 34, bold: false, color: 'textMuted' }),
+    centredText(card.scoreLabel, ROW.score, { size: 150, bold: true, color: 'primary' }),
+    centredText(card.verdictLabel, ROW.verdict, { size: 44, bold: true, color: 'text' }),
     ...indicatorItems(card.indicators),
     ...(card.weightLabel === undefined
       ? []
-      : [centredText(card.weightLabel, 610, { size: 34, bold: false, color: 'text' })]),
+      : [centredText(card.weightLabel, ROW.weight, { size: 34, bold: false, color: 'text' })]),
     qr,
     ...ownerItems(card, qr.y + qr.extent),
   ];
@@ -186,6 +217,11 @@ function drawQr(context: ReportDrawingContext, item: QrItem, theme: ReportImageT
   }
 }
 
+function drawRect(context: ReportDrawingContext, item: RectItem, theme: ReportImageTheme) {
+  context.fillStyle = theme.colors[item.color];
+  context.fillRect(item.x, item.y, item.width, item.height);
+}
+
 function drawText(context: ReportDrawingContext, item: TextItem, theme: ReportImageTheme) {
   context.font = `${item.bold ? 'bold ' : ''}${item.size}px ${theme.fontFamily}`;
   context.fillStyle = theme.colors[item.color];
@@ -202,29 +238,6 @@ export function drawReportImage(
   for (const item of items) {
     if (item.kind === 'qr') drawQr(context, item, theme);
     else if (item.kind === 'text') drawText(context, item, theme);
-    else {
-      context.fillStyle = theme.colors[item.color];
-      context.fillRect(item.x, item.y, item.width, item.height);
-    }
+    else drawRect(context, item, theme);
   }
-}
-
-/** The PNG to save or share; runs in the app's web view, where `OffscreenCanvas` exists. */
-export function renderReportPng(card: ReportCard, theme: ReportImageTheme): Promise<Blob> {
-  const canvas = new OffscreenCanvas(REPORT_IMAGE_WIDTH, REPORT_IMAGE_HEIGHT);
-  const context = canvas.getContext('2d');
-  if (!context) throw new Error('This web view cannot draw images');
-  drawReportImage(context, layoutReportImage(card), theme);
-  return canvas.convertToBlob({ type: 'image/png' });
-}
-
-/** RF-12: a PNG or JPG chosen by the user; anything the web view cannot decode has no QR code. */
-export async function readReportImage(image: Blob): Promise<QrReadResult> {
-  const bitmap = await createImageBitmap(image).catch(() => undefined);
-  if (!bitmap) return { ok: false, error: 'noQrCode' };
-  const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-  const context = canvas.getContext('2d');
-  if (!context) throw new Error('This web view cannot read images');
-  context.drawImage(bitmap, 0, 0);
-  return readQrCode(context.getImageData(0, 0, bitmap.width, bitmap.height));
 }

@@ -14,6 +14,14 @@ export type {
   SaveFileRequest,
 } from './platform';
 export { NotAnImageError } from './imageFiles';
+export {
+  readImagePixels,
+  renderPng,
+  type ImagePixels,
+  type ImagePixelsResult,
+  type ImageReadError,
+  type ImageSizeLimits,
+} from './images';
 export { createMemoryPlatform, type MemoryPlatform } from './memoryPlatform';
 
 let current: Platform | undefined;

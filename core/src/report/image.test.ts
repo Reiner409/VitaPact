@@ -6,6 +6,7 @@ import {
   REPORT_IMAGE_WIDTH,
   drawReportImage,
   layoutReportImage,
+  imageSizeLimits,
   readQrCode,
   type ReportCard,
   type ReportImageTheme,
@@ -130,6 +131,12 @@ describe('RF-10 report image with its QR code', () => {
     );
   });
 
+  it('RF-12 reports pixel data that does not match the image size as unreadable', () => {
+    const pixels = { width: 10, height: 10, data: new Uint8ClampedArray(12) };
+
+    expect(readQrCode(pixels)).toEqual({ ok: false, error: 'unreadableImage' });
+  });
+
   it('RF-10 refuses content too large for a readable QR code', () => {
     const tooLarge = { ...card, content: new Uint8Array(2000) };
 
@@ -171,5 +178,24 @@ describe('RF-11 who the report belongs to, in plain text', () => {
     );
 
     expect(withoutModules).toMatchSnapshot();
+  });
+});
+
+describe('RF-12 limits on an untrusted image', () => {
+  it('RF-12 accepts a photo-sized image file up to 20 MB', () => {
+    expect(imageSizeLimits.fitsBytes(20 * 1024 * 1024)).toBe(true);
+    expect(imageSizeLimits.fitsBytes(20 * 1024 * 1024 + 1)).toBe(false);
+  });
+
+  it('RF-12 accepts up to 8192 pixels per side and 40 megapixels in all', () => {
+    expect(imageSizeLimits.fitsDimensions(1080, 1350)).toBe(true);
+    expect(imageSizeLimits.fitsDimensions(8192, 4096)).toBe(true);
+    expect(imageSizeLimits.fitsDimensions(8193, 100)).toBe(false);
+    expect(imageSizeLimits.fitsDimensions(100, 8193)).toBe(false);
+    expect(imageSizeLimits.fitsDimensions(8000, 6000)).toBe(false);
+  });
+
+  it('RF-12 refuses an image with no pixels', () => {
+    expect(imageSizeLimits.fitsDimensions(0, 1350)).toBe(false);
   });
 });
