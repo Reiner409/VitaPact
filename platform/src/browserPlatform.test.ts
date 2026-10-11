@@ -36,7 +36,10 @@ function fakeBrowser() {
   return { urls, downloads, inputs, chooseFile };
 }
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
 
 describePlatformContract(() => {
   const { urls, downloads, chooseFile } = fakeBrowser();
@@ -63,7 +66,8 @@ describe('F2-03 browser platform', () => {
     expect(inputs[0]?.accept).toBe('.png,.jpg,.jpeg');
   });
 
-  it('releases the download link once the file is handed to the browser', async () => {
+  it('RF-10 releases the download link only after the browser has started the download', async () => {
+    vi.useFakeTimers();
     const { urls } = fakeBrowser();
     const filter = { name: 'PNG image', extensions: ['png'] };
 
@@ -72,6 +76,10 @@ describe('F2-03 browser platform', () => {
       contents: 'x',
       filter,
     });
+
+    expect(urls.revokeObjectURL).not.toHaveBeenCalled();
+
+    vi.runAllTimers();
 
     expect(urls.revokeObjectURL).toHaveBeenCalledWith('blob:vitapact/0');
   });

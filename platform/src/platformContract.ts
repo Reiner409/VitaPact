@@ -97,6 +97,13 @@ function describeOpening(makeHarness: () => PlatformHarness) {
       await expect(platform.openImageFile('Images')).rejects.toBeInstanceOf(NotAnImageError);
     });
 
+    it('RF-12 rejects a name whose extension is an object key such as .constructor', async () => {
+      const { platform, userChoosesFile } = makeHarness();
+      userChoosesFile({ name: 'luca.constructor', bytes: new Uint8Array([0x47]) });
+
+      await expect(platform.openImageFile('Images')).rejects.toBeInstanceOf(NotAnImageError);
+    });
+
     it('RF-12 resolves to nothing when the user closes the dialog', async () => {
       const { platform, userChoosesFile } = makeHarness();
       userChoosesFile(undefined);

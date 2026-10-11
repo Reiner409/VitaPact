@@ -1,12 +1,12 @@
 import type { FileFilter, ImageMimeType, OpenedFile, OpenedImage } from './platform';
 
-const MIME_TYPE_BY_EXTENSION: Readonly<Record<string, ImageMimeType>> = {
-  png: 'image/png',
-  jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
-};
+const MIME_TYPE_BY_EXTENSION: ReadonlyMap<string, ImageMimeType> = new Map([
+  ['png', 'image/png'],
+  ['jpg', 'image/jpeg'],
+  ['jpeg', 'image/jpeg'],
+]);
 
-export const IMAGE_EXTENSIONS = Object.keys(MIME_TYPE_BY_EXTENSION);
+export const IMAGE_EXTENSIONS = [...MIME_TYPE_BY_EXTENSION.keys()];
 
 export function imageFilter(filterName: string): FileFilter {
   return { name: filterName, extensions: IMAGE_EXTENSIONS };
@@ -19,7 +19,7 @@ export function fileNameOf(path: string): string {
 /** The dialog only offers images, but a typed name can still bypass the filter, hence the check. */
 export function asImage(file: OpenedFile): OpenedImage {
   const extension = file.name.split('.').at(-1)?.toLowerCase() ?? '';
-  const mimeType = MIME_TYPE_BY_EXTENSION[extension];
+  const mimeType = MIME_TYPE_BY_EXTENSION.get(extension);
   if (!mimeType) throw new NotAnImageError(file.name);
   return { ...file, mimeType };
 }

@@ -41,7 +41,8 @@ export function createBrowserPlatform(document: Document, urls: ObjectUrls = URL
       link.href = url;
       link.download = suggestedName;
       link.click();
-      urls.revokeObjectURL(url);
+      // Some browsers start the download after click() returns, so the URL must outlive it.
+      setTimeout(() => urls.revokeObjectURL(url));
       // A download cannot be cancelled before it starts; the browser asks afterwards, if at all.
       return Promise.resolve('saved');
     },

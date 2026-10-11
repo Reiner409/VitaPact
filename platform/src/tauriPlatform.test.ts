@@ -46,7 +46,7 @@ describePlatformContract(() => {
 describe('F2-03 Tauri platform', () => {
   const filter = { name: 'PNG image', extensions: ['png'] };
 
-  it('offers the suggested name and the translated file type in the save dialog', async () => {
+  it('RF-10 offers the suggested name and the translated file type in the save dialog', async () => {
     const { api } = fakeTauri();
 
     await createTauriPlatform(api).saveFile({ suggestedName: 'r.png', contents: 'x', filter });
@@ -54,7 +54,7 @@ describe('F2-03 Tauri platform', () => {
     expect(api.save).toHaveBeenCalledWith({ defaultPath: 'r.png', filters: [filter] });
   });
 
-  it('writes nothing when the user cancels the save dialog', async () => {
+  it('RF-10 writes nothing when the user cancels the save dialog', async () => {
     const { api } = fakeTauri();
     vi.mocked(api.save).mockResolvedValue(null);
 

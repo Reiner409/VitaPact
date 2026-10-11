@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { toBytes } from './fileContents';
 import { createMemoryPlatform } from './memoryPlatform';
 import { describePlatformContract } from './platformContract';
 
@@ -11,7 +12,7 @@ describePlatformContract(() => {
       Promise.resolve(
         platform.savedFiles.map(({ suggestedName, contents }) => ({
           name: suggestedName,
-          bytes: typeof contents === 'string' ? new TextEncoder().encode(contents) : contents,
+          bytes: toBytes(contents),
         })),
       ),
   };
