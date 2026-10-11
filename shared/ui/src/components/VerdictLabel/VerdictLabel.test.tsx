@@ -22,7 +22,7 @@ describe('F2-18 VerdictLabel', () => {
     expect(verdict.parentElement?.outerHTML).not.toContain('danger');
   });
 
-  it('RNF-05 shows the verdict as text, never as markup', () => {
+  it('shows the verdict as text, never as markup', () => {
     renderWithTheme(<VerdictLabel band="solidBase">{'<b>Solid base</b>'}</VerdictLabel>);
     expect(screen.getByText('<b>Solid base</b>')).toBeInTheDocument();
   });

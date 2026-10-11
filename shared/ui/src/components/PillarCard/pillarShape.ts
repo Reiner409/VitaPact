@@ -14,7 +14,13 @@ interface FieldBase {
 
 export type PillarCardField = FieldBase &
   (
-    | { readonly kind: 'number'; readonly unit: string; readonly min: number; readonly max: number }
+    | {
+        readonly kind: 'number';
+        readonly unit: string;
+        readonly min: number;
+        readonly max: number;
+        readonly step: number;
+      }
     | { readonly kind: 'scale'; readonly min: number; readonly max: number }
     | { readonly kind: 'yesNo' }
     | { readonly kind: 'choice'; readonly options: readonly string[] }

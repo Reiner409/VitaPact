@@ -34,7 +34,7 @@ describe('F2-18 ScoreRing', () => {
     expect(screen.getByText(shown)).toBeInTheDocument();
   });
 
-  it('RF-15 shows the verdict below the score', () => {
+  it('shows the verdict below the score', () => {
     renderWithTheme(
       <ScoreRing score={88} label="Week score">
         <VerdictLabel band="greatShape">In great shape</VerdictLabel>

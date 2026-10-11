@@ -14,7 +14,7 @@ const sleep: PillarCardPillar = {
   color: 'sleep',
   icon: 'sleep',
   fields: [
-    { kind: 'number', key: 'hours', unit: 'hours', min: 0, max: 24 },
+    { kind: 'number', key: 'hours', unit: 'hours', min: 0, max: 24, step: 0.5 },
     { kind: 'scale', key: 'quality', min: 1, max: 5 },
   ],
 };
@@ -36,6 +36,7 @@ const training: PillarCardPillar = {
       unit: 'minutes',
       min: 0,
       max: 1440,
+      step: 1,
       askedWhen: { key: 'trained', equals: true },
     },
   ],
@@ -50,13 +51,13 @@ const sun: PillarCardPillar = {
   id: 'sun',
   color: 'sun',
   icon: 'sun',
-  fields: [{ kind: 'number', key: 'minutes', unit: 'minutes', min: 0, max: 1440 }],
+  fields: [{ kind: 'number', key: 'minutes', unit: 'minutes', min: 0, max: 1440, step: 1 }],
 };
 const hydration: PillarCardPillar = {
   id: 'hydration',
   color: 'hydration',
   icon: 'hydration',
-  fields: [{ kind: 'number', key: 'litres', unit: 'litres', min: 0, max: 10 }],
+  fields: [{ kind: 'number', key: 'litres', unit: 'litres', min: 0, max: 10, step: 0.25 }],
 };
 
 const capitalised = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
@@ -127,8 +128,8 @@ describe('F2-18 PillarCard', () => {
     );
     expect(accentOf('Hydration')).toBe('primary');
     expect(card('Hydration').querySelector('[data-icon="pillar"]')).not.toBeNull();
-    await userEvent.type(screen.getByRole('textbox', { name: 'Litres' }), '2');
-    expect(onChange).toHaveBeenLastCalledWith('litres', 2);
+    await userEvent.type(screen.getByRole('textbox', { name: 'Litres' }), '2.25');
+    expect(onChange).toHaveBeenLastCalledWith('litres', 2.25);
   });
 
   it('RF-03 reports each change with the field key', async () => {

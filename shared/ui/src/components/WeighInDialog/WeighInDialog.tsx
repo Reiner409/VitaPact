@@ -1,4 +1,4 @@
-import { Checkbox, Group, Stack } from '@mantine/core';
+import { Checkbox, Group, Stack, Text } from '@mantine/core';
 import { useState } from 'react';
 import { Button } from '../Button/Button';
 import { Modal } from '../Modal/Modal';
@@ -28,12 +28,6 @@ export interface WeighInDialogProps {
   onLater: () => void;
 }
 
-const fastingLabelStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  minHeight: touchTarget.minHeight,
-};
-
 /** The Sunday weigh-in: weight in kg, saved only with the empty-stomach confirmation (RF-05). */
 export function WeighInDialog({ opened, labels, onLater, ...form }: WeighInDialogProps) {
   return (
@@ -51,17 +45,21 @@ function useWeighInForm({
   const [weight, setWeight] = useState<number | null>(null);
   const [fasting, setFasting] = useState(false);
   const [outOfRange, setOutOfRange] = useState(false);
+  const changeWeight = (next: number | null) => {
+    setWeight(next);
+    setOutOfRange(false);
+  };
   const submit = () => {
     if (weight === null || !fasting) return;
     const inRange = weight >= minKg && weight <= maxKg;
     setOutOfRange(!inRange);
     if (inRange) onSave(weight);
   };
-  return { weight, setWeight, fasting, setFasting, outOfRange, submit };
+  return { weight, changeWeight, fasting, setFasting, outOfRange, submit };
 }
 
 function WeighInForm({ labels, onLater, ...limits }: Omit<WeighInDialogProps, 'opened'>) {
-  const { weight, setWeight, fasting, setFasting, outOfRange, submit } = useWeighInForm(limits);
+  const { weight, changeWeight, fasting, setFasting, outOfRange, submit } = useWeighInForm(limits);
   return (
     <Stack gap="md">
       <NumberField
@@ -69,15 +67,10 @@ function WeighInForm({ labels, onLater, ...limits }: Omit<WeighInDialogProps, 'o
         unit="kg"
         unitLabel={labels.unit}
         value={weight}
-        onChange={setWeight}
+        onChange={changeWeight}
         {...(outOfRange ? { error: labels.outOfRange } : {})}
       />
-      <Checkbox
-        label={labels.fasting}
-        checked={fasting}
-        onChange={(event) => setFasting(event.currentTarget.checked)}
-        styles={{ body: { alignItems: 'center' }, label: fastingLabelStyle }}
-      />
+      <FastingCheck label={labels.fasting} checked={fasting} onChange={setFasting} />
       <Group justify="flex-end" gap="sm">
         <Button variant="subtle" onClick={onLater}>
           {labels.later}
@@ -87,5 +80,29 @@ function WeighInForm({ labels, onLater, ...limits }: Omit<WeighInDialogProps, 'o
         </Button>
       </Group>
     </Stack>
+  );
+}
+
+interface FastingCheckProps {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+/** The whole row is the checkbox, so the target is at least 44 px high (G4.6). */
+function FastingCheck({ label, checked, onChange }: FastingCheckProps) {
+  return (
+    <Checkbox.Card
+      checked={checked}
+      onChange={onChange}
+      radius="sm"
+      p="sm"
+      style={{ minHeight: touchTarget.minHeight }}
+    >
+      <Group wrap="nowrap" gap="sm">
+        <Checkbox.Indicator />
+        <Text component="span">{label}</Text>
+      </Group>
+    </Checkbox.Card>
   );
 }

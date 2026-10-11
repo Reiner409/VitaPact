@@ -24,9 +24,11 @@ export interface PillarFieldProps {
 
 const NUMBER_UNITS: readonly string[] = ['hours', 'minutes', 'kg'] satisfies NumberUnit[];
 
-/** A unit with no step of its own in NumberField, such as a new pillar's litres, takes half steps. */
-const numberUnit = (unit: string): NumberUnit =>
-  NUMBER_UNITS.includes(unit) ? (unit as NumberUnit) : 'hours';
+const isNumberUnit = (unit: string): unit is NumberUnit => NUMBER_UNITS.includes(unit);
+
+/** Known units keep NumberField's own steps; any other unit (a new pillar's litres) uses the field's step. */
+const numberStepping = (field: FieldOf<'number'>) =>
+  isNumberUnit(field.unit) ? { unit: field.unit } : { unit: 'hours' as const, step: field.step };
 
 const asNumber = (value: PillarFieldValue | undefined) =>
   typeof value === 'number' ? value : null;
@@ -57,7 +59,7 @@ function NumberPillarField({ field, label, value, text, error, onChange }: KindP
   return (
     <NumberField
       label={label}
-      unit={numberUnit(field.unit)}
+      {...numberStepping(field)}
       unitLabel={text.unitLabel(field.unit)}
       value={asNumber(value)}
       onChange={(next) => onChange(next ?? undefined)}

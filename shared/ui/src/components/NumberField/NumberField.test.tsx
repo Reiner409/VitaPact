@@ -53,6 +53,16 @@ describe('F2-17 NumberField steps', () => {
     for (let press = 0; press < 7; press += 1) await userEvent.keyboard('{ArrowUp}');
     expect(onValue).toHaveBeenLastCalledWith(70.7);
   });
+
+  it('RF-23 a step override sets the step and the decimals, e.g. litres by 0.25', async () => {
+    const { field, onValue } = renderField({ unit: 'hours', step: 0.25, initial: 2 });
+    await userEvent.click(field);
+    await userEvent.keyboard('{ArrowUp}');
+    expect(onValue).toHaveBeenLastCalledWith(2.25);
+    await userEvent.clear(field);
+    await userEvent.type(field, '1.75');
+    expect(onValue).toHaveBeenLastCalledWith(1.75);
+  });
 });
 
 describe('F2-17 NumberField limits', () => {

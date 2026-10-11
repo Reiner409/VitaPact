@@ -16,6 +16,13 @@ describe('F2-18 pillarLook', () => {
     });
   });
 
+  it('RF-23 ignores names inherited from Object, such as constructor and toString', () => {
+    expect(pillarLook({ color: 'constructor', icon: 'toString' })).toEqual({
+      accent: 'primary',
+      icon: 'pillar',
+    });
+  });
+
   it('turns an accent into its CSS variable', () => {
     expect(accentColor('sun')).toBe('var(--vp-color-pillar-sun)');
     expect(accentColor('primary')).toBe('var(--vp-color-primary)');

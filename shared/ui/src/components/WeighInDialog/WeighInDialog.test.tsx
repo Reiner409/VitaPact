@@ -75,6 +75,23 @@ describe('F2-18 WeighInDialog', () => {
     expect(screen.getByRole('alert')).toHaveTextContent(labels.outOfRange);
   });
 
+  it('RF-05 keeps one decimal place: 78.45 saves 78.4', async () => {
+    const { onSave } = renderDialog();
+    await userEvent.type(weight(), '78.45');
+    await userEvent.click(fasting());
+    await userEvent.click(save());
+    expect(onSave).toHaveBeenCalledWith(78.4);
+  });
+
+  it('RF-05 clears the range error once the weight changes', async () => {
+    renderDialog();
+    await userEvent.type(weight(), '7');
+    await userEvent.click(fasting());
+    await userEvent.click(save());
+    await userEvent.type(weight(), '8');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('RF-06 postpones with "Later"', async () => {
     const { onLater, onSave } = renderDialog();
     await userEvent.click(screen.getByRole('button', { name: 'Later' }));
@@ -82,9 +99,14 @@ describe('F2-18 WeighInDialog', () => {
     expect(onSave).not.toHaveBeenCalled();
   });
 
-  it('RNF-10 keeps the checkbox label, which also ticks it, a 44 px target', () => {
+  it('RNF-10 keeps the whole checkbox row a 44 px target, ticked with the keyboard too', async () => {
     renderDialog();
-    expect(screen.getByText(labels.fasting)).toHaveStyle({ minHeight: '44px' });
+    await userEvent.click(weight());
+    await userEvent.tab();
+    expect(fasting()).toHaveFocus();
+    await userEvent.keyboard(' ');
+    expect(fasting()).toBeChecked();
+    expect(fasting()).toHaveStyle({ minHeight: '44px' });
   });
 
   it('RNF-10 has no axe violations', async () => {

@@ -2,8 +2,9 @@ import { appIcons, type IconName } from '../icons/AppIcon';
 import { tokens, type PillarColorName } from '../tokens';
 import type { CardAccent } from './Card/Card';
 
-const isPillarColor = (name: string): name is PillarColorName => name in tokens.color.pillar;
-const isIconName = (name: string): name is IconName => name in appIcons;
+const isPillarColor = (name: string): name is PillarColorName =>
+  Object.hasOwn(tokens.color.pillar, name);
+const isIconName = (name: string): name is IconName => Object.hasOwn(appIcons, name);
 
 /**
  * A pillar names its colour and icon (core's pillar module). A new pillar without its own

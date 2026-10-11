@@ -25,7 +25,7 @@ describe('F2-18 WeighInBanner', () => {
     expect(banner.querySelector('[data-icon="weighIn"]')).not.toBeNull();
   });
 
-  it('RF-07 reopens the weigh-in from the banner', async () => {
+  it('reopens the weigh-in from the banner', async () => {
     const onWeighIn = renderBanner();
     await userEvent.click(screen.getByRole('button', { name: 'Weigh in' }));
     expect(onWeighIn).toHaveBeenCalledTimes(1);
