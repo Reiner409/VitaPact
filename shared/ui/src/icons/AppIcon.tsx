@@ -2,6 +2,7 @@ import {
   CalendarCheck,
   CalendarDays,
   Dumbbell,
+  ImageUp,
   Moon,
   NotebookPen,
   Salad,
@@ -25,6 +26,7 @@ export const appIcons = {
   food: Salad,
   sun: Sun,
   weighIn: Scale,
+  image: ImageUp,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof appIcons;
