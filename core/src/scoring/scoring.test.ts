@@ -51,13 +51,12 @@ describe('RF-09 D8 weekly score', () => {
     expect(weekScore({ days, goals, weighedIn: true })).toBe(100);
   });
 
-  it('scores 62 for a solid week, as in the section 9 verdict table', () => {
+  it('scores 62 for the section 9 sample week (5 logged, 4 sleep, 2/3 workouts, 4 clean, 3 sun)', () => {
     const days = [
       dayMeeting('sleep', 'training', 'food', 'sun'),
       dayMeeting('sleep', 'training', 'food', 'sun'),
       dayMeeting('sleep', 'food', 'sun'),
-      dayMeeting('sleep'),
-      dayMeeting(),
+      dayMeeting('sleep', 'food'),
       dayMeeting(),
     ];
     expect(weekScore({ days, goals, weighedIn: true })).toBe(62);
