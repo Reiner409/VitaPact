@@ -110,7 +110,8 @@ describe('F2-01 dates across a daylight saving change', () => {
   });
 
   afterAll(() => {
-    process.env.TZ = originalZone;
+    if (originalZone === undefined) delete process.env.TZ;
+    else process.env.TZ = originalZone;
   });
 
   it('reads the local day of a moment, late at night and early in the morning', () => {
