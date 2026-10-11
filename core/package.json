@@ -1,0 +1,17 @@
+{
+  "name": "@vitapact/core",
+  "private": true,
+  "version": "0.1.0",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "exports": {
+    "./calendar": "./src/calendar/index.ts",
+    "./crypto": "./src/crypto/index.ts",
+    "./groups": "./src/groups/index.ts",
+    "./pillars": "./src/pillars/index.ts",
+    "./report": "./src/report/index.ts",
+    "./scoring": "./src/scoring/index.ts",
+    "./storage": "./src/storage/index.ts"
+  },
+  "dependencies": {}
+}

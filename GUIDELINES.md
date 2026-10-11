@@ -21,7 +21,7 @@ A task is done only when `pnpm verify` and `pnpm test:e2e` are green and the rev
 ## 2. Ownership and parallel work
 
 - **G2.1** Touch only the files your task owns (task list, section 2). A screen agent works only
-  in `screens/<name>/`. Core works in `core/*` and `platform/`. UI works in `shared/ui` and
+  in `screens/<name>/`. Core works in `core/` and `platform/`. UI works in `shared/ui` and
   `shared/i18n/src`. Contenuti owns `shared/i18n/locales`. Setup owns the repo root, `app/`, `src-tauri/`, `tools/`, `e2e/` and CI.
 - **G2.2** Need something outside your package (a component, a core function, a permission)?
   Do not add it yourself: ask the owner through the coordinator. The owner adds it with its test.
@@ -33,7 +33,7 @@ A task is done only when `pnpm verify` and `pnpm test:e2e` are green and the rev
 
 Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/boundaries.js`).
 
-- **G3.1** Layers, top to bottom: `app` → `screens/*` → `shared/*` and `platform` → `core/*`.
+- **G3.1** Layers, top to bottom: `app` → `screens/*` → `shared/*` and `platform` → `core`.
   A package uses only packages below it, never a sibling screen.
 - **G3.2** Only `shared/ui` imports Mantine and Lucide. Screens compose `@vitapact/ui`
   components and never set their own styles.
@@ -41,10 +41,13 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
   `@vitapact/i18n`.
 - **G3.4** Only `platform/` imports Tauri. `core` and `shared` never import `platform`; screens
   call platform functions and pass results down.
-- **G3.5** `core/*` is pure TypeScript: no React, no UI, no translations, no system clock
+- **G3.5** `core` is pure TypeScript: no React, no UI, no translations, no system clock
   (dates arrive as parameters).
-- **G3.6** `core/report` never reaches stored data or notes (RNF-02): it receives the week
-  summary as input. `core/storage` must not re-export the notes table from its main entry.
+- **G3.6** `core` is one package with one folder per module (`core/src/<module>/`), each exposed as
+  `@vitapact/core/<module>` through its `index.ts`. Modules import each other through that index
+  (`../calendar`), never through deep files. `core/src/report` never reaches storage or anything
+  named notes (RNF-02): it receives the week summary as input. Notes code lives in
+  `storage/notes` and `crypto/notes`, never in a module's `index.ts`.
 - **G3.7** Import other packages by their `@vitapact/...` name and public entry point, never by
   a relative path or a `/src/` deep import.
 - **G3.8** Each package declares its own dependencies in its `package.json` (pnpm is strict).

@@ -20,7 +20,7 @@ export const forbiddenImports = [
   },
   {
     rule: 'Tauri only in platform',
-    file: 'core/report/src/bad.ts',
+    file: 'core/src/report/bad.ts',
     code: "import { save } from '@tauri-apps/plugin-dialog';",
   },
   {
@@ -60,12 +60,12 @@ export const forbiddenImports = [
   },
   {
     rule: 'core does not import platform',
-    file: 'core/storage/src/bad.ts',
+    file: 'core/src/storage/bad.ts',
     code: "import { saveFile } from '@vitapact/platform';",
   },
   {
     rule: 'core does not import React',
-    file: 'core/scoring/src/bad.ts',
+    file: 'core/src/scoring/bad.ts',
     code: "import { useState } from 'react';",
   },
   {
@@ -75,13 +75,18 @@ export const forbiddenImports = [
   },
   {
     rule: 'core/report does not reach storage (RNF-02)',
-    file: 'core/report/src/bad.ts',
-    code: "import { db } from '@vitapact/core-storage';",
+    file: 'core/src/report/bad.ts',
+    code: "import { db } from '@vitapact/core/storage';",
+  },
+  {
+    rule: 'core/report does not reach storage through a relative path (RNF-02)',
+    file: 'core/src/report/bad.ts',
+    code: "import { db } from '../storage';",
   },
   {
     rule: 'core/report does not reach notes (RNF-02)',
-    file: 'core/report/src/bad.ts',
-    code: "import { decryptNote } from '@vitapact/core-crypto/notes';",
+    file: 'core/src/report/bad.ts',
+    code: "import { decryptNote } from '../crypto/notes';",
   },
   {
     rule: 'dynamic import is checked too',
@@ -102,8 +107,8 @@ export const allowedImports = [
   },
   { file: 'screens/today/src/ok.tsx', code: "import en from '../locales/en/today.json';" },
   { file: 'screens/week/src/ok.ts', code: "import { saveFile } from '@vitapact/platform';" },
-  { file: 'screens/week/src/ok.ts', code: "import { weekScore } from '@vitapact/core-scoring';" },
-  { file: 'core/report/src/ok.ts', code: "import { sign } from '@vitapact/core-crypto';" },
-  { file: 'core/storage/src/ok.ts', code: "import Dexie from 'dexie';" },
+  { file: 'screens/week/src/ok.ts', code: "import { weekScore } from '@vitapact/core/scoring';" },
+  { file: 'core/src/report/ok.ts', code: "import { sign } from '../crypto';" },
+  { file: 'core/src/storage/ok.ts', code: "import Dexie from 'dexie';" },
   { file: 'app/src/ok.tsx', code: "import { TodayScreen } from '@vitapact/screen-today';" },
 ];

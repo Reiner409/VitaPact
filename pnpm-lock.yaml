@@ -111,19 +111,7 @@ importers:
         specifier: ^5.0.15
         version: 5.0.15(@types/react@19.3.0)(react@19.3.0)(use-sync-external-store@1.7.0(react@19.3.0))
 
-  core/calendar: {}
-
-  core/crypto: {}
-
-  core/groups: {}
-
-  core/pillars: {}
-
-  core/report: {}
-
-  core/scoring: {}
-
-  core/storage: {}
+  core: {}
 
   platform:
     dependencies:

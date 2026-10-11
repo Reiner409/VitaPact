@@ -3,11 +3,13 @@ import path from 'node:path';
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '../..');
 const BUILD_CONFIG = /\.config\.[cm]?[jt]s$/;
-const PACKAGE_ROOT = /^(app|platform|screens\/[^/]+|shared\/[^/]+|core\/[^/]+)\//;
+const PACKAGE_ROOT = /^(app|platform|core|screens\/[^/]+|shared\/[^/]+)\//;
+const CORE_MODULE = /^core\/src\/([^/]+)\//;
 
 /**
  * @typedef {{ forbidden: RegExp, unless?: RegExp, message: string }} BoundaryRule
- * `forbidden` matches the import specifier, `unless` matches the importing package root.
+ * `appliesTo` and `unless` match the importing area: the package root, or `core/<module>` inside core.
+ * `forbidden` matches the import specifier, or the repo path of a relative import inside the package.
  */
 
 /** @type {Array<{ appliesTo: RegExp } & BoundaryRule>} */
@@ -54,7 +56,7 @@ export const BOUNDARY_RULES = [
   {
     appliesTo: /^screens\//,
     forbidden: /^dexie$/,
-    message: 'Screens reach the database only through @vitapact/core-storage.',
+    message: 'Screens reach the database only through @vitapact/core/storage.',
   },
   {
     appliesTo: /^(shared|core|platform)/,
@@ -83,16 +85,40 @@ export const BOUNDARY_RULES = [
   },
   {
     appliesTo: /^core\/report$/,
-    forbidden: /^@vitapact\/core-storage(\/|$)|notes/i,
+    forbidden: /^@vitapact\/core\/storage(\/|$)|^core\/src\/storage(\/|$)|notes/i,
     message:
       'core/report may not reach stored data or notes (RNF-02); it receives the week summary as input.',
   },
 ];
 
 /** @param {string} absoluteFile */
+const repoPathOf = (absoluteFile) =>
+  path.relative(REPO_ROOT, absoluteFile).split(path.sep).join('/');
+
+/** @param {string} absoluteFile */
 export function packageRootOf(absoluteFile) {
-  const relativeFile = path.relative(REPO_ROOT, absoluteFile).split(path.sep).join('/');
-  return PACKAGE_ROOT.exec(relativeFile)?.[1];
+  return PACKAGE_ROOT.exec(repoPathOf(absoluteFile))?.[1];
+}
+
+/**
+ * The package root, or `core/<module>` for files inside the core package.
+ * @param {string} absoluteFile
+ */
+export function areaOf(absoluteFile) {
+  const coreModule = CORE_MODULE.exec(repoPathOf(absoluteFile))?.[1];
+  return coreModule ? `core/${coreModule}` : packageRootOf(absoluteFile);
+}
+
+/**
+ * @param {string} area
+ * @param {string} target
+ */
+function ruleViolation(area, target) {
+  const rule = BOUNDARY_RULES.find(
+    ({ appliesTo, forbidden, unless }) =>
+      appliesTo.test(area) && forbidden.test(target) && !unless?.test(area),
+  );
+  return rule?.message;
 }
 
 /**
@@ -102,23 +128,14 @@ export function packageRootOf(absoluteFile) {
  */
 export function boundaryViolation(absoluteFile, specifier) {
   const packageRoot = packageRootOf(absoluteFile);
-  if (!packageRoot || BUILD_CONFIG.test(absoluteFile)) return undefined;
+  const area = areaOf(absoluteFile);
+  if (!packageRoot || !area || BUILD_CONFIG.test(absoluteFile)) return undefined;
+  if (!specifier.startsWith('.')) return ruleViolation(area, specifier);
 
-  if (specifier.startsWith('.')) {
-    const target = path.resolve(path.dirname(absoluteFile), specifier);
-    const insidePackage = !path
-      .relative(path.join(REPO_ROOT, packageRoot), target)
-      .startsWith('..');
-    return insidePackage
-      ? undefined
-      : `Relative imports must stay inside ${packageRoot}; import other packages by their @vitapact name.`;
-  }
-
-  const rule = BOUNDARY_RULES.find(
-    ({ appliesTo, forbidden, unless }) =>
-      appliesTo.test(packageRoot) && forbidden.test(specifier) && !unless?.test(packageRoot),
-  );
-  return rule?.message;
+  const target = repoPathOf(path.resolve(path.dirname(absoluteFile), specifier));
+  return target.startsWith(`${packageRoot}/`)
+    ? ruleViolation(area, target)
+    : `Relative imports must stay inside ${packageRoot}; import other packages by their @vitapact name.`;
 }
 
 /** @type {import('eslint').Rule.RuleModule} */
