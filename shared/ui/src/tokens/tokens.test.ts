@@ -46,6 +46,10 @@ describe('Section 6.1 size tokens', () => {
     expect(tokens.motion).toEqual({ fast: 150, base: 250, easing: 'ease-out' });
   });
 
+  it('a toast stays on screen for 4 seconds (section 6.2)', () => {
+    expect(tokens.timing.toast).toBe(4000);
+  });
+
   it('focus ring is 2 px primaryStrong with 2 px offset', () => {
     expect(tokens.focus).toEqual({ width: 2, offset: 2, color: tokens.color.primaryStrong });
   });

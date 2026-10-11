@@ -31,6 +31,7 @@ export const tokens = {
     modal: '0 8px 24px rgba(47, 59, 47, 0.12)',
   },
   motion: { fast: 150, base: 250, easing: 'ease-out' },
+  timing: { toast: 4000 },
   focus: { width: 2, offset: 2, color: color.primaryStrong },
   layout: {
     sidebarWidth: 240,
