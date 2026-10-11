@@ -1,10 +1,14 @@
-import { parseCalendarDate, parseIsoWeek } from '../../calendar';
 import { isNote } from '../notes/note-shape';
 import { PROFILE_ID } from '../records';
 import type { TableName } from '../schema';
 import {
   arrayOf,
+  both,
   isBoolean,
+  isDate,
+  isNonNegative,
+  isRecord,
+  isWeek,
   isLiteral,
   isNumber,
   isString,
@@ -13,16 +17,17 @@ import {
   recordOf,
   shape,
   type Check,
-} from './shape';
-
-const isDate: Check = (value) => isString(value) && parseCalendarDate(value as string) === value;
-const isWeek: Check = (value) => isString(value) && parseIsoWeek(value as string) === value;
+} from '../validation/shape';
 
 const isProfile = shape({
   id: isLiteral(PROFILE_ID),
   userId: isString,
   nickname: isString,
-  goals: shape({ sleepHours: isNumber, workoutsPerWeek: isNumber, sunMinutes: isNumber }),
+  goals: shape({
+    sleepHours: isNonNegative,
+    workoutsPerWeek: isNonNegative,
+    sunMinutes: isNonNegative,
+  }),
   theme: isLiteral('light'),
   hideWeight: isBoolean,
   createdAt: isString,
@@ -84,12 +89,16 @@ const isReportSummary = shape({
   sig: isString,
 });
 
-const isFriendReport = shape({
-  userId: isString,
-  week: isWeek,
-  summary: isReportSummary,
-  importedAt: isString,
-});
+const isWrittenByItsFriend: Check = (value) =>
+  isRecord(value) &&
+  isRecord(value['summary']) &&
+  value['summary']['uid'] === value['userId'] &&
+  value['summary']['week'] === value['week'];
+
+const isFriendReport = both(
+  shape({ userId: isString, week: isWeek, summary: isReportSummary, importedAt: isString }),
+  isWrittenByItsFriend,
+);
 
 /** The check every row of a table must pass before an import may write anything. */
 export const ROW_CHECKS: Record<TableName, Check> = {

@@ -19,6 +19,8 @@ export {
 export {
   BACKUP_FORMAT,
   BACKUP_HISTORY,
+  MAX_BACKUP_LENGTH,
+  MAX_ROWS_PER_TABLE,
   exportData,
   hasStoredData,
   importData,

@@ -18,7 +18,14 @@ import {
   sampleWeighIn,
 } from '../testing';
 import { saveWeighIn } from '../weigh-ins';
-import { exportData, hasStoredData, importData, type BackupHistory } from './backup';
+import {
+  exportData,
+  hasStoredData,
+  importData,
+  MAX_BACKUP_LENGTH,
+  MAX_ROWS_PER_TABLE,
+  type BackupHistory,
+} from './backup';
 
 const EXPORTED_AT = '2026-10-11T20:00:00.000Z';
 const SECRET_TEXT = 'what we said in the session';
@@ -173,12 +180,76 @@ describe('RF-19 import validation', () => {
     extraField.tables.groups[0].script = '<script>alert(1)</script>';
     const badDate = await validFile();
     badDate.tables.dailyEntries[0].date = '2026-13-45';
+    const badNoteDate = await validFile();
+    badNoteDate.tables.notes[0].date = 'yesterday';
     const missingTable = await validFile();
     delete missingTable.tables.friends;
 
     await expectRejected(JSON.stringify(extraField), 'damaged');
     await expectRejected(JSON.stringify(badDate), 'damaged');
+    await expectRejected(JSON.stringify(badNoteDate), 'damaged');
     await expectRejected(JSON.stringify(missingTable), 'damaged');
+  });
+});
+
+describe('RF-19 import validation against hostile files', () => {
+  async function expectDamaged(text: string) {
+    const db = await openTestDatabase();
+    await fillDatabase(db);
+    const before = await snapshot(db);
+
+    expect(await importData(db, text)).toEqual({ ok: false, reason: 'damaged' });
+
+    expect(await snapshot(db)).toEqual(before);
+  }
+
+  async function validText() {
+    const db = await openTestDatabase();
+    await fillDatabase(db);
+    return exportData(db, EXPORTED_AT);
+  }
+
+  it('rejects rows carrying prototype keys', async () => {
+    const text = await validText();
+    const groupStart = `"id": "${sampleGroup.id}",`;
+
+    for (const key of ['__proto__', 'constructor', 'prototype', 'toString']) {
+      await expectDamaged(text.replace(groupStart, `${groupStart} "${key}": {},`));
+    }
+  });
+
+  it('rejects pillar keys that are not short camelCase names', async () => {
+    const text = await validText();
+
+    for (const key of ['__proto__', 'constructor', 'Bad-Key', 'a'.repeat(40)]) {
+      await expectDamaged(text.replace('"sleep": {', `"${key}": {}, "sleep": {`));
+    }
+  });
+
+  it('rejects an oversized file before reading it', async () => {
+    const text = await validText();
+
+    await expectDamaged(text + ' '.repeat(MAX_BACKUP_LENGTH));
+  });
+
+  it('rejects a table with too many rows', async () => {
+    const file = JSON.parse(await validText());
+    file.tables.groups = Array.from({ length: MAX_ROWS_PER_TABLE + 1 }, (_, index) => ({
+      ...sampleGroup,
+      id: `group-${index}`,
+    }));
+
+    await expectDamaged(JSON.stringify(file));
+  });
+
+  it('rejects negative goals and a report filed under another friend', async () => {
+    const negativeGoal = JSON.parse(await validText());
+    negativeGoal.tables.profile[0].goals.sunMinutes = -5;
+    const foreignReport = JSON.parse(await validText());
+    foreignReport.tables.friendReports[0].userId = 'someone-else';
+
+    await expectDamaged(JSON.stringify(negativeGoal));
+    await expectDamaged(JSON.stringify(foreignReport));
   });
 });
 
@@ -217,6 +288,26 @@ describe('RF-19 import of an earlier version', () => {
     expect(await getProfile(db)).toEqual(sampleProfile);
   });
 
+  it('treats an upgrade that fails on the file content as a damaged file', async () => {
+    const db = await openTestDatabase();
+    const failing: BackupHistory = {
+      ...testHistory,
+      upgrades: [
+        {
+          from: SCHEMA_VERSION,
+          upgrade: () => {
+            throw new TypeError('unexpected content');
+          },
+        },
+      ],
+    };
+
+    expect(await importData(db, await olderFile(), failing)).toEqual({
+      ok: false,
+      reason: 'damaged',
+    });
+  });
+
   it('rejects an earlier version with no known way to migrate it', async () => {
     const db = await openTestDatabase();
     const noUpgrades = { ...testHistory, upgrades: [] };
@@ -246,13 +337,38 @@ describe('RF-19 signing keys on import', () => {
     expect((await getProfile(db))?.signingKeys).toEqual(keys);
   });
 
-  it('drops the device keys when the file belongs to another user', async () => {
+  it("refuses another user's file once this device signs reports, writing nothing", async () => {
     const { db } = await deviceWithKeys({ ...sampleProfile, userId: 'someone-else' });
+    await saveGroup(db, sampleGroup);
+    const before = await snapshot(db);
     const source = await openTestDatabase();
     await saveProfile(source, sampleProfile);
 
-    await importData(db, await exportData(source, EXPORTED_AT));
+    const outcome = await importData(db, await exportData(source, EXPORTED_AT));
 
+    expect(outcome).toEqual({ ok: false, reason: 'otherUser' });
+    expect(await snapshot(db)).toEqual(before);
+  });
+
+  it("accepts another user's file on a device that has no keys yet", async () => {
+    const db = await openTestDatabase();
+    await saveProfile(db, { ...sampleProfile, userId: 'someone-else' });
+    const source = await openTestDatabase();
+    await saveProfile(source, sampleProfile);
+
+    expect(await importData(db, await exportData(source, EXPORTED_AT))).toEqual({ ok: true });
     expect(await getProfile(db)).toEqual(sampleProfile);
+  });
+
+  it('refuses a file without a profile when the device has one', async () => {
+    const { db } = await deviceWithKeys(sampleProfile);
+    const before = await snapshot(db);
+    const source = await openTestDatabase();
+    await saveGroup(source, sampleGroup);
+
+    const outcome = await importData(db, await exportData(source, EXPORTED_AT));
+
+    expect(outcome).toEqual({ ok: false, reason: 'damaged' });
+    expect(await snapshot(db)).toEqual(before);
   });
 });

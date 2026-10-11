@@ -1,6 +1,6 @@
-import { isString, isLiteral, oneOf, shape } from '../backup/shape';
+import { isDate, isLiteral, isString, oneOf, shape } from '../validation/shape';
 
-const noteDates = { id: isString, date: isString, createdAt: isString, updatedAt: isString };
+const noteDates = { id: isString, date: isDate, createdAt: isString, updatedAt: isString };
 
 export const isNote = oneOf(
   shape({ ...noteDates, kind: isLiteral('plain'), title: isString, body: isString, tag: isString }),
