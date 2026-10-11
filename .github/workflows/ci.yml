@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 concurrency:
@@ -11,22 +12,32 @@ concurrency:
 jobs:
   verify:
     name: Lint, types and tests
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22.22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Types, lint, format, unit tests, i18n keys, traceability matrix
-        run: pnpm verify
+      - name: Types
+        run: pnpm typecheck
+      - name: Lint and package boundaries
+        run: pnpm lint
+      - name: Formatting
+        run: pnpm format:check
+      - name: Unit and component tests
+        run: pnpm test
+      - name: Translation keys (RNF-12)
+        run: pnpm check:i18n
+      - name: Traceability matrix (RNF-14)
+        run: pnpm check:matrix
       - name: Install Playwright Chromium
-        run: pnpm exec playwright install chromium
+        run: pnpm exec playwright install --with-deps chromium
       - name: End-to-end tests (network guard on, RNF-01)
         run: pnpm test:e2e
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: playwright-report
@@ -38,9 +49,9 @@ jobs:
     needs: verify
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22.22
           cache: pnpm
@@ -53,12 +64,12 @@ jobs:
         run: pnpm tauri build
       - name: Installer under 15 MB (RNF-09)
         run: pnpm check:installer-size src-tauri/target/release/bundle
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: vitapact-setup-${{ github.sha }}
           path: src-tauri/target/release/bundle/nsis/*.exe
           if-no-files-found: error
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: vitapact-portable-${{ github.sha }}
           path: src-tauri/target/release/vitapact.exe
