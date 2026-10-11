@@ -9,18 +9,18 @@ enforces it.
 
 ## Layout
 
-| Folder            | Package                   | Contains                                                                          |
-| ----------------- | ------------------------- | --------------------------------------------------------------------------------- |
-| `app/`            | `@vitapact/app`           | Composition root: Vite entry, navigation, providers                               |
-| `screens/<name>/` | `@vitapact/screen-<name>` | One screen: onboarding, today, week, friends, noteboard, settings                 |
-| `shared/ui/`      | `@vitapact/ui`            | Tokens, Mantine theme, icons, shared components; `@vitapact/ui/testing` for tests |
-| `shared/i18n/`    | `@vitapact/i18n`          | i18next setup; shared namespaces (`content` = verdicts and weekend phrases)       |
-| `core/<name>/`    | `@vitapact/core-<name>`   | Pure logic: calendar, pillars, scoring, report, storage, groups, crypto           |
-| `platform/`       | `@vitapact/platform`      | The only Tauri user: save file, open image                                        |
-| `src-tauri/`      |                           | Rust shell, permissions, CSP, bundle config                                       |
-| `tools/`          |                           | Repo checks: i18n keys, boundaries, raw style values, matrix, installer size, CSP |
-| `e2e/`            |                           | Playwright tests with the network guard                                           |
-| `docs/`           |                           | Traceability matrix, review log                                                   |
+| Folder            | Package                   | Contains                                                                                       |
+| ----------------- | ------------------------- | ---------------------------------------------------------------------------------------------- |
+| `app/`            | `@vitapact/app`           | Composition root: Vite entry, navigation, providers                                            |
+| `screens/<name>/` | `@vitapact/screen-<name>` | One screen: onboarding, today, week, friends, noteboard, settings                              |
+| `shared/ui/`      | `@vitapact/ui`            | Tokens, Mantine theme, icons, shared components; `@vitapact/ui/testing` for tests              |
+| `shared/i18n/`    | `@vitapact/i18n`          | i18next setup; shared namespaces (`content` = verdicts and weekend phrases)                    |
+| `core/`           | `@vitapact/core/<module>` | Pure logic, one folder per module: calendar, pillars, scoring, report, storage, groups, crypto |
+| `platform/`       | `@vitapact/platform`      | The only Tauri user: save file, open image                                                     |
+| `src-tauri/`      |                           | Rust shell, permissions, CSP, bundle config                                                    |
+| `tools/`          |                           | Repo checks: i18n keys, boundaries, raw style values, matrix, installer size, CSP              |
+| `e2e/`            |                           | Playwright tests with the network guard                                                        |
+| `docs/`           |                           | Requirements, task list, traceability matrix, review log                                       |
 
 ## Commands
 

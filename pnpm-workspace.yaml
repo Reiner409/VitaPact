@@ -2,5 +2,5 @@ packages:
   - app
   - screens/*
   - shared/*
-  - core/*
+  - core
   - platform
