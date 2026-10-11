@@ -13,5 +13,6 @@ describe('RF-28 base64url encoding for keys and signatures', () => {
 
   it('RF-28 rejects text that is not base64url', () => {
     expect(() => base64UrlToBytes('a+b/c=')).toThrow(SyntaxError);
+    expect(() => base64UrlToBytes('abcde')).toThrow(SyntaxError);
   });
 });
