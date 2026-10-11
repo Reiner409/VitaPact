@@ -124,6 +124,15 @@ describe('RF-28 public key fingerprint', () => {
     expect(await publicKeyFingerprint(imported)).toBe(await publicKeyFingerprint(publicKey));
   });
 
+  it('RF-28 keeps the fingerprint format fixed, so friends on other devices see the same string', async () => {
+    const knownPublicKey =
+      'BGLQYHERdImT20clvDbXQBA-iWEWkhem0pWzWJjJFgENvazM2QW99wytHoVuK8I5SqbkVeZ2ZiZpQ8wgv4bH5DM';
+
+    const fingerprint = await publicKeyFingerprint(await importPublicKey(knownPublicKey));
+
+    expect(fingerprint).toBe('4861 6A89 EA77 BDB0 A1F2 4F57 60EF A273');
+  });
+
   it('RF-28 gives different fingerprints for different keys', async () => {
     const first = await createSigningKeys();
     const second = await createSigningKeys();

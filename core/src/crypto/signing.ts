@@ -3,7 +3,7 @@ import { base64UrlToBytes, bytesToBase64Url, textToBytes } from './encoding';
 const KEY_ALGORITHM: EcKeyImportParams = { name: 'ECDSA', namedCurve: 'P-256' };
 const SIGNATURE_ALGORITHM: EcdsaParams = { name: 'ECDSA', hash: 'SHA-256' };
 const FINGERPRINT_BYTES = 16;
-const FINGERPRINT_GROUP = /.{4}/g;
+const FINGERPRINT_GROUP_LENGTH = 4;
 
 /** Where the app keeps its key pair between launches; storage passes in its own implementation. */
 export interface SigningKeyStore {
@@ -64,7 +64,9 @@ export async function publicKeyFingerprint(publicKey: CryptoKey): Promise<string
   const raw = await crypto.subtle.exportKey('raw', publicKey);
   const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', raw));
   const hex = Array.from(digest.subarray(0, FINGERPRINT_BYTES), (byte) =>
-    byte.toString(16).padStart(2, '0'),
+    byte.toString(16).padStart(2, '0').toUpperCase(),
   ).join('');
-  return (hex.toUpperCase().match(FINGERPRINT_GROUP) ?? []).join(' ');
+  return Array.from({ length: hex.length / FINGERPRINT_GROUP_LENGTH }, (_, group) =>
+    hex.slice(group * FINGERPRINT_GROUP_LENGTH, (group + 1) * FINGERPRINT_GROUP_LENGTH),
+  ).join(' ');
 }
