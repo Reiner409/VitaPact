@@ -1,0 +1,14 @@
+{
+  "description": "Requirement -> task -> test. Every id below must appear in at least one test title (pnpm check:matrix). F0-03 completes this file for every RF and RNF; F1 seeded the ids its own tests cover.",
+  "requirements": [
+    { "id": "RF-15", "tasks": ["F2-20"] },
+    { "id": "RF-22", "tasks": ["F1-03"] },
+    { "id": "RF-24", "tasks": ["F1-01"] },
+    { "id": "RF-26", "tasks": ["F2-20", "F2-14"] },
+    { "id": "RNF-01", "tasks": ["F1-04", "F1-07"] },
+    { "id": "RNF-09", "tasks": ["F1-04"] },
+    { "id": "RNF-10", "tasks": ["F1-02"] },
+    { "id": "RNF-12", "tasks": ["F1-03"] },
+    { "id": "RNF-14", "tasks": ["F0-03", "F1-04"] }
+  ]
+}
