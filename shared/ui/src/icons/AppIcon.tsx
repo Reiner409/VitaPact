@@ -4,6 +4,7 @@ import {
   CircleAlert,
   CircleCheck,
   Dumbbell,
+  ImageUp,
   Info,
   Moon,
   NotebookPen,
@@ -33,6 +34,7 @@ export const appIcons = {
   warning: TriangleAlert,
   success: CircleCheck,
   error: CircleAlert,
+  image: ImageUp,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof appIcons;

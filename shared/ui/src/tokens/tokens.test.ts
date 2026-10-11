@@ -50,6 +50,10 @@ describe('Section 6.1 size tokens', () => {
     expect(tokens.timing.toast).toBe(4000);
   });
 
+  it('borders are 1 px, 2 px where they must stand out', () => {
+    expect(tokens.border).toEqual({ width: 1, strongWidth: 2 });
+  });
+
   it('focus ring is 2 px primaryStrong with 2 px offset', () => {
     expect(tokens.focus).toEqual({ width: 2, offset: 2, color: tokens.color.primaryStrong });
   });
