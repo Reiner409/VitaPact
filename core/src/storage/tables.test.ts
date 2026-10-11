@@ -107,7 +107,7 @@ describe('RNF-11 weighIns table', () => {
     expect(await getWeighIn(db, '2026-W40')).toBeUndefined();
   });
 
-  it('RF-07 ties the weigh-in to its week even when measured on a later day', async () => {
+  it('ties the weigh-in to its week even when measured on a later day', async () => {
     const db = await openTestDatabase();
     const caughtUp = { ...sampleWeighIn, measuredOn: '2026-10-13' };
 

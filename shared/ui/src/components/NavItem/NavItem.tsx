@@ -1,28 +1,53 @@
-import { NavLink } from '@mantine/core';
+import { Stack, Text, UnstyledButton } from '@mantine/core';
 import { AppIcon, type IconName } from '../../icons/AppIcon';
 import { tokens } from '../../tokens';
+import { touchTarget } from '../touchTarget';
+
+export type NavPlacement = 'sidebar' | 'bottomBar';
 
 export interface NavItemProps {
   label: string;
   icon: IconName;
   active: boolean;
   onSelect: () => void;
+  placement?: NavPlacement;
 }
 
-export function NavItem({ label, icon, active, onSelect }: NavItemProps) {
+/** Menu entry: icon beside the label in the sidebar, icon above a small label in the bottom bar. */
+export function NavItem({ label, icon, active, onSelect, placement = 'sidebar' }: NavItemProps) {
+  const inBottomBar = placement === 'bottomBar';
   return (
-    <NavLink
-      component="button"
+    <UnstyledButton
       type="button"
-      label={label}
-      leftSection={<AppIcon name={icon} />}
-      active={active}
       aria-current={active ? 'page' : undefined}
       onClick={onSelect}
-      mih={tokens.layout.minTouchTarget}
-      variant="filled"
-      color="sage.4"
-      autoContrast
-    />
+      {...(inBottomBar ? { flex: 1, py: 'xs' } : { w: '100%' })}
+      px="sm"
+      bdrs="md"
+      c="var(--vp-color-text)"
+      style={{
+        ...touchTarget,
+        display: 'flex',
+        alignItems: 'center',
+        backgroundColor: active ? 'var(--vp-color-primary)' : undefined,
+      }}
+    >
+      <Stack
+        gap={inBottomBar ? tokens.space[1] : 'sm'}
+        align="center"
+        justify={inBottomBar ? 'center' : 'flex-start'}
+        w="100%"
+        style={{ flexDirection: inBottomBar ? 'column' : 'row' }}
+      >
+        <AppIcon name={icon} />
+        <Text
+          component="span"
+          size={inBottomBar ? 'xs' : 'sm'}
+          fw={tokens.font.weight[active ? 'semibold' : 'medium']}
+        >
+          {label}
+        </Text>
+      </Stack>
+    </UnstyledButton>
   );
 }

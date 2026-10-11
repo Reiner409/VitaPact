@@ -1,13 +1,18 @@
 import {
   CalendarCheck,
   CalendarDays,
+  CircleAlert,
+  CircleCheck,
   Dumbbell,
+  ImageUp,
+  Info,
   Moon,
   NotebookPen,
   Salad,
   Scale,
   Settings,
   Sun,
+  TriangleAlert,
   Users,
   type LucideIcon,
 } from 'lucide-react';
@@ -25,6 +30,11 @@ export const appIcons = {
   food: Salad,
   sun: Sun,
   weighIn: Scale,
+  info: Info,
+  warning: TriangleAlert,
+  success: CircleCheck,
+  error: CircleAlert,
+  image: ImageUp,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof appIcons;

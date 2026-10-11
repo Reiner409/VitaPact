@@ -23,7 +23,7 @@ describe('RNF-11 notes table', () => {
     expect((await listNotes(db)).map(({ id }) => id)).toEqual(['note-2', 'note-1']);
   });
 
-  it('RF-18 stores a protected note as ciphertext and IV only', async () => {
+  it('stores a protected note as ciphertext and IV only', async () => {
     const db = await openTestDatabase();
     const { id, date, createdAt, updatedAt } = sampleNote;
     const locked: ProtectedNote = {
