@@ -11,7 +11,7 @@ keep the team's rules in `GUIDELINES.md`.
 ## Inputs
 
 - The task id and branch name (e.g. `F2-05`, `task/F2-05-pillars`).
-- The task entry in the task list (`/mnt/project-files/piano/task-list.md`): goal, acceptance
+- The task entry in `docs/tasks.md` (requirements in `docs/requirements.md`): goal, acceptance
   criteria, tests to write, owner.
 - `GUIDELINES.md`, `CLAUDE.md`, `docs/traceability-matrix.json`.
 
