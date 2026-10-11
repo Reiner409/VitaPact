@@ -16,3 +16,17 @@ export {
   saveFriend,
   saveFriendReport,
 } from './friends';
+export {
+  BACKUP_FORMAT,
+  BACKUP_HISTORY,
+  exportData,
+  hasStoredData,
+  importData,
+} from './backup/backup';
+export type {
+  BackupFile,
+  BackupHistory,
+  BackupTables,
+  BackupUpgrade,
+  ImportOutcome,
+} from './backup/backup';
