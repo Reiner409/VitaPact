@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { createWeighIn, weighInStatus, weighInWeekFor } from './index';
+import {
+  MAX_WEIGHT_KG,
+  MIN_WEIGHT_KG,
+  createWeighIn,
+  weighInStatus,
+  weighInWeekFor,
+} from './index';
 
 const SATURDAY = '2026-10-17';
 const SUNDAY = '2026-10-11';
@@ -102,7 +108,7 @@ describe('RF-05 RF-07 creating a weigh-in', () => {
     expect(createWeighIn({ today: SUNDAY, weightKg: 80.1, fastingConfirmed: true }).ok).toBe(true);
   });
 
-  it.each([72.45, 0, -70, Number.NaN, Number.POSITIVE_INFINITY])(
+  it.each([72.45, Number.NaN, Number.POSITIVE_INFINITY])(
     'rejects %s kg as a weight',
     (weightKg) => {
       expect(createWeighIn({ today: SUNDAY, weightKg, fastingConfirmed: true })).toEqual({
@@ -111,4 +117,19 @@ describe('RF-05 RF-07 creating a weigh-in', () => {
       });
     },
   );
+
+  it('accepts the weight range limits of 20 and 400 kg', () => {
+    expect(MIN_WEIGHT_KG).toBe(20);
+    expect(MAX_WEIGHT_KG).toBe(400);
+    for (const weightKg of [20, 400]) {
+      expect(createWeighIn({ today: SUNDAY, weightKg, fastingConfirmed: true }).ok).toBe(true);
+    }
+  });
+
+  it.each([19.9, 400.1, 0, -70])('rejects %s kg as out of range', (weightKg) => {
+    expect(createWeighIn({ today: SUNDAY, weightKg, fastingConfirmed: true })).toEqual({
+      ok: false,
+      error: 'weightOutOfRange',
+    });
+  });
 });

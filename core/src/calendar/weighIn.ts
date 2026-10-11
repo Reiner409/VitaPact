@@ -20,7 +20,11 @@ export interface WeighIn {
   fastingConfirmed: true;
 }
 
-export type WeighInError = 'expired' | 'fastingNotConfirmed' | 'invalidWeight';
+export type WeighInError = 'expired' | 'fastingNotConfirmed' | 'invalidWeight' | 'weightOutOfRange';
+
+/** Plausible adult weights accepted by the app, shared with the report import limits. */
+export const MIN_WEIGHT_KG = 20;
+export const MAX_WEIGHT_KG = 400;
 
 export type WeighInResult = { ok: true; weighIn: WeighIn } | { ok: false; error: WeighInError };
 
@@ -46,7 +50,11 @@ function hasAtMostOneDecimal(weightKg: number): boolean {
 }
 
 function isValidWeight(weightKg: number): boolean {
-  return Number.isFinite(weightKg) && weightKg > 0 && hasAtMostOneDecimal(weightKg);
+  return Number.isFinite(weightKg) && hasAtMostOneDecimal(weightKg);
+}
+
+function isWeightInRange(weightKg: number): boolean {
+  return weightKg >= MIN_WEIGHT_KG && weightKg <= MAX_WEIGHT_KG;
 }
 
 export function createWeighIn(input: {
@@ -58,6 +66,7 @@ export function createWeighIn(input: {
   if (!canStillBeSaved(today)) return { ok: false, error: 'expired' };
   if (!fastingConfirmed) return { ok: false, error: 'fastingNotConfirmed' };
   if (!isValidWeight(weightKg)) return { ok: false, error: 'invalidWeight' };
+  if (!isWeightInRange(weightKg)) return { ok: false, error: 'weightOutOfRange' };
   const weighIn: WeighIn = {
     week: weighInWeekFor(today),
     weightKg,
