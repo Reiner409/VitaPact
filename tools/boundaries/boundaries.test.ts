@@ -4,13 +4,15 @@ import { REPO_ROOT } from '../lib/files';
 import { allowedImports, forbiddenImports } from './fixtures/cases';
 
 const eslint = new ESLint({ cwd: REPO_ROOT });
+// The first lint run loads every plugin, which takes several seconds on a busy machine.
+const lintTimeout = { timeout: 30_000 };
 
 async function boundaryMessages(file: string, code: string) {
   const [result] = await eslint.lintText(`${code}\n`, { filePath: `${REPO_ROOT}${file}` });
   return result!.messages.filter((message) => message.ruleId === 'vitapact/package-boundaries');
 }
 
-describe('F1-06 package boundaries make lint fail on forbidden imports', () => {
+describe('F1-06 package boundaries make lint fail on forbidden imports', lintTimeout, () => {
   it.each(forbiddenImports)('$rule: $code in $file', async ({ file, code }) => {
     const messages = await boundaryMessages(file, code);
     expect(messages).toHaveLength(1);
@@ -22,7 +24,7 @@ describe('F1-06 package boundaries make lint fail on forbidden imports', () => {
   });
 });
 
-describe('F1-03 RNF-12 lint flags visible text written in JSX', () => {
+describe('F1-03 RNF-12 lint flags visible text written in JSX', lintTimeout, () => {
   const lint = async (code: string, file = 'screens/today/src/Text.tsx') => {
     const [result] = await eslint.lintText(`${code}\n`, { filePath: `${REPO_ROOT}${file}` });
     return result!.messages.filter((message) => message.ruleId === 'no-restricted-syntax');
