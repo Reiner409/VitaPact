@@ -1,0 +1,25 @@
+{
+  "name": "@vitapact/app",
+  "private": true,
+  "version": "0.1.0",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vitapact/i18n": "workspace:*",
+    "@vitapact/screen-friends": "workspace:*",
+    "@vitapact/screen-noteboard": "workspace:*",
+    "@vitapact/screen-onboarding": "workspace:*",
+    "@vitapact/screen-settings": "workspace:*",
+    "@vitapact/screen-today": "workspace:*",
+    "@vitapact/screen-week": "workspace:*",
+    "@vitapact/ui": "workspace:*",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zustand": "^5.0.15"
+  }
+}

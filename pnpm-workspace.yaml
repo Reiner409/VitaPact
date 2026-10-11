@@ -1,0 +1,6 @@
+packages:
+  - app
+  - screens/*
+  - shared/*
+  - core/*
+  - platform

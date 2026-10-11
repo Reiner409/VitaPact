@@ -1,0 +1,15 @@
+{
+  "name": "@vitapact/screen-today",
+  "private": true,
+  "version": "0.1.0",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@vitapact/i18n": "workspace:*",
+    "@vitapact/ui": "workspace:*",
+    "react": "^19.3.0"
+  }
+}

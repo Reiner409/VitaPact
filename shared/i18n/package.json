@@ -1,0 +1,15 @@
+{
+  "name": "@vitapact/i18n",
+  "private": true,
+  "version": "0.1.0",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "i18next": "^26.4.3",
+    "react": "^19.3.0",
+    "react-i18next": "^17.0.16"
+  }
+}

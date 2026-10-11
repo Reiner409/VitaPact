@@ -1,0 +1,11 @@
+{
+  "name": "VitaPact",
+  "nav": {
+    "label": "Main navigation",
+    "today": "Today",
+    "week": "Week",
+    "friends": "Friends",
+    "noteboard": "Noteboard",
+    "settings": "Settings"
+  }
+}
