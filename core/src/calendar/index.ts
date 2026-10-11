@@ -1,5 +1,6 @@
 export {
   addDays,
+  daysBetween,
   daysToSunday,
   isSunday,
   isoWeekday,
@@ -17,3 +18,13 @@ export {
   weighInCatchUpDeadline,
   type IsoWeek,
 } from './isoWeek';
+export {
+  createWeighIn,
+  weighInStatus,
+  weighInWeekFor,
+  type WeighIn,
+  type WeighInContext,
+  type WeighInError,
+  type WeighInResult,
+  type WeighInStatus,
+} from './weighIn';
