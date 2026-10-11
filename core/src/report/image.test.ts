@@ -13,8 +13,8 @@ import {
 } from '.';
 import { pixelCanvas } from './testing/pixelCanvas';
 
-/** Every byte value, as long as the largest report (F2-10), so nothing depends on text. */
-const reportContent = Uint8Array.from({ length: 398 }, (_, index) => (index * 37) % 256);
+/** Every byte value, as long as the largest report allowed (F2-10), so nothing depends on text. */
+const reportContent = Uint8Array.from({ length: 560 }, (_, index) => (index * 37) % 256);
 
 const card: ReportCard = {
   content: reportContent,

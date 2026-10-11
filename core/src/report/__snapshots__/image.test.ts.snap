@@ -173,11 +173,11 @@ exports[`RF-11 who the report belongs to, in plain text > RF-10 RF-11 keeps the 
     "y": 610,
   },
   {
-    "extent": 510,
+    "extent": 485,
     "kind": "qr",
-    "moduleSize": 6,
-    "modules": "77 modules",
-    "x": 285,
+    "moduleSize": 5,
+    "modules": "89 modules",
+    "x": 297,
     "y": 640,
   },
   {
@@ -188,7 +188,7 @@ exports[`RF-11 who the report belongs to, in plain text > RF-10 RF-11 keeps the 
     "size": 30,
     "text": "Rei · 5-11 Oct 2026",
     "x": 540,
-    "y": 1200,
+    "y": 1175,
   },
   {
     "bold": false,
@@ -198,7 +198,7 @@ exports[`RF-11 who the report belongs to, in plain text > RF-10 RF-11 keeps the 
     "size": 26,
     "text": "3f2a9c1e-5b7d-4e8a-9c21-7d4e5f6a8b90",
     "x": 540,
-    "y": 1242,
+    "y": 1217,
   },
   {
     "bold": true,
