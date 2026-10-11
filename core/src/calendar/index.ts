@@ -1,6 +1,5 @@
 export {
   addDays,
-  daysBetween,
   daysToSunday,
   isSunday,
   isoWeekday,

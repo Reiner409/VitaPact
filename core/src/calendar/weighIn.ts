@@ -1,5 +1,5 @@
 import { daysBetween, isSunday, type CalendarDate } from './calendarDate';
-import { isoWeekOf, previousWeek, sundayOf, weighInCatchUpDeadline, type IsoWeek } from './isoWeek';
+import { isoWeekOf, previousWeek, weighInCatchUpDeadline, type IsoWeek } from './isoWeek';
 
 /** The state of the weigh-in that is due on a given day (RF-05, RF-06, RF-07). */
 export type WeighInStatus = 'toAsk' | 'postponed' | 'catchUp' | 'done' | 'expired';
@@ -37,7 +37,7 @@ function canStillBeSaved(today: CalendarDate): boolean {
 export function weighInStatus({ today, recorded, postponed }: WeighInContext): WeighInStatus {
   if (recorded) return 'done';
   if (!canStillBeSaved(today)) return 'expired';
-  if (today !== sundayOf(weighInWeekFor(today))) return 'catchUp';
+  if (!isSunday(today)) return 'catchUp';
   return postponed ? 'postponed' : 'toAsk';
 }
 

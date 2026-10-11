@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createWeighIn, weighInStatus, weighInWeekFor } from './index';
 
-const SATURDAY = '2026-10-10';
+const SATURDAY = '2026-10-17';
 const SUNDAY = '2026-10-11';
 const MONDAY = '2026-10-12';
 const TUESDAY = '2026-10-13';
@@ -16,7 +16,7 @@ describe('RF-05 RF-07 which week the weigh-in belongs to', () => {
     expect(weighInWeekFor(MONDAY)).toBe('2026-W41');
     expect(weighInWeekFor(TUESDAY)).toBe('2026-W41');
     expect(weighInWeekFor(WEDNESDAY)).toBe('2026-W41');
-    expect(weighInWeekFor(SATURDAY)).toBe('2026-W40');
+    expect(weighInWeekFor(SATURDAY)).toBe('2026-W41');
   });
 });
 
@@ -47,6 +47,23 @@ describe('RF-07 D26 D9 catching up the weigh-in', () => {
 
   it('stays done after Tuesday when it was recorded', () => {
     expect(weighInStatus({ today: WEDNESDAY, recorded: true, postponed: false })).toBe('done');
+  });
+});
+
+describe('RF-05 RF-07 weigh-in at the end of a 53-week year', () => {
+  const noWeighIn = { recorded: false, postponed: false };
+
+  it('asks on Sunday and catches up on Monday and Tuesday for 2026-W53', () => {
+    for (const today of ['2027-01-03', '2027-01-04', '2027-01-05']) {
+      expect(weighInWeekFor(today)).toBe('2026-W53');
+    }
+    expect(weighInStatus({ today: '2027-01-03', ...noWeighIn })).toBe('toAsk');
+    expect(weighInStatus({ today: '2027-01-04', ...noWeighIn })).toBe('catchUp');
+    expect(weighInStatus({ today: '2027-01-05', ...noWeighIn })).toBe('catchUp');
+  });
+
+  it('expires on the Wednesday of the new year', () => {
+    expect(weighInStatus({ today: '2027-01-06', ...noWeighIn })).toBe('expired');
   });
 });
 
