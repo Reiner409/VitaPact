@@ -75,7 +75,7 @@ export interface Pillar {
   isOnGoal(values: PillarValues, goal: number): boolean;
 }
 
-export type FieldErrorCode = 'required' | 'type' | 'range' | 'step' | 'option';
+export type FieldErrorCode = 'required' | 'type' | 'range' | 'step' | 'option' | 'unexpected';
 
 export interface FieldError {
   readonly field: string;

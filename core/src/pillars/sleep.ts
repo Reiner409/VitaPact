@@ -1,3 +1,4 @@
+import { reachesGoal } from './goals';
 import type { Pillar } from './types';
 
 export const sleepPillar: Pillar = {
@@ -10,5 +11,5 @@ export const sleepPillar: Pillar = {
   ],
   summaryField: 'hours',
   goal: { cadence: 'daily', default: 7.5, min: 4, max: 12, step: 0.5, editable: true },
-  isOnGoal: (values, goal) => typeof values.hours === 'number' && values.hours >= goal,
+  isOnGoal: reachesGoal('hours'),
 };
