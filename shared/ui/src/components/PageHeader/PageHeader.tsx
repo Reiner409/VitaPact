@@ -7,13 +7,13 @@ export interface PageHeaderProps {
   action?: ReactNode;
 }
 
-/** Provisional header created by F1-01; F2-16 owns the final version. */
+/** Screen title with an optional subtitle, and an optional action on the right. */
 export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
   return (
-    <Group justify="space-between" align="flex-start" mb="lg">
+    <Group justify="space-between" align="flex-start" wrap="nowrap" gap="md" mb="lg">
       <Stack gap={0}>
         <Title order={1}>{title}</Title>
-        {subtitle && <Text c="dimmed">{subtitle}</Text>}
+        {subtitle && <Text c="var(--vp-color-text-muted)">{subtitle}</Text>}
       </Stack>
       {action}
     </Group>
