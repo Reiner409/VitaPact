@@ -20,7 +20,7 @@ enforces it.
 | `src-tauri/`      |                           | Rust shell, permissions, CSP, bundle config                                                    |
 | `tools/`          |                           | Repo checks: i18n keys, boundaries, raw style values, matrix, installer size, CSP              |
 | `e2e/`            |                           | Playwright tests with the network guard                                                        |
-| `docs/`           |                           | Traceability matrix, review log                                                                |
+| `docs/`           |                           | Requirements, task list, traceability matrix, review log                                       |
 
 ## Commands
 
