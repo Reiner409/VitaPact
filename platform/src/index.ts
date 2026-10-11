@@ -14,7 +14,6 @@ export type {
   SaveFileRequest,
 } from './platform';
 export { NotAnImageError } from './imageFiles';
-export { createMemoryPlatform, type MemoryPlatform } from './memoryPlatform';
 
 let current: Platform | undefined;
 
