@@ -89,6 +89,11 @@ export const forbiddenImports = [
     code: "import { decryptNote } from '../crypto/notes';",
   },
   {
+    rule: 'core/report does not reach notes through the package entry point (RNF-02)',
+    file: 'core/src/report/bad.ts',
+    code: "import { decryptNote } from '@vitapact/core/crypto/notes';",
+  },
+  {
     rule: 'dynamic import is checked too',
     file: 'screens/today/src/bad.ts',
     code: "export const load = () => import('@mantine/core');",
@@ -125,6 +130,14 @@ export const allowedImports = [
   { file: 'screens/today/src/ok.tsx', code: "import en from '../locales/en/today.json';" },
   { file: 'screens/week/src/ok.ts', code: "import { saveFile } from '@vitapact/platform';" },
   { file: 'screens/week/src/ok.ts', code: "import { weekScore } from '@vitapact/core/scoring';" },
+  {
+    file: 'screens/noteboard/src/ok.ts',
+    code: "import { decryptNote } from '@vitapact/core/crypto/notes';",
+  },
+  {
+    file: 'screens/noteboard/src/ok.ts',
+    code: "import { db } from '@vitapact/core/storage/notes';",
+  },
   { file: 'core/src/report/ok.ts', code: "import { sign } from '../crypto';" },
   { file: 'core/src/storage/ok.ts', code: "import Dexie from 'dexie';" },
   { file: 'app/src/ok.tsx', code: "import { TodayScreen } from '@vitapact/screen-today';" },
