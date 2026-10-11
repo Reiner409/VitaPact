@@ -2,8 +2,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { createSigningKeys, exportPublicKey } from '../crypto';
-import { encodeReportContent, encodeSignedReport } from './encoding';
+import { createSigningKeys, exportPublicKey, signText } from '../crypto';
+import { decodeReport, encodeReportContent, encodeSignedReport } from './encoding';
 import {
   MAX_REPORT_BYTES,
   NICKNAME_MAX_LENGTH,
@@ -129,27 +129,47 @@ describe('RF-10 weekly report content', () => {
   });
 
   it('RF-10 keeps the largest possible report within the QR content limit', async () => {
+    const incompressibleNickname = Array.from({ length: NICKNAME_MAX_LENGTH }, (_, index) =>
+      String.fromCodePoint(0x10000 + index * 0xb111),
+    ).join('');
     const largest: WeekReportInput = {
       ...sampleWeek,
-      nickname: '🌞'.repeat(NICKNAME_MAX_LENGTH),
+      userId: 'f9e8d7c6-b5a4-4392-8170-6f5e4d3c2b1a',
+      nickname: incompressibleNickname,
+      generatedOn: '2027-01-03',
+      week: '2026-W53',
       logged: 7,
-      sleepAvg: 23.5,
+      sleepAvg: 23.7,
       sleepOk: 7,
       trainDone: 7,
       trainGoal: 7,
       trainMin: 10080,
       cleanOk: 7,
       sunOk: 7,
-      weightKg: 399.9,
-      previousWeightKg: 20.1,
+      weightKg: 20.1,
+      previousWeightKg: 399.9,
       score: 100,
       prevScore: 0,
     };
 
     const report = await createReport(largest, keys);
 
+    expect(report.length).toBeGreaterThan(480);
     expect(report.length).toBeLessThanOrEqual(MAX_REPORT_BYTES);
-    await expect(readReport(report)).resolves.toMatchObject({ ok: true });
+    await expect(readReport(report)).resolves.toMatchObject({
+      ok: true,
+      summary: { nick: incompressibleNickname, delta: -379.8 },
+    });
+  });
+
+  it('RF-10 reads back a week that crosses the turn of the year', async () => {
+    const summary = await readSummary({
+      ...sampleWeek,
+      week: '2026-W53',
+      generatedOn: '2027-01-03',
+    });
+
+    expect(summary).toMatchObject({ week: '2026-W53', from: '2026-12-28', to: '2027-01-03' });
   });
 });
 
@@ -182,9 +202,10 @@ describe('D11 hidden weight', () => {
 
   it('D11 never writes the hidden weight anywhere in the report', async () => {
     const report = await createReport({ ...sampleWeek, weightKg: 123.4, hideWeight: true }, keys);
-    const result = await readReport(report);
+    const decoded = await decodeReport(report);
 
-    expect(JSON.stringify(result)).not.toContain('123.4');
+    expect(decoded).toMatchObject({ ok: true });
+    expect(decoded.ok && decoded.signedText).not.toContain('123.4');
   });
 });
 
@@ -220,6 +241,10 @@ describe('RNF-05 safe report import', () => {
     ['a score above 100', { score: 101 }],
     ['a score as text', { score: '62' }],
     ['a week that does not exist', { week: '2026-W54' }],
+    [
+      'a week 53 the year does not have',
+      { week: '2027-W53', from: '2027-12-27', to: '2028-01-02' },
+    ],
     ['a period that does not match the week', { from: '2026-10-04' }],
     ['a date that does not exist', { generatedOn: '2026-02-30' }],
     ['a report generated before its week', { generatedOn: '2026-10-04' }],
@@ -227,6 +252,7 @@ describe('RNF-05 safe report import', () => {
     ['an empty nickname', { nick: '   ' }],
     ['a nickname longer than the limit', { nick: 'x'.repeat(NICKNAME_MAX_LENGTH + 1) }],
     ['a nickname with a control character', { nick: 'Rei\u0007' }],
+    ['a nickname with a lone surrogate', { nick: 'Rei\ud83c' }],
     ['a missing field', { trainMin: undefined }],
     ['an unknown field', { notes: 'from the psychologist' }],
     ['a comeback that is not a boolean', { comeback: 'yes' }],
@@ -252,11 +278,29 @@ describe('RNF-05 safe report import', () => {
     expect(summary.nick).toBe(nickname);
   });
 
+  it.each(['__proto__', 'constructor'])(
+    'RNF-05 rejects signed content with a "%s" key',
+    async (key) => {
+      const content = withoutSignature(await readSummary(sampleWeek));
+      const signedText = JSON.stringify(content).replace(/}$/, `,"${key}":{"score":1}}`);
+      const report = await encodeReportContent(
+        signedText,
+        await signText(keys.privateKey, signedText),
+      );
+
+      await expect(readReport(report)).resolves.toEqual({ ok: false, error: 'invalidContent' });
+    },
+  );
+
   it('RNF-05 rejects content with a different prefix', async () => {
     const report = await createReport(sampleWeek, keys);
     report.set(ascii('XPACT1.'));
 
     await expect(readReport(report)).resolves.toEqual({ ok: false, error: 'notAReport' });
+    await expect(readReport(ascii('VPACT01.'))).resolves.toEqual({
+      ok: false,
+      error: 'notAReport',
+    });
     await expect(readReport(ascii('https://example.com'))).resolves.toEqual({
       ok: false,
       error: 'notAReport',

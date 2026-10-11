@@ -1,13 +1,16 @@
 import { signText } from '../crypto';
 
 /** What a QR code holds: `VPACT1.` then the compressed content and signature (section 9). */
-const PREFIX = /^VPACT(\d{1,3})\./;
+const PREFIX = /^VPACT([1-9]\d{0,2})\./;
 const PREFIX_SEARCH_LENGTH = 12;
 const CONTENT_VERSION = 1;
 const SIGNATURE_SEPARATOR = '\n';
 
-/** A report never comes near this; anything larger is not one, and is not unpacked. */
-export const MAX_REPORT_BYTES = 512;
+/**
+ * The worst case measured is about 517 bytes (24 incompressible 4-byte nickname characters, every
+ * field at its longest), so this leaves a margin of about 40. Anything larger is not unpacked.
+ */
+export const MAX_REPORT_BYTES = 560;
 const MAX_CONTENT_BYTES = 4 * MAX_REPORT_BYTES;
 
 export type DecodeError = 'notAReport' | 'futureVersion' | 'damaged';
@@ -25,7 +28,11 @@ async function deflate(bytes: Uint8Array<ArrayBuffer>): Promise<Uint8Array> {
 
 function concatenate(chunks: readonly Uint8Array[]): Uint8Array<ArrayBuffer> {
   const joined = new Uint8Array(chunks.reduce((size, chunk) => size + chunk.length, 0));
-  chunks.reduce((offset, chunk) => (joined.set(chunk, offset), offset + chunk.length), 0);
+  let offset = 0;
+  for (const chunk of chunks) {
+    joined.set(chunk, offset);
+    offset += chunk.length;
+  }
   return joined;
 }
 

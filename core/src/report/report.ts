@@ -1,6 +1,6 @@
 import { exportPublicKey, importPublicKey, verifyText } from '../crypto';
 import { buildSignedContent, type WeekReportInput } from './build';
-import { decodeReport, encodeSignedReport, type DecodeError } from './encoding';
+import { MAX_REPORT_BYTES, decodeReport, encodeSignedReport, type DecodeError } from './encoding';
 import type { ReportSummary } from './summary';
 import { parseSignedContent } from './validation';
 
@@ -18,7 +18,11 @@ export async function createReport(
   if (!parseSignedContent(content)) {
     throw new RangeError('This week cannot be put in a report a friend could read');
   }
-  return encodeSignedReport(content, keys.privateKey);
+  const report = await encodeSignedReport(content, keys.privateKey);
+  if (report.length > MAX_REPORT_BYTES) {
+    throw new RangeError(`A ${report.length}-byte report would be refused by every reader`);
+  }
+  return report;
 }
 
 async function isSignedBy(publicKey: string, text: string, signature: string): Promise<boolean> {

@@ -22,7 +22,8 @@ const MAX_SCORE = 100;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 /** A raw P-256 public key is 65 bytes, 87 characters in base64url. */
 const PUBLIC_KEY = /^[A-Za-z0-9_-]{87}$/;
-const CONTROL_CHARACTER = /\p{Cc}/u;
+/** Control characters, and lone surrogates that would not survive UTF-8. */
+const UNPRINTABLE = /[\p{Cc}\p{Cs}]/u;
 
 function numberFieldMax(pillar: Pillar, key: string): number {
   const field = pillar.fields.find((candidate) => candidate.key === key);
@@ -50,7 +51,7 @@ const calendarDate: Check = (value) =>
 
 function isNickname(value: unknown): boolean {
   if (typeof value !== 'string' || value.trim() === '') return false;
-  return [...value].length <= NICKNAME_MAX_LENGTH && !CONTROL_CHARACTER.test(value);
+  return [...value].length <= NICKNAME_MAX_LENGTH && !UNPRINTABLE.test(value);
 }
 
 const REQUIRED_FIELDS: Record<string, Check> = {
