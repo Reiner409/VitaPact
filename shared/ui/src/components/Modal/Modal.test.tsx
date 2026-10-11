@@ -45,6 +45,15 @@ describe('F2-16 Modal', () => {
     expect(onClose).toHaveBeenCalledTimes(2);
   });
 
+  it('RNF-10 the close button keeps a 44 px target', async () => {
+    renderModal();
+    await screen.findByRole('dialog');
+    expect(screen.getByRole('button', { name: 'Close' })).toHaveStyle({
+      minWidth: '44px',
+      minHeight: '44px',
+    });
+  });
+
   it('RNF-10 has no axe violations', async () => {
     renderModal();
     await screen.findByRole('dialog');

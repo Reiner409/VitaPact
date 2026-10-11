@@ -1,6 +1,7 @@
 import { Group, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { AppIcon, type IconName } from '../../icons/AppIcon';
+import { tokens } from '../../tokens';
 
 export type BannerTone = 'warning' | 'info';
 
@@ -34,7 +35,7 @@ export function Banner({ tone, children, icon, action }: BannerProps) {
     >
       <Group gap="sm" wrap="nowrap">
         {icon && <AppIcon name={icon} />}
-        <Text component="span" fw={500}>
+        <Text component="span" fw={tokens.font.weight.medium}>
           {children}
         </Text>
       </Group>

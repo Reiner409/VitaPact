@@ -1,7 +1,8 @@
 import { Notification, Portal } from '@mantine/core';
-import { useEffect } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 import { AppIcon } from '../../icons/AppIcon';
 import { tokens } from '../../tokens';
+import { touchTarget } from '../touchTarget';
 
 export type ToastTone = 'success' | 'error';
 
@@ -25,11 +26,13 @@ const looks: Record<ToastTone, { role: string; accent: string }> = {
 
 /** Short confirmation at the bottom, above the bottom bar; it closes itself after 4 seconds. */
 export function Toast({ opened, tone, message, closeLabel, onClose }: ToastProps) {
+  // An effect event reads the latest onClose without restarting the timer on every render.
+  const closeAfterDelay = useEffectEvent(() => onClose());
   useEffect(() => {
     if (!opened) return undefined;
-    const timer = setTimeout(onClose, tokens.timing.toast);
+    const timer = setTimeout(closeAfterDelay, tokens.timing.toast);
     return () => clearTimeout(timer);
-  }, [opened, onClose]);
+  }, [opened]);
 
   if (!opened) return null;
   const { role, accent } = looks[tone];
@@ -43,7 +46,11 @@ export function Toast({ opened, tone, message, closeLabel, onClose }: ToastProps
         withBorder
         radius="md"
         onClose={onClose}
-        closeButtonProps={{ 'aria-label': closeLabel }}
+        closeButtonProps={{
+          'aria-label': closeLabel,
+          size: tokens.layout.minTouchTarget,
+        }}
+        styles={{ closeButton: touchTarget }}
         pos="fixed"
         bottom={bottomBarHeight + tokens.space[4]}
         left="50%"

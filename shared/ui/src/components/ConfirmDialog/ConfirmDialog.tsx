@@ -1,6 +1,7 @@
 import { Group, Stack, Text, TextInput } from '@mantine/core';
 import { useState } from 'react';
 import { Button } from '../Button/Button';
+import { touchTarget } from '../touchTarget';
 import { Modal } from '../Modal/Modal';
 
 export interface TypedConfirmation {
@@ -56,6 +57,7 @@ function ConfirmBody({
           onChange={(event) => setTyped(event.currentTarget.value)}
           autoComplete="off"
           spellCheck={false}
+          styles={{ input: { minHeight: touchTarget.minHeight } }}
         />
       )}
       <Group justify="flex-end" gap="sm">

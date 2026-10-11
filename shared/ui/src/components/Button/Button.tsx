@@ -1,6 +1,7 @@
 import { Button as MantineButton, type ButtonProps as MantineButtonProps } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { AppIcon, type IconName } from '../../icons/AppIcon';
+import { tokens } from '../../tokens';
 import { touchTarget } from '../touchTarget';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'subtle' | 'destructive';
@@ -49,7 +50,7 @@ export function Button({
       fullWidth={fullWidth}
       leftSection={icon ? <AppIcon name={icon} /> : undefined}
       style={{ minHeight: touchTarget.minHeight }}
-      fw={500}
+      fw={tokens.font.weight.medium}
       onClick={onClick}
     >
       {children}

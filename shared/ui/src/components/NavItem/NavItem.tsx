@@ -40,7 +40,11 @@ export function NavItem({ label, icon, active, onSelect, placement = 'sidebar' }
         style={{ flexDirection: inBottomBar ? 'column' : 'row' }}
       >
         <AppIcon name={icon} />
-        <Text component="span" size={inBottomBar ? 'xs' : 'sm'} fw={active ? 600 : 500}>
+        <Text
+          component="span"
+          size={inBottomBar ? 'xs' : 'sm'}
+          fw={tokens.font.weight[active ? 'semibold' : 'medium']}
+        >
           {label}
         </Text>
       </Stack>

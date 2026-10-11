@@ -35,6 +35,13 @@ describe('F2-16 Card', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
+  it('a clickable card is itself the button, with no block inside it', () => {
+    renderWithTheme(<Card onClick={vi.fn()}>Monday</Card>);
+    const button = screen.getByRole('button', { name: 'Monday' });
+    expect(button.querySelector('div')).toBeNull();
+    expect(button).toHaveStyle({ minHeight: '44px' });
+  });
+
   it('RNF-10 has no axe violations in any variant', async () => {
     renderWithTheme(
       <>

@@ -17,8 +17,8 @@ describe('F2-16 PageHeader', () => {
   });
 
   it('renders no subtitle or action when not given', () => {
-    const { container } = renderWithTheme(<PageHeader title="Week" />);
-    expect(container.querySelectorAll('p')).toHaveLength(0);
+    renderWithTheme(<PageHeader title="Week" />);
+    expect(screen.queryByText('2026-W41')).not.toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 

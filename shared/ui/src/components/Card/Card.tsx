@@ -1,4 +1,4 @@
-import { Paper, UnstyledButton } from '@mantine/core';
+import { Paper } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { tokens, type PillarColorName } from '../../tokens';
 import { touchTarget } from '../touchTarget';
@@ -12,7 +12,10 @@ export interface CardProps {
   accent?: CardAccent;
   /** `soft` is the light green background of the weekend card. */
   tone?: CardTone;
-  /** Makes the whole card one button; its content becomes the button's name. */
+  /**
+   * Makes the whole card one button; its content becomes the button's name.
+   * A clickable card therefore holds only text and icons, never buttons, fields or blocks.
+   */
   onClick?: () => void;
 }
 
@@ -24,34 +27,33 @@ const background: Record<CardTone, string> = {
   soft: 'var(--vp-color-primary-soft)',
 };
 
+const buttonReset = { display: 'block', font: 'inherit', color: 'inherit', cursor: 'pointer' };
+
 /** Container with border, radius 12 and padding 16 (section 6.2). */
 export function Card({ children, accent, tone = 'surface', onClick }: CardProps) {
-  const paper = (
-    <Paper
-      withBorder
-      radius="md"
-      p="md"
-      shadow="sm"
-      data-accent={accent}
-      style={{
-        backgroundColor: background[tone],
-        borderLeft: accent ? `${tokens.space[1]}px solid ${accentColor(accent)}` : undefined,
-      }}
-    >
-      {children}
-    </Paper>
-  );
-  if (!onClick) return paper;
+  const style = {
+    backgroundColor: background[tone],
+    borderLeft: accent ? `${tokens.space[1]}px solid ${accentColor(accent)}` : undefined,
+  };
+  const shared = { withBorder: true, radius: 'md', p: 'md', shadow: 'sm', 'data-accent': accent };
+  if (!onClick) {
+    return (
+      <Paper {...shared} style={style}>
+        {children}
+      </Paper>
+    );
+  }
   return (
-    <UnstyledButton
+    <Paper
+      {...shared}
+      component="button"
       type="button"
       onClick={onClick}
       w="100%"
-      bdrs="md"
       ta="start"
-      style={{ display: 'block', minHeight: touchTarget.minHeight }}
+      style={{ ...style, ...buttonReset, minHeight: touchTarget.minHeight }}
     >
-      {paper}
-    </UnstyledButton>
+      {children}
+    </Paper>
   );
 }

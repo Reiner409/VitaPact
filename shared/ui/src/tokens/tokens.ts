@@ -48,6 +48,7 @@ export const tokens = {
     h2: { size: 18, lineHeight: 26, weight: 600 },
     body: { size: 14, lineHeight: 20, weight: 400 },
     small: { size: 12, lineHeight: 16, weight: 500 },
+    weight: { regular: 400, medium: 500, semibold: 600 },
   },
   icon: { size: 20, stroke: 1.75 },
 } as const;

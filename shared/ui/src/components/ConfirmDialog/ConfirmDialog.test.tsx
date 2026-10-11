@@ -68,6 +68,11 @@ describe('F2-16 ConfirmDialog, double', () => {
     expect(onConfirm).toHaveBeenCalledTimes(1);
   });
 
+  it('RNF-10 the word field keeps a 44 px target', async () => {
+    renderDialog({ typedConfirmation });
+    expect(await screen.findByRole('textbox')).toHaveStyle({ minHeight: '44px' });
+  });
+
   it('starts empty again when reopened', async () => {
     const handlers = { onConfirm: vi.fn(), onClose: vi.fn() };
     const props = { ...labels, ...handlers, typedConfirmation };

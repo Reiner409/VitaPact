@@ -1,6 +1,7 @@
 import { Modal as MantineModal } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { tokens } from '../../tokens';
+import { touchTarget } from '../touchTarget';
 
 export type ModalSize = 'small' | 'medium';
 
@@ -35,7 +36,11 @@ export function Modal({
       radius="lg"
       shadow="lg"
       centered
-      closeButtonProps={{ 'aria-label': closeLabel }}
+      closeButtonProps={{
+        'aria-label': closeLabel,
+        size: tokens.layout.minTouchTarget,
+        style: touchTarget,
+      }}
       transitionProps={{ duration: tokens.motion.base, timingFunction: tokens.motion.easing }}
       styles={{ title: { fontSize: tokens.font.h2.size, fontWeight: tokens.font.h2.weight } }}
     >

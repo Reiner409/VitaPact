@@ -34,6 +34,16 @@ describe('F2-16 Toast', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it('RNF-10 the close button keeps a 44 px target', () => {
+    renderWithTheme(
+      <Toast opened tone="success" message="Saved" closeLabel="Close" onClose={vi.fn()} />,
+    );
+    expect(screen.getByRole('button', { name: 'Close' })).toHaveStyle({
+      minWidth: '44px',
+      minHeight: '44px',
+    });
+  });
+
   it('RNF-10 has no axe violations', async () => {
     renderWithTheme(
       <Toast opened tone="error" message="Not saved" closeLabel="Close" onClose={vi.fn()} />,
@@ -55,6 +65,20 @@ describe('F2-16 Toast disappears after 4 seconds', () => {
     expect(onClose).not.toHaveBeenCalled();
     act(() => vi.advanceTimersByTime(1));
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps its 4 second timer when the parent re-renders with a new onClose', () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const toast = (onClose: () => void) => (
+      <Toast opened tone="success" message="Saved" closeLabel="Close" onClose={onClose} />
+    );
+    const { rerender } = renderWithTheme(toast(first));
+    act(() => vi.advanceTimersByTime(tokens.timing.toast / 2));
+    rerender(toast(second));
+    act(() => vi.advanceTimersByTime(tokens.timing.toast / 2));
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
   });
 
   it('does not close itself while closed', () => {

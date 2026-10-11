@@ -81,6 +81,10 @@ describe('Section 6.1 typography tokens', () => {
     expect(tokens.font[name]).toEqual({ size, lineHeight, weight });
   });
 
+  it('font weights are regular 400, medium 500 for buttons and labels, semibold 600', () => {
+    expect(tokens.font.weight).toEqual({ regular: 400, medium: 500, semibold: 600 });
+  });
+
   it('uses the bundled Inter font with tabular numbers', () => {
     expect(tokens.font.family).toMatch(/^'Inter Variable'/);
     expect(tokens.font.numericVariant).toBe('tabular-nums');
