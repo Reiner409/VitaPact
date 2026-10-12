@@ -1,1 +1,1 @@
-export { FriendsScreen } from './FriendsScreen';
+export { FriendsScreen, type FriendsScreenProps } from './FriendsScreen';
