@@ -43,7 +43,7 @@ test.describe('F3-NB-01 Noteboard screenshots for review', () => {
       await startWithProfile(page, '#/noteboard');
       await writeNote(page, 'Session', 'We talked about sleep and stress.', 'Psychologist');
       await writeNote(page, 'Long walk', 'Two hours by the river, no phone.', 'Activity');
-      await page.screenshot({ path: `${SCREENSHOTS}/N1-list-${width}.png`, fullPage: true });
+      await page.screenshot({ path: `${SCREENSHOTS}/N1-${width}.png`, fullPage: true });
       await page.getByRole('button', { name: /Session/ }).click();
       await page.screenshot({ path: `${SCREENSHOTS}/N1-editor-${width}.png`, fullPage: true });
     });
