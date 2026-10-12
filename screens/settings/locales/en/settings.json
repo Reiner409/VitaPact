@@ -1,3 +1,30 @@
 {
-  "title": "Settings"
+  "title": "Settings",
+  "profile": {
+    "title": "Profile",
+    "nickname": "Nickname",
+    "goals": {
+      "sleepHours": { "label": "Sleep goal", "unit": "h" },
+      "workoutsPerWeek": { "label": "Workouts per week", "unit": "/wk" },
+      "sunMinutes": { "label": "Sun per day", "unit": "min" }
+    },
+    "hideWeight": "Hide my weight in reports",
+    "yes": "Yes",
+    "no": "No",
+    "userId": "Your ID",
+    "copyUserId": "Copy ID",
+    "save": "Save profile",
+    "closeNotice": "Close",
+    "errors": {
+      "nicknameRequired": "Enter a nickname.",
+      "nicknameInvalid": "Use at most {{max}} characters, with no control characters.",
+      "goalOutOfRange": "Choose a value from {{min}} to {{max}}."
+    },
+    "notices": {
+      "saved": "Profile saved.",
+      "saveFailed": "The profile could not be saved. Try again.",
+      "copied": "ID copied.",
+      "copyFailed": "The ID could not be copied. Select it and copy it by hand."
+    }
+  }
 }
