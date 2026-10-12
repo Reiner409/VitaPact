@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '../fixtures';
+import { sampleProfile } from '@vitapact/core/storage/testing';
 import { startWithProfile } from '../support/localData';
 
 const SCREENSHOTS = 'e2e/settings/screenshots';
@@ -25,8 +26,10 @@ test.describe('RF-01 edit the profile in settings', () => {
 test.describe('RF-02 the user id in settings', () => {
   test('shows the UUID as text, not as a field', async ({ page }) => {
     await openSettings(page);
-    await expect(page.getByText('3f2a9c1e-5b7d-4e8a-9c21-7d4e5f6a8b90')).toBeVisible();
-    await expect(page.getByRole('textbox')).toHaveCount(4);
+    await expect(page.getByText(sampleProfile.userId)).toBeVisible();
+    for (const field of await page.getByRole('textbox').all()) {
+      await expect(field).not.toHaveValue(sampleProfile.userId);
+    }
   });
 });
 

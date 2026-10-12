@@ -25,7 +25,7 @@ export const GOAL_RULES: Readonly<Record<GoalKey, PillarGoal>> = {
   sunMinutes: sunPillar.goal,
 };
 
-export const GOAL_KEYS = Object.keys(GOAL_RULES) as GoalKey[];
+const GOAL_KEYS = Object.keys(GOAL_RULES) as GoalKey[];
 
 /** Control characters, and lone surrogates that would not survive UTF-8 in a report. */
 const UNPRINTABLE = /[\p{Cc}\p{Cs}]/u;
@@ -63,7 +63,7 @@ export function validateProfileForm(form: ProfileForm): ProfileFormErrors {
   return { ...(nickname && { nickname }), goals };
 }
 
-export const hasErrors = (errors: ProfileFormErrors) =>
+const hasErrors = (errors: ProfileFormErrors) =>
   errors.nickname !== undefined || Object.keys(errors.goals).length > 0;
 
 /** The profile with the form applied, or `undefined` while the form has errors. */

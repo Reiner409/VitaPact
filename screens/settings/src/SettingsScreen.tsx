@@ -18,14 +18,17 @@ export function SettingsScreen({
   copyText = copyToClipboard,
 }: SettingsScreenProps) {
   const { t } = useTranslation('settings');
-  const save = async (updated: Profile) => {
-    await saveProfile(db, updated);
-    await onProfileChange();
-  };
   return (
     <>
       <PageHeader title={t('title')} />
-      {profile && <ProfileCard profile={profile} onSave={save} onCopyUserId={copyText} />}
+      {profile && (
+        <ProfileCard
+          profile={profile}
+          onSave={(updated) => saveProfile(db, updated)}
+          onSaved={onProfileChange}
+          onCopyUserId={copyText}
+        />
+      )}
     </>
   );
 }

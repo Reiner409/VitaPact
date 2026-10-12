@@ -91,4 +91,10 @@ describe('RF-02 the user id in settings', () => {
     expect(onCopyUserId).toHaveBeenCalledWith(testProfile.userId);
     expect(await screen.findByRole('status')).toHaveTextContent(en.profile.notices.copied);
   });
+
+  it('tells the user when the id could not be copied', async () => {
+    const { user } = renderCard({ onCopyUserId: vi.fn().mockRejectedValue(new Error('denied')) });
+    await user.click(screen.getByRole('button', { name: en.profile.copyUserId }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(en.profile.notices.copyFailed);
+  });
 });

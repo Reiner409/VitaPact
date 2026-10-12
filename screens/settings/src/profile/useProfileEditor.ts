@@ -12,7 +12,10 @@ import {
 export type ProfileNotice = 'saved' | 'saveFailed' | 'copied' | 'copyFailed';
 
 export interface ProfileActions {
+  /** Writes the profile; only its failure means the profile was not saved. */
   onSave: (profile: Profile) => Promise<void>;
+  /** Runs after a successful save, e.g. to let the rest of the app reread the profile. */
+  onSaved?: () => Promise<void>;
   onCopyUserId: (userId: string) => Promise<void>;
 }
 
@@ -32,7 +35,10 @@ async function outcome(
 }
 
 /** Form state of the profile card; errors appear only after the first save attempt. */
-export function useProfileEditor(profile: Profile, { onSave, onCopyUserId }: ProfileActions) {
+export function useProfileEditor(
+  profile: Profile,
+  { onSave, onSaved, onCopyUserId }: ProfileActions,
+) {
   const [form, setForm] = useState<ProfileForm>(() => formOf(profile));
   const [showErrors, setShowErrors] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -48,8 +54,10 @@ export function useProfileEditor(profile: Profile, { onSave, onCopyUserId }: Pro
     const updated = applyForm(profile, form);
     if (!updated) return;
     setSaving(true);
-    setNotice(await outcome(() => onSave(updated), 'saved', 'saveFailed'));
+    const result = await outcome(() => onSave(updated), 'saved', 'saveFailed');
+    setNotice(result);
     setSaving(false);
+    if (result === 'saved') await onSaved?.().catch(() => undefined);
   };
 
   const copyUserId = async () =>

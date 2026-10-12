@@ -43,6 +43,15 @@ describe('RF-01 settings save the profile in the local database', () => {
     expect(await getProfile(db)).toMatchObject({ nickname: 'Sam', hideWeight: true });
     expect(onProfileChange).toHaveBeenCalledOnce();
   });
+
+  it('keeps the saved profile when the app fails to reread it', async () => {
+    const { db, onProfileChange, user } = await renderScreen();
+    onProfileChange.mockRejectedValueOnce(new Error('reread failed'));
+    await user.type(screen.getByRole('textbox', { name: en.profile.nickname }), '9');
+    await user.click(screen.getByRole('button', { name: en.profile.save }));
+    expect(await screen.findByRole('status')).toHaveTextContent(en.profile.notices.saved);
+    expect(await getProfile(db)).toMatchObject({ nickname: 'Rei9' });
+  });
 });
 
 describe('RF-02 settings never change the user id', () => {
