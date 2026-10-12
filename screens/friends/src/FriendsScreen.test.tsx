@@ -39,12 +39,14 @@ async function fillNewGroup(user: ReturnType<typeof userEvent.setup>, name: stri
   return dialog;
 }
 
-describe('RF-25 friends screen without groups', () => {
+describe('FriendsScreen', () => {
   it('shows its translated title as the page heading', async () => {
     await renderFriends();
     expect(await screen.findByRole('heading', { level: 1, name: en.title })).toBeInTheDocument();
   });
+});
 
+describe('RF-25 friends screen without groups', () => {
   it('shows the empty state with the action that creates the first group', async () => {
     await renderFriends();
     expect(await screen.findByRole('heading', { name: en.empty.title })).toBeInTheDocument();
@@ -71,6 +73,32 @@ describe('RF-25 group selector', () => {
     const members = screen.getByRole('list', { name: en.group.members });
     expect(members).toHaveTextContent('Sam');
     expect(members).not.toHaveTextContent('Ana');
+  });
+
+  it('lists members in nickname order, whatever order they were stored in', async () => {
+    const sam = { ...sampleFriend, nickname: 'Sam' };
+    const group = { ...office, memberIds: [sam.userId, ana.userId] };
+    await renderFriends({ groups: [group], friends: [sam, ana] });
+    const members = await screen.findByRole('list', { name: en.group.members });
+    expect(
+      within(members)
+        .getAllByRole('listitem')
+        .map((item) => item.textContent),
+    ).toEqual(['Ana', 'Sam']);
+  });
+
+  it('orders two friends with the same nickname by user id', async () => {
+    const firstSam = { ...sampleFriend, userId: 'a0000000-0000-4000-8000-000000000001' };
+    const secondSam = { ...sampleFriend, userId: 'b0000000-0000-4000-8000-000000000002' };
+    const group = { ...office, memberIds: [secondSam.userId, firstSam.userId] };
+    const { user } = await renderFriends({ groups: [group], friends: [secondSam, firstSam] });
+    await user.click(await screen.findByRole('button', { name: en.newGroup.open }));
+    const dialog = await screen.findByRole('dialog', { name: en.newGroup.title });
+    const chips = within(dialog).getAllByRole('checkbox', { name: 'Sam' });
+    expect(chips.map((chip) => (chip as HTMLInputElement).value)).toEqual([
+      firstSam.userId,
+      secondSam.userId,
+    ]);
   });
 
   it('shows a nickname with markup as plain text (RNF-05)', async () => {
@@ -133,6 +161,19 @@ describe('RF-25 new group', () => {
     await user.click(within(dialog).getByRole('button', { name: en.newGroup.create }));
     expect(await screen.findByText(en.group.noMembers)).toBeInTheDocument();
     expect(await listGroups(db)).toHaveLength(1);
+  });
+
+  it('keeps the dialog open and says so when the group cannot be saved', async () => {
+    const { db, user } = await renderFriends();
+    await user.click(await screen.findByRole('button', { name: en.newGroup.open }));
+    const dialog = await fillNewGroup(user, 'Office', 'brings the coffee');
+    db.close();
+    await user.click(within(dialog).getByRole('button', { name: en.newGroup.create }));
+    expect(await within(dialog).findByText(en.newGroup.saveFailed)).toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: en.newGroup.create })).not.toHaveAttribute(
+      'aria-busy',
+    );
+    expect(within(dialog).getByLabelText(en.newGroup.name)).toHaveValue('Office');
   });
 
   it('cancelling closes the dialog and saves nothing', async () => {

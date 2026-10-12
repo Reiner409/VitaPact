@@ -11,6 +11,7 @@ export function useNewGroupForm(onCreate: (group: NewGroup) => Promise<void>, on
   const [group, setGroup] = useState(EMPTY);
   const [errors, setErrors] = useState<readonly GroupDetailsError[]>([]);
   const [saving, setSaving] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
 
   const edit = (change: Partial<NewGroup>, keepError: (error: GroupDetailsError) => boolean) => {
     setGroup((current) => ({ ...current, ...change }));
@@ -20,6 +21,7 @@ export function useNewGroupForm(onCreate: (group: NewGroup) => Promise<void>, on
   function close() {
     setGroup(EMPTY);
     setErrors([]);
+    setSaveFailed(false);
     onClose();
   }
 
@@ -28,9 +30,16 @@ export function useNewGroupForm(onCreate: (group: NewGroup) => Promise<void>, on
     const checked = checkGroupDetails(group);
     if (!checked.ok) return setErrors(checked.errors);
     setSaving(true);
-    await onCreate({ ...checked.details, memberIds: group.memberIds });
-    setSaving(false);
-    close();
+    setSaveFailed(false);
+    try {
+      await onCreate({ ...checked.details, memberIds: group.memberIds });
+      close();
+    } catch {
+      // The dialog stays open with what the user typed, so they can try again.
+      setSaveFailed(true);
+    } finally {
+      setSaving(false);
+    }
   }
 
   const fields = {
@@ -40,7 +49,7 @@ export function useNewGroupForm(onCreate: (group: NewGroup) => Promise<void>, on
     setStake: (stake: string) => edit({ stake }, isNameError),
     setMemberIds: (memberIds: string[]) => setGroup((current) => ({ ...current, memberIds })),
   };
-  return { fields, saving, submit, close };
+  return { fields, saving, saveFailed, submit, close };
 }
 
 export type NewGroupFields = ReturnType<typeof useNewGroupForm>['fields'];

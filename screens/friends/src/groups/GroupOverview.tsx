@@ -10,11 +10,8 @@ export interface GroupOverviewProps {
 /** The stake and the members of the chosen group; the ranking takes their place in node F3. */
 export function GroupOverview({ group, friends }: GroupOverviewProps) {
   const { t } = useTranslation('friends');
-  const nicknames = new Map(friends.map(({ userId, nickname }) => [userId, nickname]));
-  const members = group.memberIds.flatMap((userId) => {
-    const nickname = nicknames.get(userId);
-    return nickname === undefined ? [] : [{ userId, nickname }];
-  });
+  // Friends arrive sorted, so a group lists its members the same way however it was created.
+  const members = friends.filter(({ userId }) => group.memberIds.includes(userId));
   return (
     <Card>
       <p>{t('group.stake', { stake: group.stake })}</p>

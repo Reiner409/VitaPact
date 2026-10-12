@@ -22,6 +22,7 @@
     "counter": "{{length}} / {{max}}",
     "create": "Create group",
     "cancel": "Cancel",
+    "saveFailed": "The group could not be saved. Try again.",
     "errors": {
       "nameMissing": "Give the group a name.",
       "nameTooLong": "Keep the name within {{max}} characters.",

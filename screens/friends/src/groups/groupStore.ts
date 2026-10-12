@@ -18,9 +18,11 @@ export interface NewGroup extends GroupDetails {
 }
 
 const byCreation = (a: Group, b: Group) => a.createdAt.localeCompare(b.createdAt);
-const byNickname = (a: Friend, b: Friend) => a.nickname.localeCompare(b.nickname);
+const byNickname = (a: Friend, b: Friend) =>
+  a.nickname.localeCompare(b.nickname) || a.userId.localeCompare(b.userId);
 
-/** Groups oldest first, so the default selection stays the same; friends by nickname. */
+/** Groups oldest first, so the default selection stays the same; friends by nickname, then
+ * by user id so two friends with the same nickname keep a stable order. */
 export async function loadFriendsData(db: VitaPactDatabase): Promise<FriendsData> {
   const [groups, friends] = await Promise.all([listGroups(db), listFriends(db)]);
   return { groups: groups.sort(byCreation), friends: friends.sort(byNickname) };
