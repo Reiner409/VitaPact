@@ -26,8 +26,11 @@ test.describe('F3-TD-01 F3-TD-05 the Today screen', () => {
     await expect(training.getByRole('radio', { name: 'Running' })).toBeChecked();
 
     for (const width of SCREENSHOT_WIDTHS) {
+      // The viewport is as tall as the page, so the fixed phone navigation sits at the real bottom.
       await page.setViewportSize({ width, height: 900 });
-      await page.screenshot({ path: `e2e/today/screenshots/T1-${width}.png`, fullPage: true });
+      const height = await page.evaluate(() => document.documentElement.scrollHeight);
+      await page.setViewportSize({ width, height });
+      await page.screenshot({ path: `e2e/today/screenshots/T1-${width}.png` });
     }
   });
 });
