@@ -80,6 +80,9 @@ importers:
 
   app:
     dependencies:
+      '@vitapact/core':
+        specifier: workspace:*
+        version: link:../core
       '@vitapact/i18n':
         specifier: workspace:*
         version: link:../shared/i18n
@@ -147,6 +150,9 @@ importers:
 
   screens/friends:
     dependencies:
+      '@vitapact/core':
+        specifier: workspace:*
+        version: link:../../core
       '@vitapact/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
@@ -159,6 +165,9 @@ importers:
 
   screens/noteboard:
     dependencies:
+      '@vitapact/core':
+        specifier: workspace:*
+        version: link:../../core
       '@vitapact/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
@@ -186,6 +195,9 @@ importers:
 
   screens/settings:
     dependencies:
+      '@vitapact/core':
+        specifier: workspace:*
+        version: link:../../core
       '@vitapact/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
@@ -198,6 +210,9 @@ importers:
 
   screens/today:
     dependencies:
+      '@vitapact/core':
+        specifier: workspace:*
+        version: link:../../core
       '@vitapact/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
@@ -210,6 +225,9 @@ importers:
 
   screens/week:
     dependencies:
+      '@vitapact/core':
+        specifier: workspace:*
+        version: link:../../core
       '@vitapact/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n

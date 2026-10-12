@@ -4,6 +4,7 @@ import { OnboardingScreen } from '@vitapact/screen-onboarding';
 import { SettingsScreen } from '@vitapact/screen-settings';
 import { TodayScreen } from '@vitapact/screen-today';
 import { WeekScreen } from '@vitapact/screen-week';
+import type { Profile, VitaPactDatabase } from '@vitapact/core/storage';
 import type { IconName } from '@vitapact/ui';
 import type { ComponentType } from 'react';
 
@@ -17,9 +18,20 @@ export const screenIds = [
 ] as const;
 export type ScreenId = (typeof screenIds)[number];
 
+/**
+ * What the app hands every screen. A screen declares only the props it uses; the local database is
+ * opened once here, and a screen that saves the profile calls `onProfileChange` so the others see it.
+ */
+export interface ScreenProps {
+  db: VitaPactDatabase;
+  /** Undefined only before onboarding has created it. */
+  profile: Profile | undefined;
+  onProfileChange: () => Promise<void>;
+}
+
 export interface NavRoute {
   id: ScreenId;
-  Screen: ComponentType;
+  Screen: ComponentType<ScreenProps>;
   /** Only the five main screens appear in the navigation; onboarding is the first-run flow. */
   nav?: { icon: IconName; labelKey: `nav.${ScreenId}` };
 }

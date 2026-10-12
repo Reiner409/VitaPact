@@ -13,6 +13,7 @@ export {
   getFriend,
   getFriendReport,
   listFriendReportsOf,
+  listFriends,
   listFriendReportsOfWeek,
   saveFriend,
   saveFriendReport,

@@ -15,7 +15,8 @@
     "./report/testing": "./src/report/testing/index.ts",
     "./scoring": "./src/scoring/index.ts",
     "./storage": "./src/storage/index.ts",
-    "./storage/notes": "./src/storage/notes/index.ts"
+    "./storage/notes": "./src/storage/notes/index.ts",
+    "./storage/testing": "./src/storage/testing.ts"
   },
   "dependencies": {
     "dexie": "^4.4.6",
