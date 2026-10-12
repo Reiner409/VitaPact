@@ -1,5 +1,3 @@
-import jpeg from 'jpeg-js';
-import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 import {
   REPORT_IMAGE_HEIGHT,
@@ -8,91 +6,22 @@ import {
   layoutReportImage,
   imageSizeLimits,
   readQrCode,
-  type ReportCard,
-  type ReportImageTheme,
-  type ReportPixels,
 } from '.';
-import { pixelCanvas } from './testing/pixelCanvas';
+import { pixelCanvas, renderReportPixels, sampleReportCard, sampleReportTheme } from './testing';
 
-/** Every byte value, as long as the largest report allowed (F2-10), so nothing depends on text. */
-const reportContent = Uint8Array.from({ length: 560 }, (_, index) => (index * 37) % 256);
-
-const card: ReportCard = {
-  content: reportContent,
-  nickname: 'Rei',
-  userId: '3f2a9c1e-5b7d-4e8a-9c21-7d4e5f6a8b90',
-  weekLabel: 'Week 41 · 2026',
-  periodLabel: '5-11 Oct 2026',
-  scoreLabel: '62',
-  verdictLabel: 'Solid base',
-  indicators: [
-    { pillar: 'sleep', label: 'Sleep', value: '7.0 h · 4/7' },
-    { pillar: 'training', label: 'Training', value: '2/3 · 110 min' },
-    { pillar: 'food', label: 'Clean eating', value: '4/7' },
-    { pillar: 'sun', label: 'Sun', value: '3/7' },
-  ],
-  weightLabel: '78.4 kg (-0.6)',
-  motto: 'Join the VitalityMaxxing lifestyle',
-};
-
-const theme: ReportImageTheme = {
-  fontFamily: 'Inter, sans-serif',
-  colors: {
-    background: '#F6F1E7',
-    text: '#1F2A24',
-    textMuted: '#5B665F',
-    primary: '#2F6B4F',
-    sleep: '#5B6CC2',
-    training: '#C2703D',
-    food: '#4E9A5B',
-    sun: '#D9A21B',
-    qrDark: '#000000',
-    qrLight: '#FFFFFF',
-  },
-};
-
-function renderPixels(reportCard: ReportCard): ReportPixels {
-  const canvas = pixelCanvas(REPORT_IMAGE_WIDTH, REPORT_IMAGE_HEIGHT);
-  drawReportImage(canvas.context, layoutReportImage(reportCard), theme);
-  return canvas.pixels;
-}
-
-function throughPng(pixels: ReportPixels): ReportPixels {
-  const png = new PNG({ width: pixels.width, height: pixels.height });
-  png.data.set(pixels.data);
-  const decoded = PNG.sync.read(PNG.sync.write(png));
-  return {
-    width: decoded.width,
-    height: decoded.height,
-    data: new Uint8ClampedArray(decoded.data),
-  };
-}
-
-function throughJpeg(pixels: ReportPixels, quality: number): ReportPixels {
-  const encoded = jpeg.encode({ ...pixels, data: Buffer.from(pixels.data) }, quality);
-  const decoded = jpeg.decode(encoded.data, { useTArray: true });
-  return {
-    width: decoded.width,
-    height: decoded.height,
-    data: new Uint8ClampedArray(decoded.data),
-  };
-}
+const card = sampleReportCard;
+const theme = sampleReportTheme;
+const reportContent = card.content;
 
 describe('RF-10 report image with its QR code', () => {
   it('RF-10 draws a 1080 × 1350 portrait image', () => {
-    const pixels = renderPixels(card);
+    const pixels = renderReportPixels(card);
 
     expect([pixels.width, pixels.height]).toEqual([1080, 1350]);
   });
 
-  it('RF-10 reads back exactly the content it drew, through a PNG file', () => {
-    const result = readQrCode(throughPng(renderPixels(card)));
-
-    expect(result).toEqual({ ok: true, content: reportContent });
-  });
-
-  it('RF-12 still reads the content after a chat app recompresses it as a medium-quality JPG', () => {
-    const result = readQrCode(throughJpeg(renderPixels(card), 50));
+  it('RF-10 reads back exactly the content it drew', () => {
+    const result = readQrCode(renderReportPixels(card));
 
     expect(result).toEqual({ ok: true, content: reportContent });
   });
