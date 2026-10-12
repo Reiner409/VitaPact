@@ -7,5 +7,9 @@
     "friends": "Friends",
     "noteboard": "Noteboard",
     "settings": "Settings"
+  },
+  "storage": {
+    "unavailableTitle": "Your data can't be opened",
+    "unavailableText": "VitaPact keeps everything on this device. Close the app and open it again; if this keeps happening, restart the computer."
   }
 }
