@@ -1,4 +1,6 @@
-import { expect, test } from './fixtures';
+import { expect, test } from '../fixtures';
+
+const SCREENSHOTS = 'e2e/onboarding/screenshots';
 
 const VIEWPORTS = [
   { name: 'desktop', width: 1280, height: 800 },
@@ -7,7 +9,7 @@ const VIEWPORTS = [
 
 test.describe('RF-01 welcome step 1: nickname', () => {
   for (const viewport of VIEWPORTS) {
-    test(`asks for a nickname before continuing (${viewport.name})`, async ({ page }, testInfo) => {
+    test(`asks for a nickname before continuing (${viewport.name})`, async ({ page }) => {
       await page.setViewportSize(viewport);
       await page.goto('/#/onboarding');
       const nickname = page.getByRole('textbox', { name: 'Your nickname' });
@@ -15,11 +17,10 @@ test.describe('RF-01 welcome step 1: nickname', () => {
 
       await continueButton.click();
       await expect(page.getByRole('alert')).toHaveText('Enter a nickname to continue.');
-      await page.screenshot({ path: testInfo.outputPath(`nickname-error-${viewport.name}.png`) });
 
       await nickname.fill('Élodie 🌞');
       await expect(page.getByText(/^8 of 24 characters/)).toBeVisible();
-      await page.screenshot({ path: testInfo.outputPath(`nickname-${viewport.name}.png`) });
+      await page.screenshot({ path: `${SCREENSHOTS}/B1-${viewport.width}.png` });
 
       await continueButton.click();
       await expect(page.getByText('Step 2 of 3')).toBeVisible();
