@@ -1,3 +1,32 @@
 {
-  "title": "Noteboard"
+  "title": "Noteboard",
+  "actions": {
+    "new": "New note",
+    "save": "Save",
+    "back": "Back to notes",
+    "delete": "Delete note"
+  },
+  "empty": {
+    "title": "No notes yet",
+    "description": "Write down what you want to remember. Notes stay on this device."
+  },
+  "list": {
+    "label": "Your notes",
+    "untitled": "Untitled note"
+  },
+  "editor": {
+    "label": "Note editor",
+    "title": "Title",
+    "body": "Text",
+    "tag": "Tag",
+    "tagHint": "Optional, e.g. Psychologist or Activity",
+    "counter": "{{length}} / {{max}}"
+  },
+  "delete": {
+    "title": "Delete this note?",
+    "message": "The note will be removed from this device. This cannot be undone.",
+    "confirm": "Delete",
+    "cancel": "Keep it",
+    "close": "Close"
+  }
 }
