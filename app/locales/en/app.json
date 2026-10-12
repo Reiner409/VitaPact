@@ -11,5 +11,18 @@
   "storage": {
     "unavailableTitle": "Your data can't be opened",
     "unavailableText": "VitaPact keeps everything on this device. Close the app and open it again; if this keeps happening, restart the computer."
+  },
+  "weighIn": {
+    "title": "Sunday weigh-in",
+    "close": "Close",
+    "weight": "Weight",
+    "unit": "kilograms",
+    "fasting": "On an empty stomach, before breakfast",
+    "save": "Save",
+    "later": "Later",
+    "outOfRange": "Enter a weight between {{min}} and {{max}} kg.",
+    "reminderToday": "Today's weigh-in is still to do. You can enter it until Tuesday.",
+    "reminderCatchUp": "Sunday's weigh-in is still to do. You can enter it until Tuesday.",
+    "open": "Weigh in"
   }
 }

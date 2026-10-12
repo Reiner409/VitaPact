@@ -17,6 +17,9 @@ async function databaseWithProfile() {
   return db;
 }
 
+/** A Wednesday, when no weigh-in is due, so the weigh-in dialog never covers these screens. */
+const wednesday = () => '2026-10-21';
+
 const heading = (name: string) => screen.findByRole('heading', { level: 1, name });
 
 describe('F1-01 app shell', () => {
@@ -24,7 +27,7 @@ describe('F1-01 app shell', () => {
 
   it('opens on Today', async () => {
     const db = await databaseWithProfile();
-    render(<App openDatabase={() => Promise.resolve(db)} />);
+    render(<App openDatabase={() => Promise.resolve(db)} clock={wednesday} />);
     expect(await heading('Today')).toBeInTheDocument();
   });
 
@@ -32,7 +35,7 @@ describe('F1-01 app shell', () => {
     'navigates to %s from the sidebar',
     async (name) => {
       const db = await databaseWithProfile();
-      render(<App openDatabase={() => Promise.resolve(db)} />);
+      render(<App openDatabase={() => Promise.resolve(db)} clock={wednesday} />);
       await heading('Today');
       const nav = screen.getByRole('navigation', { name: 'Main navigation' });
       await userEvent.click(within(nav).getByRole('button', { name }));
@@ -46,7 +49,7 @@ describe('RF-01 first launch', () => {
 
   it('shows onboarding, without the navigation, while there is no profile', async () => {
     const db = await openTestDatabase();
-    render(<App openDatabase={() => Promise.resolve(db)} />);
+    render(<App openDatabase={() => Promise.resolve(db)} clock={wednesday} />);
     expect(await heading('Welcome')).toBeInTheDocument();
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
   });
@@ -54,14 +57,14 @@ describe('RF-01 first launch', () => {
   it('keeps showing onboarding when another screen is asked for by address', async () => {
     openTo('#/week');
     const db = await openTestDatabase();
-    render(<App openDatabase={() => Promise.resolve(db)} />);
+    render(<App openDatabase={() => Promise.resolve(db)} clock={wednesday} />);
     expect(await heading('Welcome')).toBeInTheDocument();
   });
 
   it('never shows onboarding again once the profile exists', async () => {
     openTo('#/onboarding');
     const db = await databaseWithProfile();
-    render(<App openDatabase={() => Promise.resolve(db)} />);
+    render(<App openDatabase={() => Promise.resolve(db)} clock={wednesday} />);
     expect(await heading('Today')).toBeInTheDocument();
   });
 });

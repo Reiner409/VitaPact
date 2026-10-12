@@ -1,3 +1,4 @@
+import { toCalendarDate, type CalendarDate } from '@vitapact/core/calendar';
 import type { Profile, VitaPactDatabase } from '@vitapact/core/storage';
 import { I18nProvider, useTranslation } from '@vitapact/i18n';
 import { AppShell, EmptyState, VitaPactProvider, type AppShellNavItem } from '@vitapact/ui';
@@ -6,6 +7,12 @@ import { i18n } from './i18n';
 import { useNavigation } from './navigation/navigationStore';
 import { DEFAULT_SCREEN, routes, type ScreenId, type ScreenProps } from './navigation/routes';
 import { useLocalData, type OpenDatabase } from './storage/useLocalData';
+import { useWeighInPrompt } from './weighIn/useWeighInPrompt';
+
+/** Today's date, read again on every render so a session left open past midnight moves on. */
+export type Clock = () => CalendarDate;
+
+const systemClock: Clock = () => toCalendarDate(new Date());
 
 const screens = Object.fromEntries(routes.map(({ id, Screen }) => [id, Screen])) as Record<
   ScreenId,
@@ -18,9 +25,10 @@ function visibleScreen(current: ScreenId, profile: Profile | undefined): ScreenI
   return current === 'onboarding' ? DEFAULT_SCREEN : current;
 }
 
-function Shell(props: ScreenProps) {
+function Shell({ clock, ...props }: ScreenProps & { clock: Clock }) {
   const { t } = useTranslation('app');
   const { current, navigate, syncFromLocation } = useNavigation();
+  const weighIn = useWeighInPrompt(props.db, clock());
 
   useEffect(() => {
     window.addEventListener('hashchange', syncFromLocation);
@@ -45,13 +53,14 @@ function Shell(props: ScreenProps) {
       : [],
   );
   return (
-    <AppShell navLabel={t('nav.label')} navItems={navItems}>
+    <AppShell navLabel={t('nav.label')} navItems={navItems} banner={weighIn.banner}>
       <CurrentScreen {...props} />
+      {weighIn.dialog}
     </AppShell>
   );
 }
 
-function LocalDataGate({ openDatabase }: { openDatabase: OpenDatabase }) {
+function LocalDataGate({ openDatabase, clock }: { openDatabase: OpenDatabase; clock: Clock }) {
   const { t } = useTranslation('app');
   const { data, reloadProfile } = useLocalData(openDatabase);
   if (data.status === 'opening') return null;
@@ -64,19 +73,23 @@ function LocalDataGate({ openDatabase }: { openDatabase: OpenDatabase }) {
       />
     );
   }
-  return <Shell db={data.db} profile={data.profile} onProfileChange={reloadProfile} />;
+  return (
+    <Shell db={data.db} profile={data.profile} onProfileChange={reloadProfile} clock={clock} />
+  );
 }
 
 export interface AppProps {
   /** The real IndexedDB in the app; tests pass an in-memory one. */
   openDatabase: () => Promise<VitaPactDatabase>;
+  /** The system date in the app; tests pass a fixed day. */
+  clock?: Clock;
 }
 
-export function App({ openDatabase }: AppProps) {
+export function App({ openDatabase, clock = systemClock }: AppProps) {
   return (
     <I18nProvider i18n={i18n}>
       <VitaPactProvider>
-        <LocalDataGate openDatabase={openDatabase} />
+        <LocalDataGate openDatabase={openDatabase} clock={clock} />
       </VitaPactProvider>
     </I18nProvider>
   );
