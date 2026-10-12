@@ -10,6 +10,7 @@
     "./crypto/notes": "./src/crypto/notes.ts",
     "./groups": "./src/groups/index.ts",
     "./pillars": "./src/pillars/index.ts",
+    "./pillars/testing": "./src/pillars/testing/index.ts",
     "./report": "./src/report/index.ts",
     "./scoring": "./src/scoring/index.ts",
     "./storage": "./src/storage/index.ts",

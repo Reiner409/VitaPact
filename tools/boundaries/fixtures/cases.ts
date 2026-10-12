@@ -140,5 +140,13 @@ export const allowedImports = [
   },
   { file: 'core/src/report/ok.ts', code: "import { sign } from '../crypto';" },
   { file: 'core/src/storage/ok.ts', code: "import Dexie from 'dexie';" },
+  {
+    file: 'shared/ui/src/ok.tsx',
+    code: "import type { Pillar } from '@vitapact/core/pillars';",
+  },
+  {
+    file: 'shared/ui/src/ok.test.tsx',
+    code: "import { hydrationPillar } from '@vitapact/core/pillars/testing';",
+  },
   { file: 'app/src/ok.tsx', code: "import { TodayScreen } from '@vitapact/screen-today';" },
 ];

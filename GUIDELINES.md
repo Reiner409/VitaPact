@@ -35,6 +35,8 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
 
 - **G3.1** Layers, top to bottom: `app` → `screens/*` → `shared/*` and `platform` → `core`.
   A package uses only packages below it, never a sibling screen.
+  So `shared/ui` may use `core` types and pure functions (a `PillarCard` takes a core `Pillar`).
+  Tests that need the extra pillar from F2-05 import it from `@vitapact/core/pillars/testing`.
 - **G3.2** Only `shared/ui` imports Mantine and Lucide. Screens compose `@vitapact/ui`
   components and never set their own styles.
 - **G3.3** Only `shared/i18n` imports i18next. Everyone else uses `useTranslation` from
