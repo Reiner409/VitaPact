@@ -69,7 +69,7 @@ describe('F3-TD-03 training card', () => {
     expect(card('Training').queryByRole('radiogroup', { name: 'Workout' })).not.toBeInTheDocument();
     expect(card('Training').queryByRole('textbox', { name: 'Duration' })).not.toBeInTheDocument();
     await userEvent.click(card('Training').getByRole('button', { name: 'Yes' }));
-    expect(card('Training').getByRole('radio', { name: 'Team sports' })).toBeInTheDocument();
+    expect(card('Training').getByRole('radio', { name: 'Sport' })).toBeInTheDocument();
     expect(card('Training').getByRole('textbox', { name: 'Duration' })).toBeInTheDocument();
   });
 });
