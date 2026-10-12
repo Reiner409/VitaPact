@@ -1,3 +1,32 @@
 {
-  "title": "Friends"
+  "title": "Friends",
+  "close": "Close",
+  "empty": {
+    "title": "No groups yet",
+    "description": "Create a group with a stake, then add your friends' weekly reports to it."
+  },
+  "group": {
+    "select": "Group",
+    "stake": "At stake: {{stake}}",
+    "members": "Members",
+    "noMembers": "Nobody in this group yet. Friends join when you add their reports."
+  },
+  "newGroup": {
+    "open": "New group",
+    "title": "New group",
+    "name": "Group name",
+    "stake": "Stake",
+    "stakePlaceholder": "e.g. whoever falls behind buys the pizza",
+    "members": "Members",
+    "noFriendsYet": "No friends to add yet. You can add them later, when their first report arrives.",
+    "counter": "{{length}} / {{max}}",
+    "create": "Create group",
+    "cancel": "Cancel",
+    "errors": {
+      "nameMissing": "Give the group a name.",
+      "nameTooLong": "Keep the name within {{max}} characters.",
+      "stakeMissing": "Write what is at stake.",
+      "stakeTooLong": "Keep the stake within {{max}} characters."
+    }
+  }
 }
