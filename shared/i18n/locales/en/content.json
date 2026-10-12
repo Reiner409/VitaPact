@@ -22,5 +22,57 @@
       "05": "Your turn to host with {{stake}}, {{name}}. Hard weeks happen to all of us, and the group is right here with you.",
       "06": "Hey {{name}}, you're bringing {{stake}} this weekend. Think of it as a thank-you to the group and a reason to laugh together. You've got this, one day at a time."
     }
+  },
+  "verdict": {
+    "pauseWeek": {
+      "title": "Pause week",
+      "messages": {
+        "01": "The group is waiting for you, no rush.",
+        "02": "Everyone needs a pause now and then. Come back when you're ready.",
+        "03": "This week was a breather. Monday is a fresh start, together.",
+        "04": "Be kind to yourself this week. One small step is enough to restart.",
+        "05": "No pressure at all. We're glad you're here, whenever you're ready."
+      }
+    },
+    "lightWeek": {
+      "title": "Light week",
+      "messages": {
+        "01": "It happens. On Monday we start again together.",
+        "02": "Some weeks are lighter, and that's okay. Every day logged still counts.",
+        "03": "A gentle week. One small habit at a time is plenty.",
+        "04": "You kept showing up, and that matters. Next week is a fresh page.",
+        "05": "Rest is part of the journey too. We're right here with you."
+      }
+    },
+    "solidBase": {
+      "title": "Solid base",
+      "messages": {
+        "01": "You're there: a few more days and you'll fly.",
+        "02": "Good foundations this week. The next step is close.",
+        "03": "More good days than not. Keep building on them.",
+        "04": "A steady week. Pick one pillar to nudge and watch it grow.",
+        "05": "The habits are taking root. Keep looking after them."
+      }
+    },
+    "onIt": {
+      "title": "On track",
+      "messages": {
+        "01": "Great consistency, keep it up.",
+        "02": "A strong week, with steady habits day after day.",
+        "03": "You're building something solid here. Nice going.",
+        "04": "Most days went your way. That's real progress.",
+        "05": "Good rhythm this week. A little more and it's a textbook one."
+      }
+    },
+    "greatShape": {
+      "title": "In great shape",
+      "messages": {
+        "01": "A textbook week!",
+        "02": "Every pillar showed up this week. Wonderful work.",
+        "03": "This is what consistency looks like. Enjoy it!",
+        "04": "Sleep, training, food and sun all in tune. Take a bow.",
+        "05": "A week to be proud of. Keep the rhythm going."
+      }
+    }
   }
 }
