@@ -1,23 +1,25 @@
 import { isoWeekOf, previousWeek } from '@vitapact/core/calendar';
 import type { CalendarDate } from '@vitapact/core/calendar';
-import type { VitaPactDatabase } from '@vitapact/core/storage';
+import type { Goals, VitaPactDatabase } from '@vitapact/core/storage';
 import { useState } from 'react';
 import { WeekHeader } from './WeekHeader';
 import { WeekPillars } from './WeekPillars';
 import { WeekScore } from './WeekScore';
 import { nextWeek } from './week/weekNavigation';
+import { toPillarGoals } from './week/weekSummary';
 import { useWeek } from './week/useWeek';
 
 export interface WeekViewProps {
   db: VitaPactDatabase;
+  goals: Goals;
   today: CalendarDate;
 }
 
 /** RF-08, RF-09: the chosen week's score first, then its pillars (D24). */
-export function WeekView({ db, today }: WeekViewProps) {
+export function WeekView({ db, goals, today }: WeekViewProps) {
   const currentWeek = isoWeekOf(today);
   const [week, setWeek] = useState(currentWeek);
-  const loaded = useWeek(db, week);
+  const summary = useWeek(db, week, goals);
   return (
     <>
       <WeekHeader
@@ -26,10 +28,10 @@ export function WeekView({ db, today }: WeekViewProps) {
         onPrevious={() => setWeek(previousWeek(week))}
         onNext={() => setWeek(nextWeek(week))}
       />
-      {loaded && (
+      {summary && (
         <>
-          <WeekScore score={loaded.summary.score} band={loaded.summary.band} />
-          <WeekPillars pillars={loaded.summary.pillars} goals={loaded.goals} />
+          <WeekScore score={summary.score} band={summary.band} />
+          <WeekPillars pillars={summary.pillars} goals={toPillarGoals(goals)} />
         </>
       )}
     </>

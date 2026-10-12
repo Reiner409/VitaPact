@@ -1,8 +1,8 @@
 import { pillarRegistry } from '@vitapact/core/pillars';
 import { VERDICT_BANDS } from '@vitapact/core/scoring';
-import { saveDailyEntry, saveProfile, saveWeighIn } from '@vitapact/core/storage';
+import { DEFAULT_GOALS, saveDailyEntry, saveWeighIn } from '@vitapact/core/storage';
 import type { DailyEntry, VitaPactDatabase } from '@vitapact/core/storage';
-import { openTestDatabase, sampleProfile } from '@vitapact/core/storage/testing';
+import { openTestDatabase } from '@vitapact/core/storage/testing';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@vitapact/ui/testing';
@@ -34,8 +34,10 @@ beforeEach(async () => {
   db = await openTestDatabase();
 });
 
-function renderWeek(today: string) {
-  renderWithProviders(<WeekView db={db} today={today} />, { translations: { week: en, content } });
+function renderWeek(today: string, goals = DEFAULT_GOALS) {
+  renderWithProviders(<WeekView db={db} goals={goals} today={today} />, {
+    translations: { week: en, content },
+  });
 }
 
 describe('RF-08 week selector (F3-WK-01)', () => {
@@ -87,10 +89,9 @@ describe('RF-09 week score and verdict (F3-WK-02)', () => {
     expect(screen.getByText('verdict pauseWeek')).toBeInTheDocument();
   });
 
-  it('scores against the goals of the saved profile', async () => {
-    await saveProfile(db, { ...sampleProfile, goals: { ...sampleProfile.goals, sleepHours: 9 } });
+  it('scores against the goals of the profile', async () => {
     await saveDailyEntry(db, goodDay('2026-10-05'));
-    renderWeek('2026-10-05');
+    renderWeek('2026-10-05', { ...DEFAULT_GOALS, sleepHours: 9 });
     expect(await screen.findByText('0 of 7 nights on target')).toBeInTheDocument();
   });
 });

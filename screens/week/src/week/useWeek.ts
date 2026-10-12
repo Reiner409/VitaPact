@@ -1,24 +1,29 @@
 import type { IsoWeek } from '@vitapact/core/calendar';
-import type { VitaPactDatabase } from '@vitapact/core/storage';
+import type { Goals, VitaPactDatabase } from '@vitapact/core/storage';
 import { useEffect, useState } from 'react';
-import { loadWeek, type LoadedWeek } from './loadWeek';
+import { loadWeek } from './loadWeek';
+import type { WeekSummary } from './weekSummary';
 
-interface WeekState {
+interface LoadedWeek {
   readonly week: IsoWeek;
-  readonly loaded: LoadedWeek;
+  readonly summary: WeekSummary;
 }
 
-/** The loaded week, or undefined while it loads; a late answer for another week is dropped. */
-export function useWeek(db: VitaPactDatabase, week: IsoWeek): LoadedWeek | undefined {
-  const [state, setState] = useState<WeekState>();
+/** The week's summary, or undefined while it loads; a late answer for another week is dropped. */
+export function useWeek(
+  db: VitaPactDatabase,
+  week: IsoWeek,
+  goals: Goals,
+): WeekSummary | undefined {
+  const [loaded, setLoaded] = useState<LoadedWeek>();
   useEffect(() => {
     let current = true;
-    void loadWeek(db, week).then((loaded) => {
-      if (current) setState({ week, loaded });
+    void loadWeek(db, week, goals).then((summary) => {
+      if (current) setLoaded({ week, summary });
     });
     return () => {
       current = false;
     };
-  }, [db, week]);
-  return state?.week === week ? state.loaded : undefined;
+  }, [db, week, goals]);
+  return loaded?.week === week ? loaded.summary : undefined;
 }
