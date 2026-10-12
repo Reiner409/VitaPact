@@ -2,6 +2,70 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-12 · F2-12 · #28 · Approved
+
+- Checks: CI green; verify ✔, e2e ✔. Main merged in after #26, and both export sets were kept in `report/index.ts`.
+- Covered: RF-12, RF-28 (core part). Each outcome in the acceptance criteria has its own test. Lookups go
+  through an injected `FriendDirectory`, so report still never reaches storage (RNF-02).
+- New rules: none.
+
+## 2026-10-12 · F2-20 · #29 · Approved
+
+- Checks: CI green.
+- Covered: RF-15. Texts approved by Rei on 2026-10-12.
+- Carried to the `VerdictLabel` follow-up: a test that every core `VERDICT_BANDS` id has
+  `content:verdict.<band>.title` (G5.3). The i18n test copies the ids because `@vitapact/i18n` does
+  not depend on core.
+- New rules: none.
+
+## 2026-10-11 · F2-11 · #26 · Approved after changes
+
+- Checks: CI green; verify ✔, e2e ✔.
+- Covered: RF-10, RF-11, RF-12, D23.
+- Required and done: browser-only APIs (`OffscreenCanvas`, `createImageBitmap`) moved from core to
+  `platform/src/images.ts`; byte and pixel limits checked before decoding, with typed outcomes;
+  `readQrCode` checks the buffer length.
+- Rei's review: the test-only codecs pngjs and jpeg-js were dropped. The PNG round trip proved nothing
+  because PNG is lossless. The JPG recompression test moved to `e2e/report-image.spec.ts`, which runs on
+  Chromium's own codec, the engine WebView2 uses.
+- New rules: G9.10, G9.12.
+
+## 2026-10-11 · F2-18 · #25 · Approved after changes
+
+- Checks: CI green; verify ✔, e2e ✔.
+- Covered: RF-03, RF-05, RF-06, RF-08, RF-09, RF-15, RF-23, RNF-10.
+- Required and done: number fields take the pillar's `step` (hydration by 0.25); test pillars match
+  core's; `pillarLook` uses `Object.hasOwn`; the fasting confirmation is a 44 px `Checkbox.Card` row;
+  RF-07, RF-15 and RNF-05 dropped from titles that did not check them (G9.1).
+- New rule: G9.11.
+
+## 2026-10-11 · F2-10 · #23 · Approved after changes
+
+- Checks: CI green; verify ✔, e2e ✔.
+- Covered: RF-10, RF-27, RF-28 (signature part), RNF-02, RNF-05, D11.
+- Required and done: the worst-case report measured 517 bytes, above the 512 limit. `MAX_REPORT_BYTES`
+  is now 560, taken from that measured worst case, and `createReport` throws a `RangeError` beyond it.
+  Tests added for ISO week 53, the year turn and prototype keys.
+- New rule: G9.9.
+
+## 2026-10-11 · Setup · #27 · Written by the architect
+
+- `shared/ui` may use core types and pure functions (G3.1), and `@vitapact/core/pillars/testing`
+  exposes the extra pillar for tests. Two boundary cases were added.
+
+## 2026-10-11 · F2-03 · #24 · Written by the architect
+
+- The in-memory platform moved to `@vitapact/platform/testing`, so the app entry point no longer
+  ships it. A test checks this.
+
+## 2026-10-11 · F2-08 · #21 · Approved
+
+- Checks: CI green; verify ✔, e2e ✔.
+- Covered: RF-08.
+- Agreed for F2-10: the report delta is this week minus the previous ISO week's weigh-in, and it is
+  left out when that week has none.
+- New rules: none.
+
 ## 2026-10-11 · F2-06 · #20 · Approved after changes
 
 - Checks: CI green; verify ✔ (363 tests), e2e ✔.

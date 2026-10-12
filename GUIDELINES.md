@@ -159,3 +159,12 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
 - **G9.8** · F2-01 · Calendar-day arithmetic works on UTC midnights of `YYYY-MM-DD` strings. Only
   `toCalendarDate` converts from local time, so a time-zone or daylight-saving change never shifts
   a day.
+- **G9.9** · F2-10 · A size limit on generated content is set from a measured worst case built from
+  incompressible input, and the producer refuses what its own reader would refuse.
+- **G9.10** · F2-11 · A file the user chooses is checked before it is decoded: first its bytes, then its
+  pixel dimensions. Every failure is a typed outcome, not an exception. APIs that exist only in the
+  browser live in `platform`, and core receives plain bytes or pixels.
+- **G9.11** · F2-18 · A component that draws the fields of a core type reads every property core uses
+  for them (unit, min, max, step), and its tests use core's own fixtures.
+- **G9.12** · F2-11 · A new library, even a test-only one, comes in only after a native alternative has
+  been ruled out. The pull request lists the pros and cons, and Rei approves it.
