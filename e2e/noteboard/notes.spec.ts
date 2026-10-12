@@ -36,7 +36,7 @@ test.describe('RF-17 Noteboard notes kept on this device', () => {
   });
 });
 
-test.describe('RF-29 Noteboard screenshots for review (N1)', () => {
+test.describe('F3-NB-01 Noteboard screenshots for review', () => {
   for (const width of [1280, 390]) {
     test(`shows the list and the editor at ${width} px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
