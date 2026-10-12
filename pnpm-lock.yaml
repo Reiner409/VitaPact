@@ -171,6 +171,9 @@ importers:
 
   screens/onboarding:
     dependencies:
+      '@vitapact/core':
+        specifier: workspace:*
+        version: link:../../core
       '@vitapact/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n

@@ -1,3 +1,16 @@
 {
-  "title": "Welcome"
+  "title": "Welcome",
+  "progress": "Step {{current}} of {{total}}",
+  "back": "Back",
+  "continue": "Continue",
+  "nickname": {
+    "label": "Your nickname",
+    "counter": "{{length}} of {{max}} characters. Friends see it on your weekly report.",
+    "empty": "Enter a nickname to continue.",
+    "tooLong": "Use at most {{max}} characters.",
+    "unprintable": "Remove the hidden characters from the nickname."
+  },
+  "goals": {
+    "title": "Your goals"
+  }
 }
