@@ -11,7 +11,7 @@ test.describe('RF-01 welcome step 1: nickname', () => {
   for (const viewport of VIEWPORTS) {
     test(`asks for a nickname before continuing (${viewport.name})`, async ({ page }) => {
       await page.setViewportSize(viewport);
-      await page.goto('/#/onboarding');
+      await page.goto('/');
       const nickname = page.getByRole('textbox', { name: 'Your nickname' });
       const continueButton = page.getByRole('button', { name: 'Continue' });
 
