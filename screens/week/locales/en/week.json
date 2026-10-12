@@ -1,3 +1,34 @@
 {
-  "title": "Week"
+  "title": "Week",
+  "range": "Week {{number}} · {{from, datetime(day: numeric; month: short; timeZone: UTC)}} – {{to, datetime(day: numeric; month: short; year: numeric; timeZone: UTC)}}",
+  "selector": {
+    "previous": "Previous week",
+    "next": "Next week"
+  },
+  "score": {
+    "label": "Week score"
+  },
+  "pillars": {
+    "noData": "Nothing logged yet",
+    "sleep": {
+      "name": "Sleep",
+      "average": "{{value, number(maximumFractionDigits: 1)}} h average",
+      "onGoal": "{{count}} of 7 nights on target"
+    },
+    "training": {
+      "name": "Training",
+      "average": "{{value, number(maximumFractionDigits: 0)}} min per workout",
+      "onGoal": "{{count}} of {{goal}} workouts"
+    },
+    "food": {
+      "name": "Eating",
+      "average": "{{value, number(maximumFractionDigits: 1)}} out of 5 average",
+      "onGoal": "{{count}} of 7 clean days"
+    },
+    "sun": {
+      "name": "Sun",
+      "average": "{{value, number(maximumFractionDigits: 0)}} min average",
+      "onGoal": "{{count}} of 7 days on target"
+    }
+  }
 }
