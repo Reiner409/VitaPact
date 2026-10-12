@@ -26,8 +26,8 @@ export const sampleEntry: DailyEntry = {
   date: '2026-10-06',
   pillars: {
     sleep: { hours: 7.5, quality: 4 },
-    training: { done: true, type: 'gym', minutes: 60 },
-    eating: { rating: 4 },
+    training: { trained: true, type: 'gym', minutes: 60 },
+    food: { rating: 4 },
     sun: { minutes: 25 },
   },
   updatedAt: '2026-10-06T21:00:00.000Z',

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { pillarRegistry } from '../pillars';
 import { getDailyEntry, listDailyEntries, saveDailyEntry } from './daily-entries';
 import {
   getFriend,
@@ -180,5 +181,18 @@ describe('RNF-11 friendReports table', () => {
     expect(await listFriendReportsOfWeek(db, '2026-W41')).toHaveLength(2);
     const weeks = (await listFriendReportsOf(db, sampleFriend.userId)).map(({ week }) => week);
     expect(weeks).toEqual(['2026-W40', '2026-W41']);
+  });
+});
+
+describe('A1 the sample day used by screen tests', () => {
+  it('RF-03 is a valid day for the pillar registry', () => {
+    // Storage allows null for a cleared field; the registry reads a missing one as undefined.
+    const day = Object.fromEntries(
+      Object.entries(sampleEntry.pillars).map(([pillar, values]) => [
+        pillar,
+        Object.fromEntries(Object.entries(values).map(([key, value]) => [key, value ?? undefined])),
+      ]),
+    );
+    expect(pillarRegistry.validateDay(day)).toEqual([]);
   });
 });
