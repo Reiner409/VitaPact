@@ -17,3 +17,11 @@ export {
   type ReportPixels,
 } from './image';
 export { imageSizeLimits, readQrCode, type QrReadError, type QrReadResult } from './qr';
+export {
+  importFriendReport,
+  type FriendDirectory,
+  type ImportContext,
+  type ImportOutcome,
+  type ImportRejection,
+  type KnownFriend,
+} from './import';
