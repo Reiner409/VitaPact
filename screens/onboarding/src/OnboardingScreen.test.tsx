@@ -68,6 +68,13 @@ describe('RF-01 welcome step 1: nickname', () => {
     expect(nicknameField()).toHaveValue('Rei');
   });
 
+  it('hands on the nickname without the spaces around it', async () => {
+    renderScreen();
+    await userEvent.type(nicknameField(), '  Rei  {Enter}');
+    await userEvent.click(screen.getByRole('button', { name: en.back }));
+    expect(nicknameField()).toHaveValue('Rei');
+  });
+
   it('clears the error as soon as the nickname becomes valid', async () => {
     renderScreen();
     await userEvent.click(continueButton());

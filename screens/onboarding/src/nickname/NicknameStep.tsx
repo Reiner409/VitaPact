@@ -34,7 +34,9 @@ export function NicknameStep({ nickname, onChange, onContinue }: NicknameStepPro
   const submit = (event: FormEvent) => {
     event.preventDefault();
     setTriedToContinue(true);
-    if (!problem) onContinue();
+    if (problem) return;
+    onChange(nickname.trim());
+    onContinue();
   };
 
   return (
