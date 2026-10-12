@@ -12,7 +12,8 @@
   },
   "list": {
     "label": "Your notes",
-    "untitled": "Untitled note"
+    "untitled": "Untitled note",
+    "summary": "{{title}} · {{date}}"
   },
   "editor": {
     "label": "Note editor",
@@ -27,6 +28,11 @@
     "message": "The note will be removed from this device. This cannot be undone.",
     "confirm": "Delete",
     "cancel": "Keep it",
+    "close": "Close"
+  },
+  "errors": {
+    "save": "The note could not be saved on this device. Try again.",
+    "delete": "The note could not be deleted. Try again.",
     "close": "Close"
   }
 }

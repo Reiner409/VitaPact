@@ -1,9 +1,12 @@
 import type { Note, PlainNote } from '@vitapact/core/storage/notes';
 import { useCallback, useEffect, useState } from 'react';
+import { newestFirst } from './newestFirst';
 import type { NotesStore } from './notesStore';
 
 const plainNotes = async (store: NotesStore) =>
-  (await store.list()).filter((note: Note): note is PlainNote => note.kind === 'plain');
+  newestFirst(
+    (await store.list()).filter((note: Note): note is PlainNote => note.kind === 'plain'),
+  );
 
 /** The plain notes in the store, newest date first, and the calls that change them. */
 export function useNotes(store: NotesStore) {

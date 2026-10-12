@@ -34,8 +34,10 @@ function NoteRow({ note, onOpen }: { note: PlainNote; onOpen: (note: PlainNote) 
   const { t, i18n } = useTranslation('noteboard');
   return (
     <Card onClick={() => onOpen(note)}>
-      <strong>{note.title || t('list.untitled')}</strong>
-      <time dateTime={note.date}>{formatNoteDate(note.date, i18n.language)}</time>
+      {t('list.summary', {
+        title: note.title || t('list.untitled'),
+        date: formatNoteDate(note.date, i18n.language),
+      })}
       {note.tag && <Badge variant="neutral">{note.tag}</Badge>}
     </Card>
   );

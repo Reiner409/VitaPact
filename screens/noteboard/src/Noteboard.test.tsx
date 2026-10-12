@@ -106,4 +106,32 @@ describe('RF-17 Noteboard list and editor', () => {
     expect(screen.getByRole('region', { name: en.list.label })).toBeInTheDocument();
     expect(screen.queryByRole('region', { name: en.editor.label })).not.toBeInTheDocument();
   });
+
+  it('names each card with its title and date', async () => {
+    renderBoard([savedNote]);
+    expect(
+      await screen.findByRole('button', { name: 'Session · Oct 8, 2026 therapy' }),
+    ).toBeInTheDocument();
+  });
+
+  it('shows the date of the open note under the title', async () => {
+    const { user } = renderBoard([savedNote]);
+    await user.click(await screen.findByRole('button', { name: /Session/ }));
+    expect(screen.getByText('Oct 8, 2026')).toBeInTheDocument();
+  });
+
+  it('keeps the editor open and says so when the note cannot be saved', async () => {
+    const memory = memoryStore();
+    const failing: NotesStore = { ...memory.store, save: () => Promise.reject(new Error('full')) };
+    renderWithProviders(<Noteboard store={failing} clock={clock} />, {
+      translations: { noteboard: en },
+    });
+    const user = userEvent.setup();
+    await user.click((await screen.findAllByRole('button', { name: en.actions.new }))[0]!);
+    await user.type(screen.getByRole('textbox', { name: en.editor.title }), 'Session');
+    await user.click(screen.getByRole('button', { name: en.actions.save }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(en.errors.save);
+    expect(screen.getByRole('textbox', { name: en.editor.title })).toHaveValue('Session');
+  });
 });
