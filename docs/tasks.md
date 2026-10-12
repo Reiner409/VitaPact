@@ -69,16 +69,16 @@ time, and shows the result before moving on. Gate 3 no longer blocks the screens
 
 ### The lanes
 
-| Lane                     | Writes in            | Nodes in order (one pull request each)                                                                                                                                                                                               |
-| ------------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Start-up** (Architect) | `app/`               | A1 open the local database and hand it to the screens; test database exported as `@vitapact/core/storage/testing`; first launch goes to Welcome when there is no profile · A2 weigh-in banner on every screen (RF-06, F3-TD-09)      |
-| **UI**                   | `shared/ui`          | U1 fixes seen in the 12 October screenshots · U2 F2-19                                                                                                                                                                               |
-| **Today**                | `screens/today`      | T1 header and four cards (F3-TD-01…05) · T2 save the day and score (F3-TD-06) · T3 week strip (F3-TD-07) · T4 Sunday weigh-in (F3-TD-08) · T5 evening reminder (F3-TD-10, Could)                                                     |
-| **Week**                 | `screens/week`       | W1 selector, score and pillars (F3-WK-01, 02) · W2 day tiles (F3-WK-03) · W3 day detail and edit (F3-WK-04) · W4 weight chart (F3-WK-05) · W5 generate the report with QR (F3-WK-06)                                                 |
-| **Welcome**              | `screens/onboarding` | B1 nickname (F3-ON-01) · B2 goals (F3-ON-02) · B3 privacy and profile creation (F3-ON-03)                                                                                                                                            |
-| **Noteboard**            | `screens/noteboard`  | N1 list and editor (F3-NB-01) · N2 search and tags (F3-NB-02) · N3 privacy banner (F3-NB-03) · N4 password, lock, unlock, removal (F3-NB-04…06)                                                                                      |
-| **Friends**              | `screens/friends`    | F1 group and empty state (F3-FR-01, 02) · F2 add a report and a new friend (F3-FR-03, 04) · F3 weekly and monthly ranking (F3-FR-05, 06) · F4 history and removing a friend (F3-FR-08, 09) · F5 weekend card (F3-FR-07, after F2-14) |
-| **Settings**             | `screens/settings`   | S1 profile (F3-ST-01) · S2 key fingerprint and about (F3-ST-03, 05) · S3 export and import data (F3-ST-06) · S4 groups (F3-ST-02) · S5 delete all data (F3-ST-04)                                                                    |
+| Lane                     | Writes in            | Nodes in order (one pull request each)                                                                                                                                                                                                      |
+| ------------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Start-up** (Architect) | `app/`               | A1 open the local database and hand it to the screens; test database exported as `@vitapact/core/storage/testing`; first launch goes to Welcome when there is no profile · A2 Sunday weigh-in and its banner on every screen (F3-TD-08, 09) |
+| **UI**                   | `shared/ui`          | U1 fixes seen in the 12 October screenshots · U2 F2-19                                                                                                                                                                                      |
+| **Today**                | `screens/today`      | T1 header and four cards (F3-TD-01…05) · T2 save the day and score (F3-TD-06) · T3 week strip (F3-TD-07) · T4 moved to A2 · T5 evening reminder (F3-TD-10, Could)                                                                           |
+| **Week**                 | `screens/week`       | W1 selector, score and pillars (F3-WK-01, 02) · W2 day tiles (F3-WK-03) · W3 day detail and edit (F3-WK-04) · W4 weight chart (F3-WK-05) · W5 generate the report with QR (F3-WK-06)                                                        |
+| **Welcome**              | `screens/onboarding` | B1 nickname (F3-ON-01) · B2 goals (F3-ON-02) · B3 privacy and profile creation (F3-ON-03)                                                                                                                                                   |
+| **Noteboard**            | `screens/noteboard`  | N1 list and editor (F3-NB-01) · N2 search and tags (F3-NB-02) · N3 privacy banner (F3-NB-03) · N4 password, lock, unlock, removal (F3-NB-04…06)                                                                                             |
+| **Friends**              | `screens/friends`    | F1 group and empty state (F3-FR-01, 02) · F2 add a report and a new friend (F3-FR-03, 04) · F3 weekly and monthly ranking (F3-FR-05, 06) · F4 history and removing a friend (F3-FR-08, 09) · F5 weekend card (F3-FR-07, after F2-14)        |
+| **Settings**             | `screens/settings`   | S1 profile (F3-ST-01) · S2 key fingerprint and about (F3-ST-03, 05) · S3 export and import data (F3-ST-06) · S4 groups (F3-ST-02) · S5 delete all data (F3-ST-04)                                                                           |
 
 ### What a screen receives (A1)
 
@@ -426,6 +426,7 @@ Common dependencies: the lane table in section 3a.
 - **Requirements:** RF-05
 - **Goal:** on Sunday, on opening, WeighInDialog opens; "Later" (Più tardi) closes it.
 - **Tests to write:** opens only on Sunday and only if the weigh-in is missing; does not open again after saving.
+- **Owner:** the Start-up lane (A2), with F3-TD-09: the dialog and the banner share the "Later" state and live in the shell, not in Today.
 
 #### F3-TD-09 · Weigh-in reminder and catch-up
 
