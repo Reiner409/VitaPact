@@ -51,3 +51,29 @@ export {
   type FilePickerProps,
   type FilePickerState,
 } from './components/FilePicker/FilePicker';
+export type { ScoreBand } from './components/scoreBand';
+export { ScoreRing, type ScoreRingProps } from './components/ScoreRing/ScoreRing';
+export { VerdictLabel, type VerdictLabelProps } from './components/VerdictLabel/VerdictLabel';
+export { DayTile, type DayTileProps } from './components/DayTile/DayTile';
+export {
+  WeekStrip,
+  type WeekStripDay,
+  type WeekStripProps,
+} from './components/WeekStrip/WeekStrip';
+export { PillarSummary, type PillarSummaryProps } from './components/PillarSummary/PillarSummary';
+export { TrendChart, type TrendChartProps } from './components/TrendChart/TrendChart';
+export type { TrendPoint } from './components/TrendChart/trendChartConfig';
+export { WeighInBanner, type WeighInBannerProps } from './components/WeighInBanner/WeighInBanner';
+export {
+  WeighInDialog,
+  type WeighInDialogLabels,
+  type WeighInDialogProps,
+} from './components/WeighInDialog/WeighInDialog';
+export { PillarCard, type PillarCardProps } from './components/PillarCard/PillarCard';
+export type { PillarCardText } from './components/PillarCard/PillarField';
+export type {
+  PillarCardField,
+  PillarCardPillar,
+  PillarCardValues,
+  PillarFieldValue,
+} from './components/PillarCard/pillarShape';

@@ -12,6 +12,7 @@
     "./pillars": "./src/pillars/index.ts",
     "./pillars/testing": "./src/pillars/testing/index.ts",
     "./report": "./src/report/index.ts",
+    "./report/testing": "./src/report/testing/index.ts",
     "./scoring": "./src/scoring/index.ts",
     "./storage": "./src/storage/index.ts",
     "./storage/notes": "./src/storage/notes/index.ts"
