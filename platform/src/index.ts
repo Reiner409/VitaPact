@@ -22,7 +22,6 @@ export {
   type ImageReadError,
   type ImageSizeLimits,
 } from './images';
-export { createMemoryPlatform, type MemoryPlatform } from './memoryPlatform';
 
 let current: Platform | undefined;
 

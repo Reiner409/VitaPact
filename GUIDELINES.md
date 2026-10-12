@@ -35,6 +35,8 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
 
 - **G3.1** Layers, top to bottom: `app` → `screens/*` → `shared/*` and `platform` → `core`.
   A package uses only packages below it, never a sibling screen.
+  So `shared/ui` may use `core` types and pure functions (a `PillarCard` takes a core `Pillar`).
+  Tests that need the extra pillar from F2-05 import it from `@vitapact/core/pillars/testing`.
 - **G3.2** Only `shared/ui` imports Mantine and Lucide. Screens compose `@vitapact/ui`
   components and never set their own styles.
 - **G3.3** Only `shared/i18n` imports i18next. Everyone else uses `useTranslation` from
@@ -132,10 +134,28 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
 - **G8.2** Tauri permissions are limited to `core:default`, opening and saving files
   (`src-tauri/capabilities/default.json`). A new permission needs Rei's approval in review.
 - **G8.3** Only standard Web Crypto algorithms; secrets (private key, note key, password) never
-  reach disk or any export.
+  reach disk in readable form or any export. Storing a non-extractable `CryptoKey` in IndexedDB is
+  allowed: the browser keeps it, and no code can read its bytes.
 
 ## 9. Rules learned in reviews
 
 <!-- The reviewer appends rules here: G9.n · task id · rule. -->
 
-_None yet._
+- **G9.1** · F2-02 · A test title carries a requirement id only when that test checks the
+  requirement. An id that is merely nearby goes in the PR body, not in the title.
+- **G9.2** · F2-03 · Keys that come from outside the app (storage, imports, QR payloads) are looked
+  up in a `Map`, an `Object.create(null)` record or behind `Object.hasOwn`, never on a plain object.
+- **G9.3** · F1-06 · A test that starts a heavy tool (ESLint, a bundler) gives its `describe` an
+  explicit timeout, because the cold start is slow on a busy machine.
+- **G9.4** · F2-07 · Tests of a date rule in core include an ISO year with week 53 and the turn of
+  the year.
+- **G9.5** · F2-09 · Never assert the bytes of an ECDSA signature: they change on every run. Verify
+  the signature instead, and check that tampering makes verification fail.
+- **G9.6** · F2-16 · Every clickable element takes its size from the `touchTarget` token, and a test
+  checks it.
+- **G9.7** · F2-21 · Shape checks on untrusted input test field names with `Object.hasOwn` and
+  reject `__proto__`, `constructor` and `prototype`. Every free-form key, string and list has a
+  named length limit.
+- **G9.8** · F2-01 · Calendar-day arithmetic works on UTC midnights of `YYYY-MM-DD` strings. Only
+  `toCalendarDate` converts from local time, so a time-zone or daylight-saving change never shifts
+  a day.
