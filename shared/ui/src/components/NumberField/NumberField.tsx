@@ -12,6 +12,8 @@ export interface NumberFieldProps {
   onChange: (value: number | null) => void;
   min?: number;
   max?: number;
+  /** Overrides the unit's step, e.g. 0.25 for a new pillar's litres; decimals follow it. */
+  step?: number;
   description?: string;
   error?: string;
 }
@@ -22,6 +24,11 @@ const numberUnits: Record<NumberUnit, { step: number; decimals: number }> = {
   minutes: { step: 5, decimals: 0 },
   kg: { step: 0.1, decimals: 1 },
 };
+
+const decimalsOf = (step: number) => step.toString().split('.')[1]?.length ?? 0;
+
+const stepping = (unit: NumberUnit, step: number | undefined) =>
+  step === undefined ? numberUnits[unit] : { step, decimals: decimalsOf(step) };
 
 const toValue = (raw: number | string): number | null =>
   raw === '' ? null : typeof raw === 'number' ? raw : Number(raw);
@@ -34,10 +41,11 @@ export function NumberField({
   onChange,
   min = 0,
   max,
+  step: stepOverride,
   description,
   error,
 }: NumberFieldProps) {
-  const { step, decimals } = numberUnits[unit];
+  const { step, decimals } = stepping(unit, stepOverride);
   return (
     <NumberInput
       label={label}
