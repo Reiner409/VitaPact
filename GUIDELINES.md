@@ -22,7 +22,8 @@ A task is done only when `pnpm verify` and `pnpm test:e2e` are green and the rev
 
 - **G2.1** Touch only the files your task owns (task list, section 2). A screen agent works only
   in `screens/<name>/`. Core works in `core/` and `platform/`. UI works in `shared/ui` and
-  `shared/i18n/src`. Contenuti owns `shared/i18n/locales`. Setup owns the repo root, `app/`, `src-tauri/`, `tools/`, `e2e/` and CI.
+  `shared/i18n/src`. Contenuti owns `shared/i18n/locales`. Setup owns the repo root, `app/`, `src-tauri/`, `tools/`, `e2e/` and CI, except
+  `e2e/<screen>/`, which belongs to that screen's lane (section 3a of the task list).
 - **G2.2** Need something outside your package (a component, a core function, a permission)?
   Do not add it yourself: ask the owner through the coordinator. The owner adds it with its test.
 - **G2.3** Each task works on its own branch `task/<id>-<short-name>` and opens a pull request on

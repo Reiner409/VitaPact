@@ -40,8 +40,70 @@ Parallelism rule: a screen agent does not touch `shared` or `core`. If it needs 
 | ------ | ----------------------------------------------------------------------------------------------- | ------------------- |
 | Gate 1 | F0 complete: screens described in detail, open questions closed                                 | Rei                 |
 | Gate 2 | F1 complete: empty app that opens on Windows, CI and boundary rules active, guidelines approved | Architect, then Rei |
-| Gate 3 | F2 complete: core and components tested                                                         | Architect           |
+| Gate 3 | F2 complete: core and components tested (no longer blocks the screens, see 3a)                  | Architect           |
 | Gate 4 | F4 complete: Windows build, 8 end-to-end scenarios green, open source publication               | Rei                 |
+
+## 3a. Lanes (from 12 October 2026, approved by Rei)
+
+The core (F2-01 … F2-13, F2-15, F2-21) is on `main` and counts as complete. From here the work goes
+**screen by screen, in parallel**. Each lane is a thread that works on one screen, one node at a
+time, and shows the result before moving on. Gate 3 no longer blocks the screens.
+
+### Lane rules
+
+1. **One node = one pull request = one visible result.** A node is a part of the screen you can see and
+   use (a card, a dialog, a list), saving real data locally.
+2. **Screenshots in every pull request.** The node's end-to-end test saves screenshots of the screen at
+   1280 and 390 px, and the pull request shows them. Rei looks at them and approves before the merge,
+   after the Architect's review.
+3. **One open pull request per lane.** The next node starts after the previous one is merged.
+4. **A lane writes only in its own `screens/<name>`** (code, tests, `locales`). It uses what is already
+   in `core` and `shared/ui` without changing it.
+5. **No shared logic between lanes.** If a screen needs a function that does not exist, the lane
+   writes it inside its own package, even if another lane has something similar. When the Architect
+   sees common parts, they are extracted into `core` or `shared/ui` in later, separate pull requests.
+6. **Contact points, each with a single owner:** `app/` (start-up, navigation, the weigh-in banner on
+   every screen) belongs to the **Start-up** lane; `shared/ui` (component fixes, F2-19) to the **UI**
+   lane; `docs/` and the matrix to the Architect. A screen lane that needs a change there asks the
+   owner and carries on with what it has.
+
+### The lanes
+
+| Lane                     | Writes in            | Nodes in order (one pull request each)                                                                                                                                                                                               |
+| ------------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Start-up** (Architect) | `app/`               | A1 open the local database and hand it to the screens; test database exported as `@vitapact/core/storage/testing`; first launch goes to Welcome when there is no profile · A2 weigh-in banner on every screen (RF-06, F3-TD-09)      |
+| **UI**                   | `shared/ui`          | U1 fixes seen in the 12 October screenshots · U2 F2-19                                                                                                                                                                               |
+| **Today**                | `screens/today`      | T1 header and four cards (F3-TD-01…05) · T2 save the day and score (F3-TD-06) · T3 week strip (F3-TD-07) · T4 Sunday weigh-in (F3-TD-08) · T5 evening reminder (F3-TD-10, Could)                                                     |
+| **Week**                 | `screens/week`       | W1 selector, score and pillars (F3-WK-01, 02) · W2 day tiles (F3-WK-03) · W3 day detail and edit (F3-WK-04) · W4 weight chart (F3-WK-05) · W5 generate the report with QR (F3-WK-06)                                                 |
+| **Welcome**              | `screens/onboarding` | B1 nickname (F3-ON-01) · B2 goals (F3-ON-02) · B3 privacy and profile creation (F3-ON-03)                                                                                                                                            |
+| **Noteboard**            | `screens/noteboard`  | N1 list and editor (F3-NB-01) · N2 search and tags (F3-NB-02) · N3 privacy banner (F3-NB-03) · N4 password, lock, unlock, removal (F3-NB-04…06)                                                                                      |
+| **Friends**              | `screens/friends`    | F1 group and empty state (F3-FR-01, 02) · F2 add a report and a new friend (F3-FR-03, 04) · F3 weekly and monthly ranking (F3-FR-05, 06) · F4 history and removing a friend (F3-FR-08, 09) · F5 weekend card (F3-FR-07, after F2-14) |
+| **Settings**             | `screens/settings`   | S1 profile (F3-ST-01) · S2 key fingerprint and about (F3-ST-03, 05) · S3 export and import data (F3-ST-06) · S4 groups (F3-ST-02) · S5 delete all data (F3-ST-04)                                                                    |
+
+### What a screen receives (A1)
+
+The app opens the local database once and passes every screen these props (`ScreenProps` in
+`app/src/navigation/routes.ts`). A screen declares only the ones it uses:
+
+```ts
+interface ScreenProps {
+  db: VitaPactDatabase; // from @vitapact/core/storage
+  profile: Profile | undefined; // undefined only on the Welcome screen, before it is created
+  onProfileChange: () => Promise<void>; // call after saving the profile so every screen sees it
+}
+```
+
+- Without a profile the app shows only the Welcome screen, without navigation. Once the Welcome screen
+  has created the profile and called `onProfileChange`, the app moves to Today.
+- Screens read and write through the functions of `@vitapact/core/storage`, never through Dexie.
+- Component tests open an in-memory database with `openTestDatabase()` from
+  `@vitapact/core/storage/testing`, which also exports sample records (`sampleProfile`, `sampleEntry`, …).
+- End-to-end tests start with a profile through `startWithProfile(page)` from `e2e/support/localData.ts`.
+- Each screen lane owns `e2e/<screen>/` (for example `e2e/onboarding/nickname.spec.ts`) and saves its
+  screenshots with `page.screenshot({ path: 'e2e/<screen>/screenshots/<node>-1280.png' })`, then again
+  at a 390 px wide viewport. The rest of `e2e/` stays with Start-up.
+- Browser APIs a screen needs (for example copying to the clipboard) arrive as props for now. Start-up
+  moves them into `platform` in a later pull request, and the screen keeps the same prop.
 
 ---
 
@@ -289,7 +351,7 @@ Each screen agent works only in its own package and uses only components from `s
 
 ### Welcome · `screens/onboarding` (T15)
 
-Common dependencies: Gate 3.
+Common dependencies: the lane table in section 3a.
 
 #### F3-ON-01 · Step 1: nickname
 
@@ -314,7 +376,7 @@ Common dependencies: Gate 3.
 
 ### Today · `screens/today` (T16)
 
-Common dependencies: Gate 3.
+Common dependencies: the lane table in section 3a.
 
 #### F3-TD-01 · Day header
 
@@ -381,7 +443,7 @@ Common dependencies: Gate 3.
 
 ### Week · `screens/week` (T17)
 
-Common dependencies: Gate 3.
+Common dependencies: the lane table in section 3a.
 
 #### F3-WK-01 · Week selector
 
@@ -421,7 +483,7 @@ Common dependencies: Gate 3.
 
 ### Friends · `screens/friends` (T18)
 
-Common dependencies: Gate 3.
+Common dependencies: the lane table in section 3a.
 
 #### F3-FR-01 · Group selector and empty state
 
@@ -479,7 +541,7 @@ Common dependencies: Gate 3.
 
 ### Noteboard · `screens/noteboard` (T19)
 
-Common dependencies: Gate 3.
+Common dependencies: the lane table in section 3a.
 
 #### F3-NB-01 · List and editor
 
@@ -519,7 +581,7 @@ Common dependencies: Gate 3.
 
 ### Settings · `screens/settings` (T20)
 
-Common dependencies: Gate 3.
+Common dependencies: the lane table in section 3a.
 
 #### F3-ST-01 · Profile
 

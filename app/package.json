@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vitapact/core": "workspace:*",
     "@vitapact/i18n": "workspace:*",
     "@vitapact/screen-friends": "workspace:*",
     "@vitapact/screen-noteboard": "workspace:*",
