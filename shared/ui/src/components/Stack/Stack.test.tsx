@@ -33,4 +33,16 @@ describe('F2-16 Stack', () => {
     const row = screen.getByText('First').parentElement;
     expect(row?.style.getPropertyValue('--group-gap')).toBe('calc(1rem * var(--mantine-scale))');
   });
+
+  it('F3-WK-02 lays blocks out in a grid when given columns', () => {
+    renderWithTheme(
+      <Stack columns={4}>
+        <p>First</p>
+        <p>Second</p>
+      </Stack>,
+    );
+    const grid = screen.getByText('First').parentElement;
+    expect(grid).toHaveClass('mantine-SimpleGrid-root');
+    expect(grid).toHaveAttribute('data-gap', 'normal');
+  });
 });
