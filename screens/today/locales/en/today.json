@@ -21,10 +21,16 @@
   "save": "Save day",
   "dayScore": "Day score",
   "notices": {
-    "saved": "Day saved.",
+    "saved": "Day saved. Nice one!",
     "failed": "The day could not be saved. Try again.",
     "close": "Close"
   },
   "quickValue": "{{value}} {{unit}}",
-  "unsaved": "Your changes are not saved yet."
+  "unsaved": "Your changes are not saved yet.",
+  "greeting": {
+    "morning": "Good morning, {{name}}",
+    "afternoon": "Good afternoon, {{name}}",
+    "evening": "Good evening, {{name}}",
+    "night": "Still up, {{name}}?"
+  }
 }

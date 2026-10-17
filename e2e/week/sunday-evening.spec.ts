@@ -24,7 +24,7 @@ test.describe('F3-WK-01..06 Sunday evening on the week (RF-04, RF-08, RF-10)', (
       .click();
     await page.getByRole('region', { name: 'Sun' }).getByRole('button', { name: '30 min' }).click();
     await page.getByRole('button', { name: 'Save day' }).click();
-    await expect(page.getByText('Day saved.')).toBeVisible();
+    await expect(page.getByText('Day saved. Nice one!')).toBeVisible();
     await page.getByRole('navigation').getByRole('button', { name: 'Week' }).click();
     await expect(page.getByRole('meter', { name: 'Week score' })).toBeVisible();
   });

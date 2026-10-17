@@ -29,7 +29,7 @@ test.describe('F3-TD-06 live day score (RF-03, RF-09)', () => {
     await food.getByRole('radio', { name: 'Spotless' }).click();
     await expect(score).toHaveAttribute('aria-valuenow', '36');
     await page.getByRole('button', { name: 'Save day' }).click();
-    await expect(page.getByText('Day saved.')).toBeVisible();
+    await expect(page.getByText('Day saved. Nice one!')).toBeVisible();
 
     await page.getByRole('navigation').getByRole('button', { name: 'Week' }).click();
     await page.getByRole('navigation').getByRole('button', { name: 'Today' }).click();

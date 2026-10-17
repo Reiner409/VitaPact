@@ -32,12 +32,17 @@ export function buildCssVariables(tokens: Tokens): CssVariables {
   };
 }
 
-/** Global rules that cannot live in the Mantine theme: focus ring and reduced motion. */
+/** Global rules that cannot live in the Mantine theme: focus ring, the goal pop and reduced motion. */
 export function buildGlobalCss(tokens: Tokens): string {
   return `
 :focus-visible {
   outline: ${px(tokens.focus.width)} solid ${tokens.focus.color};
   outline-offset: ${px(tokens.focus.offset)};
+}
+@keyframes vp-pop {
+  0% { opacity: 0; transform: scale(0.6); }
+  70% { opacity: 1; transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 @media (prefers-reduced-motion: reduce) {
   :root {

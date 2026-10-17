@@ -33,6 +33,16 @@ describe('F3-TD-01 day header', () => {
     expect(screen.getByText('Monday, October 12 · Week 42 · 6 days to Sunday')).toBeInTheDocument();
   });
 
+  it('greets the user by nickname for the hour of the day', async () => {
+    await renderToday({ now: () => new Date(2026, 9, 12, 8, 0) });
+    expect(screen.getByText(`Good morning, ${sampleProfile.nickname}`)).toBeInTheDocument();
+  });
+
+  it('greets nobody before the profile exists', async () => {
+    await renderToday({ profile: undefined, now: () => new Date(2026, 9, 12, 23, 30) });
+    expect(screen.queryByText(/^Still up/)).not.toBeInTheDocument();
+  });
+
   it('says that Sunday is today on a Sunday', async () => {
     await renderToday({ today: SUNDAY });
     expect(screen.getByText(/Week 42 · Sunday is today$/)).toBeInTheDocument();

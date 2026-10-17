@@ -44,16 +44,17 @@ function useToday({
     week.reload();
   };
   const saving = useSaveDay(db, onSaved, now);
-  return { today, day, setDay, ...dayValues, goals, week, saving };
+  return { today, day, setDay, ...dayValues, goals, week, saving, now };
 }
 
 export function TodayScreen(props: TodayScreenProps) {
   const { t } = useTranslation('today');
-  const { today, day, setDay, values, setField, changed, goals, week, saving } = useToday(props);
+  const { today, day, setDay, values, setField, changed, goals, week, saving, now } =
+    useToday(props);
 
   return (
     <Stack>
-      <DayHeader date={day} />
+      <DayHeader date={day} nickname={props.profile?.nickname} now={now()} />
       <TodayWeekStrip days={week.days} today={today} onSelectDay={setDay} />
       {/* Follows every answer as it is given; only "Save day" stores it (F3-TD-06). */}
       <ScoreRing score={dayScore(values, goals)} label={t('dayScore')} />
