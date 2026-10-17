@@ -28,9 +28,9 @@ describe('RF-01 edit the profile in settings', () => {
   it('shows the stored nickname and goals', () => {
     renderCard();
     expect(field(en.profile.nickname)).toHaveValue('Rei');
-    expect(goalField('sleepHours')).toHaveValue('7.5');
-    expect(goalField('workoutsPerWeek')).toHaveValue('3');
-    expect(goalField('sunMinutes')).toHaveValue('20');
+    expect(goalField('sleepHours')).toHaveValue('7.5\u00a0hours');
+    expect(goalField('workoutsPerWeek')).toHaveValue('3\u00a0workouts');
+    expect(goalField('sunMinutes')).toHaveValue('20\u00a0minutes');
   });
 
   it('saves the changed nickname, goals and hide-weight choice', async () => {

@@ -10,7 +10,7 @@ export function pillarTextOf(t: Translate, pillar: string): PillarCardText {
     optionLabel: (field, option) => t(pillarKey.option(pillar, field, option)),
     scaleValueLabel: (field, value) => t(pillarKey.scaleValue(pillar, field, value)),
     quickValueLabel: (unit, value) =>
-      t('today:quickValue', { value, unit: t(pillarKey.unit(unit)) }),
+      t('today:quickValue', { value, unit: t(pillarKey.shortUnit(unit)) }),
     yes: t(pillarKey.yes),
     no: t(pillarKey.no),
   };

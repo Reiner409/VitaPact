@@ -42,6 +42,8 @@ export const tokens = {
     contentMaxWidth: 960,
     mobileBreakpoint: 768,
     minTouchTarget: 44,
+    /** Number steppers stay compact instead of spanning a wide card. */
+    fieldMaxWidth: 320,
   },
   font: {
     family: "'Inter Variable', 'Segoe UI', system-ui, sans-serif",

@@ -5,7 +5,7 @@ function fieldKeysOf(pillar: string, field: PillarField): string[] {
   const own = [pillarKey.field(pillar, field.key)];
   switch (field.kind) {
     case 'number':
-      return [...own, pillarKey.unit(field.unit)];
+      return [...own, pillarKey.unit(field.unit), pillarKey.shortUnit(field.unit)];
     case 'scale':
       return [
         ...own,

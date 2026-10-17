@@ -5,16 +5,16 @@
     "nickname": "Nickname",
     "goals": {
       "sleepHours": {
-        "label": "Sleep goal",
-        "unit": "h"
+        "label": "Sleep each night",
+        "unit": "hours"
       },
       "workoutsPerWeek": {
-        "label": "Workouts per week",
-        "unit": "/wk"
+        "label": "Workouts each week",
+        "unit": "workouts"
       },
       "sunMinutes": {
-        "label": "Sun per day",
-        "unit": "min"
+        "label": "Sun each day",
+        "unit": "minutes"
       }
     },
     "hideWeight": "Hide my weight in reports",

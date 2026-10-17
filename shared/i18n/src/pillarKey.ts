@@ -10,6 +10,7 @@ export const pillarKey = {
     `pillars:${pillar}.options.${field}.${option}`,
   scaleValue: (pillar: string, field: string, value: number) =>
     `pillars:${pillar}.scale.${field}.${value}`,
+  shortUnit: (unit: string) => `pillars:shortUnits.${unit}`,
   unit: (unit: string) => `pillars:units.${unit}`,
   yes: 'pillars:answers.yes',
   no: 'pillars:answers.no',

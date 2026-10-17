@@ -129,7 +129,7 @@ describe('F2-18 PillarCard', () => {
   it('RF-03 sets the minutes with a quick value button', async () => {
     renderWithTheme(<StatefulCard pillar={sun} title="Sun" />);
     await userEvent.click(screen.getByRole('button', { name: '30 min' }));
-    expect(screen.getByRole('textbox', { name: 'Minutes' })).toHaveValue('30');
+    expect(screen.getByRole('textbox', { name: 'Minutes' })).toHaveValue('30\u00a0min');
   });
 
   it('RF-23 shows the test pillar with no change to the card', async () => {

@@ -65,6 +65,7 @@ describe('Section 6.1 size tokens', () => {
       contentMaxWidth: 960,
       mobileBreakpoint: 768,
       minTouchTarget: 44,
+      fieldMaxWidth: 320,
     });
   });
 

@@ -84,7 +84,7 @@ describe('F2-17 NumberField limits', () => {
     const { field, onValue } = renderField({ unit: 'hours', max: 24 });
     await userEvent.type(field, '99');
     await userEvent.tab();
-    expect(field).toHaveValue('99');
+    expect(field).toHaveValue('99\u00a0h');
     expect(onValue).toHaveBeenLastCalledWith(99);
     expect(onValue).not.toHaveBeenCalledWith(24);
   });
@@ -96,10 +96,37 @@ describe('F2-17 NumberField limits', () => {
   });
 });
 
+describe('F2-17 NumberField stepper buttons', () => {
+  const stepButtons = () =>
+    document.querySelectorAll<HTMLButtonElement>('button[aria-hidden="true"]');
+
+  it('steps down and up with the − and + buttons, within the limits', async () => {
+    const { onValue } = renderField({ unit: 'hours', initial: 23.5, max: 24 });
+    const [minus, plus] = stepButtons();
+    await userEvent.click(plus!);
+    expect(onValue).toHaveBeenLastCalledWith(24);
+    await userEvent.click(plus!);
+    expect(onValue).toHaveBeenLastCalledWith(24);
+    await userEvent.click(minus!);
+    expect(onValue).toHaveBeenLastCalledWith(23.5);
+  });
+
+  it('starts from the minimum when the field is empty', async () => {
+    const { onValue } = renderField({ unit: 'minutes', min: 0 });
+    await userEvent.click(stepButtons()[1]!);
+    expect(onValue).toHaveBeenLastCalledWith(5);
+  });
+
+  it('RNF-10 keeps the buttons out of the tab order; the arrow keys do the same', () => {
+    renderField({ unit: 'hours', initial: 7 });
+    for (const button of stepButtons()) expect(button).toHaveAttribute('tabindex', '-1');
+  });
+});
+
 describe('F2-17 NumberField presentation', () => {
   it('shows the unit next to the number', () => {
     renderField({ unit: 'hours', initial: 7 });
-    expect(screen.getByText('h')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Sleep' })).toHaveValue('7\u00a0h');
   });
 
   it('RNF-10 shows the error under the field and announces it', () => {
