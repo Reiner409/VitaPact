@@ -14,6 +14,13 @@ export {
 export { Banner, type BannerProps, type BannerTone } from './components/Banner/Banner';
 export { Modal, type ModalProps, type ModalSize } from './components/Modal/Modal';
 export {
+  GroupDialog,
+  type GroupDialogFriend,
+  type GroupDialogProps,
+  type GroupDialogText,
+} from './components/GroupDialog/GroupDialog';
+export { EMPTY_GROUP, type GroupDraft } from './components/GroupDialog/useGroupForm';
+export {
   ConfirmDialog,
   type ConfirmDialogProps,
   type TypedConfirmation,
