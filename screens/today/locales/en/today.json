@@ -9,7 +9,10 @@
   "pillars": {
     "sleep": {
       "name": "Sleep",
-      "fields": { "hours": "Hours slept", "quality": "Sleep quality" },
+      "fields": {
+        "hours": "Hours slept",
+        "quality": "Sleep quality"
+      },
       "scale": {
         "quality": {
           "1": "Very poor",
@@ -22,7 +25,11 @@
     },
     "training": {
       "name": "Training",
-      "fields": { "trained": "Trained today?", "type": "Workout", "minutes": "Duration" },
+      "fields": {
+        "trained": "Trained today?",
+        "type": "Workout",
+        "minutes": "Duration"
+      },
       "options": {
         "type": {
           "gym": "Gym",
@@ -36,7 +43,9 @@
     },
     "food": {
       "name": "Clean eating",
-      "fields": { "rating": "How clean did you eat?" },
+      "fields": {
+        "rating": "How clean did you eat?"
+      },
       "scale": {
         "rating": {
           "1": "Disaster",
@@ -49,15 +58,37 @@
     },
     "sun": {
       "name": "Sun",
-      "fields": { "minutes": "Minutes in the sun" }
+      "fields": {
+        "minutes": "Minutes in the sun"
+      }
     }
   },
-  "units": { "hours": "h", "minutes": "min" },
-  "answers": { "yes": "Yes", "no": "No" },
+  "units": {
+    "hours": "h",
+    "minutes": "min"
+  },
+  "answers": {
+    "yes": "Yes",
+    "no": "No"
+  },
   "goalReached": "Goal reached",
   "errors": {
     "range": "Enter a value from {{min}} to {{max}}",
     "step": "Use steps of {{step}}",
-    "type": "Enter a number"
-  }
+    "type": "Enter a number",
+    "required": "Fill in this field"
+  },
+  "week": {
+    "label": "This week",
+    "missing": "Not logged",
+    "today": "Today"
+  },
+  "save": "Save day",
+  "dayScore": "Day score",
+  "notices": {
+    "saved": "Day saved.",
+    "failed": "The day could not be saved. Try again.",
+    "close": "Close"
+  },
+  "quickValue": "{{value}} {{unit}}"
 }

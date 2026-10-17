@@ -11,6 +11,9 @@ import {
  */
 export type LiveErrorCode = Extract<FieldErrorCode, 'range' | 'step' | 'type'>;
 
+/** After a save attempt, empty fields are flagged too. */
+export type ShownErrorCode = LiveErrorCode | 'required';
+
 const LIVE_CODES: ReadonlySet<FieldErrorCode> = new Set<LiveErrorCode>(['range', 'step', 'type']);
 
 const isLive = (code: FieldErrorCode): code is LiveErrorCode => LIVE_CODES.has(code);
@@ -20,6 +23,15 @@ export function liveErrorsOf(pillar: Pillar, values: PillarValues): Map<string, 
   return new Map(
     validatePillarValues(pillar, values).flatMap(({ field, code }) =>
       isLive(code) ? [[field, code] as const] : [],
+    ),
+  );
+}
+
+/** The errors to show once the user has tried to save: live errors plus empty fields. */
+export function savedErrorsOf(pillar: Pillar, values: PillarValues): Map<string, ShownErrorCode> {
+  return new Map(
+    validatePillarValues(pillar, values).flatMap(({ field, code }) =>
+      isLive(code) || code === 'required' ? [[field, code] as const] : [],
     ),
   );
 }

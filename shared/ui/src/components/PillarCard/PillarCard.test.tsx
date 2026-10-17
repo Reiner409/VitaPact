@@ -51,7 +51,17 @@ const sun: PillarCardPillar = {
   id: 'sun',
   color: 'sun',
   icon: 'sun',
-  fields: [{ kind: 'number', key: 'minutes', unit: 'minutes', min: 0, max: 1440, step: 1 }],
+  fields: [
+    {
+      kind: 'number',
+      key: 'minutes',
+      unit: 'minutes',
+      min: 0,
+      max: 1440,
+      step: 1,
+      quickValues: [10, 20, 30, 60],
+    },
+  ],
 };
 const hydration: PillarCardPillar = {
   id: 'hydration',
@@ -67,6 +77,7 @@ const text: PillarCardText = {
   unitLabel: (unit) => unit.slice(0, 3),
   optionLabel: (_field, option) => capitalised(option),
   scaleValueLabel: (field, value) => `${field} ${value} of 5`,
+  quickValueLabel: (unit, value) => `${value} ${unit.slice(0, 3)}`,
   yes: 'Yes',
   no: 'No',
 };
@@ -113,6 +124,12 @@ describe('F2-18 PillarCard', () => {
     renderWithTheme(<StatefulCard pillar={sun} title="Sun" />);
     expect(accentOf('Sun')).toBe('sun');
     expect(screen.getByRole('textbox', { name: 'Minutes' })).toBeInTheDocument();
+  });
+
+  it('RF-03 sets the minutes with a quick value button', async () => {
+    renderWithTheme(<StatefulCard pillar={sun} title="Sun" />);
+    await userEvent.click(screen.getByRole('button', { name: '30 min' }));
+    expect(screen.getByRole('textbox', { name: 'Minutes' })).toHaveValue('30');
   });
 
   it('RF-23 shows the test pillar with no change to the card', async () => {

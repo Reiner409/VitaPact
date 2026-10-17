@@ -26,6 +26,8 @@ export interface NumberField extends FieldBase {
   readonly min: number;
   readonly max: number;
   readonly step: number;
+  /** Common values offered as one-tap buttons, e.g. 10/20/30/60 minutes of sun. */
+  readonly quickValues?: readonly number[];
 }
 
 /** A whole-number rating such as 1-5 stars. */

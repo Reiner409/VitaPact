@@ -23,6 +23,8 @@ export function pillarTextOf(t: Translate, pillar: string): PillarCardText {
     unitLabel: (unit) => t(pillarKey.unit(unit)),
     optionLabel: (field, option) => t(pillarKey.option(pillar, field, option)),
     scaleValueLabel: (field, value) => t(pillarKey.scaleValue(pillar, field, value)),
+    quickValueLabel: (unit, value) =>
+      t('today:quickValue', { value, unit: t(pillarKey.unit(unit)) }),
     yes: t('today:answers.yes'),
     no: t('today:answers.no'),
   };
