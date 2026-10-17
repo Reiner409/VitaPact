@@ -35,6 +35,6 @@ test.describe('F3-TD-06 F3-TD-07 evening check-in (RF-03)', () => {
       page
         .getByRole('region', { name: 'Sun' })
         .getByRole('textbox', { name: 'Minutes in the sun' }),
-    ).toHaveValue('30');
+    ).toHaveValue('30\u00a0minutes');
   });
 });

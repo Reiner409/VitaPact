@@ -111,9 +111,9 @@ describe('RF-01 welcome step 2: goals', () => {
   it('shows the three goals with their defaults', async () => {
     renderScreen();
     await toGoals();
-    expect(goalField(en.goals.sleepHours.label)).toHaveValue('7.5');
-    expect(goalField(en.goals.workoutsPerWeek.label)).toHaveValue('3');
-    expect(goalField(en.goals.sunMinutes.label)).toHaveValue('20');
+    expect(goalField(en.goals.sleepHours.label)).toHaveValue('7.5\u00a0hours');
+    expect(goalField(en.goals.workoutsPerWeek.label)).toHaveValue('3\u00a0workouts');
+    expect(goalField(en.goals.sunMinutes.label)).toHaveValue('20\u00a0minutes');
   });
 
   it('flags a goal out of range under its field and stays on the step', async () => {
@@ -133,7 +133,7 @@ describe('RF-01 welcome step 2: goals', () => {
     await userEvent.type(goalField(en.goals.sleepHours.label), '8');
     await userEvent.click(continueButton());
     await userEvent.click(screen.getByRole('button', { name: en.back }));
-    expect(goalField(en.goals.sleepHours.label)).toHaveValue('8');
+    expect(goalField(en.goals.sleepHours.label)).toHaveValue('8\u00a0hours');
   });
 });
 

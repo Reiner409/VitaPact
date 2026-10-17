@@ -11,9 +11,18 @@
     "unprintable": "Remove the hidden characters from the nickname."
   },
   "goals": {
-    "sleepHours": { "label": "Sleep each night", "unit": "h" },
-    "workoutsPerWeek": { "label": "Workouts per week", "unit": "/wk" },
-    "sunMinutes": { "label": "Sun each day", "unit": "min" },
+    "sleepHours": {
+      "label": "Sleep each night",
+      "unit": "hours"
+    },
+    "workoutsPerWeek": {
+      "label": "Workouts each week",
+      "unit": "workouts"
+    },
+    "sunMinutes": {
+      "label": "Sun each day",
+      "unit": "minutes"
+    },
     "outOfRange": "Choose a value from {{min}} to {{max}}."
   },
   "privacy": {

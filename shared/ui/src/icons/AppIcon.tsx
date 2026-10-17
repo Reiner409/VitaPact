@@ -9,8 +9,10 @@ import {
   Dumbbell,
   ImageUp,
   Info,
+  Minus,
   Moon,
   NotebookPen,
+  Plus,
   Salad,
   Scale,
   Settings,
@@ -42,6 +44,8 @@ export const appIcons = {
   image: ImageUp,
   previous: ChevronLeft,
   next: ChevronRight,
+  decrease: Minus,
+  increase: Plus,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof appIcons;

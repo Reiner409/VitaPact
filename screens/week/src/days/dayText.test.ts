@@ -14,7 +14,7 @@ describe('F3-WK-04 the answers of a day', () => {
     expect(answerLines(t, training, { trained: true, type: 'gym', minutes: 45 })).toEqual([
       { label: 'Trained today?', answer: 'Yes' },
       { label: 'Workout', answer: 'Gym' },
-      { label: 'Duration', answer: '45 min' },
+      { label: 'Duration', answer: '45 minutes' },
     ]);
   });
 

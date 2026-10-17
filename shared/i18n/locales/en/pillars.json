@@ -55,11 +55,15 @@
     }
   },
   "units": {
-    "hours": "h",
-    "minutes": "min"
+    "hours": "hours",
+    "minutes": "minutes"
   },
   "answers": {
     "yes": "Yes",
     "no": "No"
+  },
+  "shortUnits": {
+    "hours": "h",
+    "minutes": "min"
   }
 }

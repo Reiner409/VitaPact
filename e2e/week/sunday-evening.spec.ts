@@ -43,7 +43,7 @@ test.describe('F3-WK-01..06 Sunday evening on the week (RF-04, RF-08, RF-10)', (
     await detail.getByRole('button', { name: 'Edit' }).click();
     await expect(
       page.getByRole('region', { name: 'Sleep' }).getByRole('textbox', { name: 'Hours slept' }),
-    ).toHaveValue('8');
+    ).toHaveValue('8\u00a0hours');
   });
 
   test('creates the signed weekly report and saves it as a PNG', async ({ page }) => {

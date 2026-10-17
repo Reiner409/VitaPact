@@ -1,4 +1,7 @@
-import { NumberInput, Text } from '@mantine/core';
+import { ActionIcon, NumberInput } from '@mantine/core';
+import { AppIcon, type IconName } from '../../icons/AppIcon';
+import { tokens } from '../../tokens';
+import { touchTarget } from '../touchTarget';
 import { fieldErrorProps, fieldStyles, optional } from '../fieldProps';
 
 export type NumberUnit = 'hours' | 'minutes' | 'kg';
@@ -25,6 +28,9 @@ const numberUnits: Record<NumberUnit, { step: number; decimals: number }> = {
   kg: { step: 0.1, decimals: 1 },
 };
 
+/** A non-breaking space between the number and its unit. */
+const UNIT_GAP = '\u00a0';
+
 const decimalsOf = (step: number) => step.toString().split('.')[1]?.length ?? 0;
 
 const stepping = (unit: NumberUnit, step: number | undefined) =>
@@ -33,6 +39,68 @@ const stepping = (unit: NumberUnit, step: number | undefined) =>
 const toValue = (raw: number | string): number | null =>
   raw === '' ? null : typeof raw === 'number' ? raw : Number(raw);
 
+interface Limits {
+  decimals: number;
+  min: number;
+  max: number | undefined;
+}
+
+/** One step up or down from the value (or from the minimum when empty), kept within the limits. */
+function stepped(value: number | null, by: number, { decimals, min, max }: Limits) {
+  const next = Number(((value ?? min) + by).toFixed(decimals));
+  return Math.min(max ?? Number.POSITIVE_INFINITY, Math.max(min, next));
+}
+
+/**
+ * The − and + of the stepper. They are a pointer shortcut only: the field itself takes the
+ * arrow keys, so the buttons stay out of the tab order and out of the accessibility tree.
+ */
+function StepButton({ icon, onStep }: { icon: IconName; onStep: () => void }) {
+  return (
+    <ActionIcon
+      variant="subtle"
+      radius="xl"
+      size={tokens.layout.minTouchTarget}
+      c="var(--vp-color-primary-strong)"
+      aria-hidden="true"
+      tabIndex={-1}
+      onMouseDown={(event) => event.preventDefault()}
+      onClick={onStep}
+    >
+      <AppIcon name={icon} />
+    </ActionIcon>
+  );
+}
+
+const stepperStyles = {
+  ...fieldStyles,
+  input: {
+    ...fieldStyles.input,
+    fontVariantNumeric: tokens.font.numericVariant,
+    textAlign: 'center' as const,
+    fontSize: tokens.font.h2.size,
+    fontWeight: tokens.font.weight.semibold,
+    borderRadius: tokens.radius.full,
+  },
+  section: { paddingInline: tokens.space[1] },
+};
+
+/** What every stepper shares, whatever its unit and limits. */
+const fixedProps = {
+  clampBehavior: 'none',
+  allowNegative: false,
+  hideControls: true,
+  inputMode: 'decimal',
+  leftSectionWidth: touchTarget.minWidth + tokens.space[2],
+  leftSectionPointerEvents: 'all',
+  rightSectionWidth: touchTarget.minWidth + tokens.space[2],
+  rightSectionPointerEvents: 'all',
+  errorProps: fieldErrorProps,
+  maw: tokens.layout.fieldMaxWidth,
+  styles: stepperStyles,
+} as const;
+
+/** Apple-style stepper: − and + around the number, centred, with its unit spelled out. */
 export function NumberField({
   label,
   unit,
@@ -46,6 +114,7 @@ export function NumberField({
   error,
 }: NumberFieldProps) {
   const { step, decimals } = stepping(unit, stepOverride);
+  const stepBy = (by: number) => onChange(stepped(value, by, { decimals, min, max }));
   return (
     <NumberInput
       label={label}
@@ -57,16 +126,10 @@ export function NumberField({
       {...optional('max', max)}
       {...optional('description', description)}
       {...optional('error', error)}
-      clampBehavior="none"
-      allowNegative={false}
-      hideControls
-      inputMode="decimal"
-      rightSection={<Text c="var(--vp-color-text-muted)">{unitLabel}</Text>}
-      errorProps={fieldErrorProps}
-      styles={{
-        ...fieldStyles,
-        input: { ...fieldStyles.input, fontVariantNumeric: 'tabular-nums' },
-      }}
+      {...fixedProps}
+      leftSection={<StepButton icon="decrease" onStep={() => stepBy(-step)} />}
+      suffix={UNIT_GAP + unitLabel}
+      rightSection={<StepButton icon="increase" onStep={() => stepBy(step)} />}
     />
   );
 }

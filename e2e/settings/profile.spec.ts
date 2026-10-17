@@ -13,13 +13,15 @@ test.describe('RF-01 edit the profile in settings', () => {
   test('keeps the new nickname and goals after a reload', async ({ page }) => {
     await openSettings(page);
     await page.getByRole('textbox', { name: 'Nickname' }).fill('Sam');
-    await page.getByRole('textbox', { name: 'Workouts per week' }).fill('4');
+    await page.getByRole('textbox', { name: 'Workouts each week' }).fill('4');
     await page.getByRole('button', { name: 'Save profile' }).click();
     await expect(page.getByRole('status')).toHaveText('Profile saved.');
 
     await page.reload();
     await expect(page.getByRole('textbox', { name: 'Nickname' })).toHaveValue('Sam');
-    await expect(page.getByRole('textbox', { name: 'Workouts per week' })).toHaveValue('4');
+    await expect(page.getByRole('textbox', { name: 'Workouts each week' })).toHaveValue(
+      '4\u00a0workouts',
+    );
   });
 });
 

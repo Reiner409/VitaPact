@@ -102,7 +102,9 @@ describe('F3-TD-05 sun card', () => {
   it('RF-03 sets the minutes with a quick button', async () => {
     await renderToday();
     await userEvent.click(card('Sun').getByRole('button', { name: '30 min' }));
-    expect(card('Sun').getByRole('textbox', { name: 'Minutes in the sun' })).toHaveValue('30');
+    expect(card('Sun').getByRole('textbox', { name: 'Minutes in the sun' })).toHaveValue(
+      '30\u00a0minutes',
+    );
   });
 
   it('RF-03 reaches the goal with the minutes of the profile', async () => {
@@ -122,12 +124,14 @@ describe('F3-TD-02 F3-TD-05 the saved day', () => {
     await saveDailyEntry(db, sampleEntry);
     await renderToday({ db, today: sampleEntry.date });
     await waitFor(() =>
-      expect(card('Sleep').getByRole('textbox', { name: 'Hours slept' })).toHaveDisplayValue('7.5'),
+      expect(card('Sleep').getByRole('textbox', { name: 'Hours slept' })).toHaveDisplayValue(
+        '7.5\u00a0hours',
+      ),
     );
     expect(card('Training').getByRole('radio', { name: 'Gym' })).toBeChecked();
     expect(card('Clean eating').getByRole('radio', { name: 'Clean' })).toBeChecked();
     expect(card('Sun').getByRole('textbox', { name: 'Minutes in the sun' })).toHaveDisplayValue(
-      '25',
+      '25\u00a0minutes',
     );
   });
 
@@ -164,7 +168,7 @@ describe('F3-TD-06 save day and daily score', () => {
     await saveDailyEntry(db, { ...sampleEntry, date: MONDAY });
     await renderToday({ db });
     const minutes = card('Sun').getByRole('textbox', { name: 'Minutes in the sun' });
-    await waitFor(() => expect(minutes).toHaveDisplayValue('25'));
+    await waitFor(() => expect(minutes).toHaveDisplayValue('25\u00a0minutes'));
     await userEvent.click(card('Sun').getByRole('button', { name: '60 min' }));
     await userEvent.click(saveButton());
     await screen.findByText(en.notices.saved);
@@ -192,7 +196,7 @@ describe('F3-TD-07 week strip', () => {
     expect(screen.getByText(/^Tuesday, October 13/)).toBeInTheDocument();
     await waitFor(() =>
       expect(card('Sun').getByRole('textbox', { name: 'Minutes in the sun' })).toHaveDisplayValue(
-        '25',
+        '25\u00a0minutes',
       ),
     );
   });

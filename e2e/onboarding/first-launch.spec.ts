@@ -11,7 +11,7 @@ test.describe('RF-01 RF-02 first launch, from the welcome to Today', () => {
     await page.getByRole('button', { name: 'Continue' }).click();
 
     const sleep = page.getByRole('textbox', { name: 'Sleep each night' });
-    await expect(sleep).toHaveValue('7.5');
+    await expect(sleep).toHaveValue('7.5\u00a0hours');
     await sleep.fill('8');
     await page.screenshot({ path: `${SCREENSHOTS}/B2-1280.png` });
     await page.getByRole('button', { name: 'Continue' }).click();
