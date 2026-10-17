@@ -117,7 +117,7 @@ The elements of the model become the shared components: sidebar and header (AppS
 
 - Week selector with forward and back arrows.
 - Large score (0-100) with the verdict at the top of the screen: it is the first thing the user sees. Below it, a single line with the four pillars in small type (sleep, training, eating, sun).
-- Seven clickable tiles, one per day (Mon-Sun), each with the day's score (0-100) and a dot coloured by score band. No table: details appear only when a day is clicked. That opens the day's summary with the values of the four pillars and the button to edit them (if the week is still open). The day score uses the same weights as the weekly score, without the weigh-in. On a rest day, training does not lower the score.
+- Seven clickable tiles, one per day (Mon-Sun), each with the day's score (0-100) and a dot coloured by score band. No table: details appear only when a day is clicked. That opens the day's summary with the values of the four pillars and the button to edit them (if the week is still open). The day score uses the pillar weights of the weekly score, without logging and the weigh-in. Each pillar earns the share of its goal it reached: sleep 70% hours against the goal and 30% quality, clean eating its 1-5 rating, sun its minutes against the goal. A day with no sleep, the lowest rating and no sun scores 0. On a rest day, training does not lower the score. On Today the score follows the answers as they are given; the day is stored only with "Save day".
 - Line chart of weight over the last 12 Sundays.
 - Button "Create report (Crea resoconto)" that opens the report modal.
 

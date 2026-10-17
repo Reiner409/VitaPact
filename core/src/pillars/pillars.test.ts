@@ -24,7 +24,7 @@ describe('RF-03 sleep pillar', () => {
   });
 
   it.each([-0.5, 24.5])('rejects %s hours, outside 0 to 24', (hours) => {
-    expect(errorCodes(sleepPillar, { hours, quality: 3 })).toEqual(['hours:range']);
+    expect(errorCodes(sleepPillar, { hours, quality: 3 })).toContain('hours:range');
   });
 
   it.each([0, 6])('rejects quality %s, outside 1 to 5', (quality) => {
@@ -36,7 +36,13 @@ describe('RF-03 sleep pillar', () => {
   });
 
   it('asks for every field', () => {
-    expect(errorCodes(sleepPillar, {})).toEqual(['hours:required', 'quality:required']);
+    expect(errorCodes(sleepPillar, { hours: 7 })).toEqual(['quality:required']);
+    expect(errorCodes(sleepPillar, {})).toEqual(['hours:required']);
+  });
+
+  it('asks no quality after 0 hours of sleep', () => {
+    expect(errorCodes(sleepPillar, { hours: 0 })).toEqual([]);
+    expect(errorCodes(sleepPillar, { hours: 0, quality: 1 })).toEqual(['quality:unexpected']);
   });
 
   it('rejects a field the pillar does not have', () => {

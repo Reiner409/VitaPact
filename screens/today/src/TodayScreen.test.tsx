@@ -40,10 +40,15 @@ describe('F3-TD-01 day header', () => {
 });
 
 describe('F3-TD-02 sleep card', () => {
-  it('RF-03 asks the hours and a quality of five steps', async () => {
+  it('RF-03 asks the hours and, once some sleep is logged, a quality of five steps', async () => {
     await renderToday();
-    expect(card('Sleep').getByRole('textbox', { name: 'Hours slept' })).toBeInTheDocument();
+    const hours = card('Sleep').getByRole('textbox', { name: 'Hours slept' });
+    expect(card('Sleep').queryAllByRole('radio')).toHaveLength(0);
+    await userEvent.type(hours, '7');
     expect(card('Sleep').getAllByRole('radio')).toHaveLength(5);
+    await userEvent.clear(hours);
+    await userEvent.type(hours, '0');
+    expect(card('Sleep').queryAllByRole('radio')).toHaveLength(0);
   });
 
   it('RF-03 turns green once the hours reach the goal of the profile', async () => {

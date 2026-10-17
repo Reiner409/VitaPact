@@ -1,5 +1,5 @@
 import { MINUTES_IN_A_DAY } from './limits';
-import { reachesGoal } from './goals';
+import { reachesGoal, shareOf } from './goals';
 import type { Pillar } from './types';
 
 export const sunPillar: Pillar = {
@@ -20,4 +20,5 @@ export const sunPillar: Pillar = {
   summaryField: 'minutes',
   goal: { cadence: 'daily', default: 20, min: 5, max: 240, step: 5, editable: true },
   isOnGoal: reachesGoal('minutes'),
+  dayProgress: (values, goal) => shareOf(values.minutes, goal),
 };

@@ -14,6 +14,18 @@ export interface ScaleInputProps {
 }
 
 const SCALE: ScaleValue[] = [1, 2, 3, 4, 5];
+
+/**
+ * One face per step, from crying to beaming, the same for every 1-5 rating in the app.
+ * The faces are decoration: each button is named by `getValueLabel`.
+ */
+export const SCALE_FACES: Record<ScaleValue, string> = {
+  1: '\u{1F62D}',
+  2: '\u{1F61F}',
+  3: '\u{1F610}',
+  4: '\u{1F642}',
+  5: '\u{1F601}',
+};
 const clampToScale = (value: number) => Math.min(5, Math.max(1, value)) as ScaleValue;
 
 const keySteps: Record<string, (current: number) => number> = {
@@ -25,7 +37,7 @@ const keySteps: Record<string, (current: number) => number> = {
   End: () => 5,
 };
 
-/** One to five dots, a radio group: Tab reaches it, arrows, Home and End move the choice. */
+/** One to five faces, a radio group: Tab reaches it, arrows, Home and End move the choice. */
 export function ScaleInput({ label, value, onChange, getValueLabel }: ScaleInputProps) {
   const labelId = useId();
   const dots = useRef<Array<HTMLButtonElement | null>>([]);
@@ -62,7 +74,7 @@ export function ScaleInput({ label, value, onChange, getValueLabel }: ScaleInput
             onClick={() => select(dot)}
             style={{ ...touchTarget, display: 'grid', placeItems: 'center', borderRadius: '50%' }}
           >
-            <ScaleDot filled={value !== null && dot <= value} />
+            <ScaleFace value={dot} selected={value === dot} />
           </UnstyledButton>
         ))}
       </Group>
@@ -70,19 +82,32 @@ export function ScaleInput({ label, value, onChange, getValueLabel }: ScaleInput
   );
 }
 
-function ScaleDot({ filled }: { filled: boolean }) {
-  const size = tokens.space[4];
+/** Faces not chosen stay visible but step back. */
+const FADED_OPACITY = 0.55;
+
+function ScaleFace({ value, selected }: { value: ScaleValue; selected: boolean }) {
+  const size = touchTarget.minHeight;
   return (
     <span
       aria-hidden="true"
+      data-selected={selected}
       style={{
+        display: 'grid',
+        placeItems: 'center',
         width: size,
         height: size,
         borderRadius: '50%',
-        border: `${tokens.border.strongWidth}px solid var(--vp-color-primary-strong)`,
-        backgroundColor: filled ? 'var(--vp-color-primary-strong)' : 'var(--vp-color-surface)',
-        transition: `background-color var(--vp-motion-fast) ${tokens.motion.easing}`,
+        fontSize: tokens.font.h1.size,
+        lineHeight: 1,
+        border: `${tokens.border.strongWidth}px solid ${selected ? 'var(--vp-color-primary-strong)' : 'transparent'}`,
+        backgroundColor: selected ? 'var(--vp-color-primary-soft)' : 'transparent',
+        // Faces not chosen turn grey, so the choice reads at a glance.
+        filter: selected ? 'none' : 'grayscale(1)',
+        opacity: selected ? 1 : FADED_OPACITY,
+        transition: `opacity var(--vp-motion-fast) ${tokens.motion.easing}`,
       }}
-    />
+    >
+      {SCALE_FACES[value]}
+    </span>
   );
 }

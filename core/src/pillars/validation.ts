@@ -27,8 +27,13 @@ function unexpectedFieldErrors(values: PillarValues, askedKeys: ReadonlySet<stri
     .map(([key]) => ({ field: key, code: 'unexpected' }));
 }
 
-function isAsked(field: PillarField, values: PillarValues): boolean {
-  return !field.askedWhen || values[field.askedWhen.key] === field.askedWhen.equals;
+/** Whether a field is asked, given the other answers of its pillar. */
+export function isAsked(field: PillarField, values: PillarValues): boolean {
+  const condition = field.askedWhen;
+  if (!condition) return true;
+  const value = values[condition.key];
+  if ('above' in condition) return typeof value === 'number' && value > condition.above;
+  return value === condition.equals;
 }
 
 function fieldErrorCode(field: PillarField, value: FieldValue | undefined): FieldErrorCode | null {

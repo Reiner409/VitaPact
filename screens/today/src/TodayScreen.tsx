@@ -6,7 +6,9 @@ import {
   type Profile,
   type VitaPactDatabase,
 } from '@vitapact/core/storage';
-import { Stack } from '@vitapact/ui';
+import { ScoreRing, Stack } from '@vitapact/ui';
+import { useTranslation } from '@vitapact/i18n';
+import { dayScore } from '@vitapact/core/scoring';
 import { useState } from 'react';
 import { DayHeader } from './day/DayHeader';
 import { useDayValues } from './day/useDayValues';
@@ -26,7 +28,7 @@ export interface TodayScreenProps {
   now?: () => Date;
 }
 
-export function TodayScreen({
+function useToday({
   db,
   profile,
   today = toCalendarDate(new Date()),
@@ -34,15 +36,27 @@ export function TodayScreen({
   now = () => new Date(),
 }: TodayScreenProps) {
   const [day, setDay] = useState(openedDay ?? today);
-  const { values, setField } = useDayValues(db, day);
+  const dayValues = useDayValues(db, day);
   const goals = pillarGoalsOf(profile?.goals ?? DEFAULT_GOALS);
   const week = useWeekDays(db, today, goals);
-  const saving = useSaveDay(db, week.reload, now);
+  const onSaved = () => {
+    dayValues.markSaved();
+    week.reload();
+  };
+  const saving = useSaveDay(db, onSaved, now);
+  return { today, day, setDay, ...dayValues, goals, week, saving };
+}
+
+export function TodayScreen(props: TodayScreenProps) {
+  const { t } = useTranslation('today');
+  const { today, day, setDay, values, setField, changed, goals, week, saving } = useToday(props);
 
   return (
     <Stack>
       <DayHeader date={day} />
       <TodayWeekStrip days={week.days} today={today} onSelectDay={setDay} />
+      {/* Follows every answer as it is given; only "Save day" stores it (F3-TD-06). */}
+      <ScoreRing score={dayScore(values, goals)} label={t('dayScore')} />
       {pillarRegistry.list().map((pillar) => (
         <TodayPillarCard
           key={pillar.id}
@@ -55,7 +69,7 @@ export function TodayScreen({
       ))}
       <SaveDay
         onSave={() => void saving.save(day, values)}
-        savedScore={week.days.find(({ date }) => date === day)?.score ?? null}
+        changed={changed}
         notice={saving.notice}
         onCloseNotice={saving.closeNotice}
       />

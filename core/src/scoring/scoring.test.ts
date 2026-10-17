@@ -6,7 +6,7 @@ import { VERDICT_BANDS, dayScore, daysOnGoal, scoreWeights, verdictBand, weekSco
 const goals: Goals = { sleep: 7.5, training: 3, food: 4, sun: 20 };
 
 const perfectDay: DayValues = {
-  sleep: { hours: 8, quality: 4 },
+  sleep: { hours: 8, quality: 5 },
   training: { trained: true, type: 'gym', minutes: 45 },
   food: { rating: 5 },
   sun: { minutes: 30 },
@@ -143,12 +143,32 @@ describe('RF-09 daily score (section 5.3)', () => {
     expect(dayScore(restDay, goals)).toBe(100);
   });
 
-  it('counts only logging on a day off every goal', () => {
-    expect(dayScore(missedDay, goals)).toBe(21);
+  it('gives 0 to a day with nothing done: no sleep, worst food, no sun', () => {
+    const nothing: DayValues = {
+      sleep: { hours: 0 },
+      training: { trained: false },
+      food: { rating: 1 },
+      sun: { minutes: 0 },
+    };
+    expect(dayScore(nothing, goals)).toBe(0);
+    // A quality left over from before the hours were set to 0 is not asked, so it gives nothing.
+    expect(dayScore({ ...nothing, sleep: { hours: 0, quality: 5 } }, goals)).toBe(0);
   });
 
-  it('uses the weekly weights without the weigh-in', () => {
-    expect(dayScore(dayMeeting('sleep', 'training'), goals)).toBe(68);
+  it('gives each pillar the share of its goal reached, quality and food included', () => {
+    // Sleep 5 of 7.5 h at quality 2: 0.7 x 2/3 + 0.3 x 1/4; food 2 of 5: 1/4; sun 0.
+    expect(dayScore(missedDay, goals)).toBe(34);
+  });
+
+  it('raises the score with a better sleep quality or food rating alone', () => {
+    const betterSleep = { ...missedDay, sleep: { hours: 5, quality: 5 } };
+    const betterFood = { ...missedDay, food: { rating: 5 } };
+    expect(dayScore(betterSleep, goals)).toBeGreaterThan(dayScore(missedDay, goals));
+    expect(dayScore(betterFood, goals)).toBeGreaterThan(dayScore(missedDay, goals));
+  });
+
+  it('uses the weekly pillar weights, without logging or the weigh-in', () => {
+    expect(dayScore(dayMeeting('sleep', 'training'), goals)).toBe(69);
   });
 
   it('follows alternative weights', () => {

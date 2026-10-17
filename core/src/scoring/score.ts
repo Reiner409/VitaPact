@@ -38,11 +38,13 @@ export function weekScore(input: WeekScoreInput, options: ScoreOptions = {}): nu
   ]);
 }
 
-/** Section 5.3: the weekly weights without the weigh-in; a rest day does not lower the score. */
+/**
+ * Section 5.3: the pillar weights of the week, each pillar earning the share of its goal it
+ * reached, so a day with nothing done scores 0. A rest day does not lower the score.
+ */
 export function dayScore(day: DayValues, goals: Goals, options: ScoreOptions = {}): number {
   const { weights = scoreWeights, pillars = pillarRegistry } = options;
   return toScore([
-    { weight: weights.logging, progress: 1 },
     ...pillars.list().map((pillar) => ({
       weight: ownValue(weights.pillars, pillar.id) ?? 0,
       progress: pillarDayProgress(pillar, day, goals),
@@ -65,7 +67,9 @@ function pillarWeekProgress(pillar: Pillar, { days, goals }: WeekScoreInput): nu
 function pillarDayProgress(pillar: Pillar, day: DayValues, goals: Goals): number | null {
   const onGoal = isDayOnGoal(pillar, day, goals);
   if (pillar.goal.cadence === 'weekly') return onGoal ? 1 : null;
-  return onGoal ? 1 : 0;
+  const values = day[pillar.id];
+  if (values === undefined || !pillar.dayProgress) return onGoal ? 1 : 0;
+  return pillar.dayProgress(values, goalOf(pillar, goals));
 }
 
 function isDayOnGoal(pillar: Pillar, day: DayValues, goals: Goals): boolean {
