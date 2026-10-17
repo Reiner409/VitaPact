@@ -4,11 +4,12 @@ import type { Group } from '@vitapact/core/storage';
 import { useTranslation } from '@vitapact/i18n';
 import { RankingList, Stack } from '@vitapact/ui';
 import type { FriendsData } from '../groups/groupStore';
-import { monthlyRows, weeklyRows } from './rankingRows';
+import { monthlyRows, selectable, weeklyRows, type OnSelectFriend } from './rankingRows';
 
 export interface GroupRankingsProps {
   data: FriendsData;
   group: Group;
+  onSelectFriend: OnSelectFriend;
 }
 
 const weekNumberOf = (week: string) => Number(week.slice(week.indexOf('W') + 1));
@@ -19,7 +20,7 @@ function monthName(week: string, language: string): string {
 }
 
 /** Section 5.4: the week's ranking, then the month's; You always have a row. */
-export function GroupRankings({ data, group }: GroupRankingsProps) {
+export function GroupRankings({ data, group, onSelectFriend }: GroupRankingsProps) {
   const { t, i18n } = useTranslation('friends');
   const input = { memberIds: group.memberIds, ownUserId: data.ownUserId, reports: data.reports };
   const nicknames = new Map(data.friends.map(({ userId, nickname }) => [userId, nickname]));
@@ -31,12 +32,15 @@ export function GroupRankings({ data, group }: GroupRankingsProps) {
       <RankingList
         label={t('ranking.weekly', { week: weekNumberOf(week) })}
         youLabel={t('ranking.you')}
-        rows={weeklyRows(t, weeklyRanking(input, week), nicknameOf)}
+        rows={selectable(weeklyRows(t, weeklyRanking(input, week), nicknameOf), onSelectFriend)}
       />
       <RankingList
         label={t('ranking.monthly', { month: monthName(week, i18n.language) })}
         youLabel={t('ranking.you')}
-        rows={monthlyRows(t, monthlyRanking(input, monthOfWeek(week)), nicknameOf)}
+        rows={selectable(
+          monthlyRows(t, monthlyRanking(input, monthOfWeek(week)), nicknameOf),
+          onSelectFriend,
+        )}
       />
     </Stack>
   );

@@ -8,10 +8,11 @@ export interface GroupPanelProps {
   data: FriendsData;
   selected: Group;
   onSelect: (groupId: string) => void;
+  onSelectFriend: (userId: string) => void;
 }
 
 /** RF-25: the group selector and what the chosen group shows. */
-export function GroupPanel({ data, selected, onSelect }: GroupPanelProps) {
+export function GroupPanel({ data, selected, onSelect, onSelectFriend }: GroupPanelProps) {
   const { t } = useTranslation('friends');
   return (
     <>
@@ -21,7 +22,7 @@ export function GroupPanel({ data, selected, onSelect }: GroupPanelProps) {
         value={selected.id}
         onChange={onSelect}
       />
-      <GroupOverview group={selected} data={data} />
+      <GroupOverview group={selected} data={data} onSelectFriend={onSelectFriend} />
     </>
   );
 }

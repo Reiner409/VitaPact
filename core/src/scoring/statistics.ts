@@ -73,7 +73,8 @@ export function weightSeries(lastWeek: IsoWeek, weighIns: readonly WeighInWeight
   }));
 }
 
-function weeksEndingWith(lastWeek: IsoWeek): IsoWeek[] {
+/** The 12 weeks that end with the given one, oldest first (RF-08, RF-13). */
+export function weeksEndingWith(lastWeek: IsoWeek): IsoWeek[] {
   const weeks: IsoWeek[] = [];
   for (let week = lastWeek; weeks.length < WEIGHT_SERIES_WEEKS; week = previousWeek(week)) {
     weeks.push(week);

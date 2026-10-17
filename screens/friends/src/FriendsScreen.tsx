@@ -1,8 +1,9 @@
 import { toCalendarDate, type CalendarDate } from '@vitapact/core/calendar';
-import type { Group, Profile, VitaPactDatabase } from '@vitapact/core/storage';
+import type { Friend, Group, Profile, VitaPactDatabase } from '@vitapact/core/storage';
 import { useTranslation } from '@vitapact/i18n';
 import { Banner, Button, EmptyState, PageHeader, Stack } from '@vitapact/ui';
 import { useState } from 'react';
+import { FriendDialog } from './friend/FriendDialog';
 import { createGroup, type NewGroup } from './groups/groupStore';
 import { GroupPanel } from './groups/GroupPanel';
 import { NewGroupDialog } from './groups/NewGroupDialog';
@@ -42,6 +43,7 @@ function useFriendsScreen({
 }: FriendsScreenProps) {
   const { t } = useTranslation('friends');
   const { data, reload } = useFriendsData(db, profile, today);
+  const detail = useFriendDetail(data?.friends ?? [], reload);
   const [selectedId, setSelectedId] = useState<string>();
   const [creating, setCreating] = useState(false);
   const [savedFrom, setSavedFrom] = useState<string>();
@@ -65,10 +67,31 @@ function useFriendsScreen({
     await reload();
   }
   const selected = data && pickGroup(data.groups, selectedId);
-  return { data, selected, setSelectedId, creating, setCreating, create, addReport, savedFrom };
+  return {
+    ...{ db, data, selected, setSelectedId, creating, setCreating },
+    ...{ create, addReport, savedFrom, detail },
+  };
 }
 
 type FriendsScreenState = ReturnType<typeof useFriendsScreen>;
+
+/** F3-FR-08: the friend whose history is open, and the notice once one is removed. */
+function useFriendDetail(friends: readonly Friend[], reload: () => Promise<void>) {
+  const [friendId, setFriendId] = useState<string>();
+  const [removed, setRemoved] = useState<string>();
+  const friend = friends.find(({ userId }) => userId === friendId);
+  return {
+    friend,
+    removed,
+    open: setFriendId,
+    close: () => setFriendId(undefined),
+    onRemoved: async () => {
+      setRemoved(friend?.nickname);
+      setFriendId(undefined);
+      await reload();
+    },
+  };
+}
 
 function FriendsActions({ screen }: { screen: FriendsScreenState }) {
   const { t } = useTranslation('friends');
@@ -85,9 +108,18 @@ function FriendsActions({ screen }: { screen: FriendsScreenState }) {
 }
 
 function FriendsDialogs({ screen }: { screen: FriendsScreenState }) {
-  const { addReport, data } = screen;
+  const { addReport, data, detail } = screen;
   return (
     <>
+      {data && (
+        <FriendDialog
+          db={screen.db}
+          friend={detail.friend}
+          lastWeek={data.rankingWeek}
+          onClose={detail.close}
+          onRemoved={detail.onRemoved}
+        />
+      )}
       <NewGroupDialog
         opened={screen.creating}
         friends={data?.friends ?? []}
@@ -116,6 +148,9 @@ export function FriendsScreen(props: FriendsScreenProps) {
         subtitle={t('addReport.pasteHint')}
         action={<FriendsActions screen={screen} />}
       />
+      {screen.detail.removed !== undefined && (
+        <Banner tone="info">{t('remove.done', { nickname: screen.detail.removed })}</Banner>
+      )}
       {screen.savedFrom !== undefined && (
         <Banner tone="info">{t('addReport.saved', { nickname: screen.savedFrom })}</Banner>
       )}
@@ -128,7 +163,12 @@ export function FriendsScreen(props: FriendsScreenProps) {
         />
       )}
       {data && selected && (
-        <GroupPanel data={data} selected={selected} onSelect={screen.setSelectedId} />
+        <GroupPanel
+          data={data}
+          selected={selected}
+          onSelect={screen.setSelectedId}
+          onSelectFriend={screen.detail.open}
+        />
       )}
       <FriendsDialogs screen={screen} />
     </Stack>
