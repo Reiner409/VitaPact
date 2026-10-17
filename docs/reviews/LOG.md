@@ -2,6 +2,20 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-17 · F3-NB-02, F3-NB-03 · #44 · Approved after changes
+
+- Checks: verify ✔ (1079 tests), e2e ✔ (30 tests on e3963d2; the fix commit 2a7b2c0 changes only
+  `NoteList.tsx` and a unit test, verify rerun ✔).
+- Covered: RF-17 (search, tag filter, tag suggestions, D32), RNF-02 (privacy banner on the list and
+  the editor).
+- Required and done: `NoteList.tsx` → stop applying a tag filter once no note has that tag, or the list
+  stayed narrowed with no chip to clear it (test "drops the tag filter once no note has that tag any
+  more"); PR body → the protected-notes search test moves to F3-NB-05; PR title shortened to 59
+  characters (G6.7).
+- Accepted: the e2e test clicks the tag chip by text, because Playwright cannot click Mantine's hidden
+  chip input.
+- New rule: G9.13.
+
 ## 2026-10-12 · F2-12 · #28 · Approved
 
 - Checks: CI green; verify ✔, e2e ✔. Main merged in after #26, and both export sets were kept in `report/index.ts`.
