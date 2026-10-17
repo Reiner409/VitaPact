@@ -1,29 +1,35 @@
-import { checkGroupDetails, type GroupDetailsError } from '@vitapact/core/groups';
+import {
+  checkGroupDetails,
+  type GroupDetails,
+  type GroupDetailsError,
+} from '@vitapact/core/groups';
 import { useState, type FormEvent } from 'react';
-import type { NewGroup } from './groupStore';
 
-const EMPTY: NewGroup = { name: '', stake: '', memberIds: [] };
+/** What the dialog edits: name and stake as typed, members picked among the friends. */
+export interface GroupDraft extends GroupDetails {
+  memberIds: readonly string[];
+}
+
+export const EMPTY_GROUP: GroupDraft = { name: '', stake: '', memberIds: [] };
+
 const NAME_ERRORS: readonly GroupDetailsError[] = ['nameMissing', 'nameTooLong'];
 const isNameError = (error: GroupDetailsError) => NAME_ERRORS.includes(error);
 
-/** The fields of the New group dialog, checked by core before anything is saved. */
-export function useNewGroupForm(onCreate: (group: NewGroup) => Promise<void>, onClose: () => void) {
-  const [group, setGroup] = useState(EMPTY);
+/** The group fields, checked by core before anything is saved (RF-25). */
+export function useGroupForm(
+  initial: GroupDraft,
+  onSave: (group: GroupDraft) => Promise<void>,
+  onClose: () => void,
+) {
+  const [group, setGroup] = useState(initial);
   const [errors, setErrors] = useState<readonly GroupDetailsError[]>([]);
   const [saving, setSaving] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
 
-  const edit = (change: Partial<NewGroup>, keepError: (error: GroupDetailsError) => boolean) => {
+  const edit = (change: Partial<GroupDraft>, keepError: (error: GroupDetailsError) => boolean) => {
     setGroup((current) => ({ ...current, ...change }));
     setErrors((current) => current.filter(keepError));
   };
-
-  function close() {
-    setGroup(EMPTY);
-    setErrors([]);
-    setSaveFailed(false);
-    onClose();
-  }
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -32,8 +38,8 @@ export function useNewGroupForm(onCreate: (group: NewGroup) => Promise<void>, on
     setSaving(true);
     setSaveFailed(false);
     try {
-      await onCreate({ ...checked.details, memberIds: group.memberIds });
-      close();
+      await onSave({ ...checked.details, memberIds: group.memberIds });
+      onClose();
     } catch {
       // The dialog stays open with what the user typed, so they can try again.
       setSaveFailed(true);
@@ -49,7 +55,7 @@ export function useNewGroupForm(onCreate: (group: NewGroup) => Promise<void>, on
     setStake: (stake: string) => edit({ stake }, isNameError),
     setMemberIds: (memberIds: string[]) => setGroup((current) => ({ ...current, memberIds })),
   };
-  return { fields, saving, saveFailed, submit, close };
+  return { fields, saving, saveFailed, submit };
 }
 
-export type NewGroupFields = ReturnType<typeof useNewGroupForm>['fields'];
+export type GroupFormFields = ReturnType<typeof useGroupForm>['fields'];

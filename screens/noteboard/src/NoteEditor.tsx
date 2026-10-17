@@ -1,17 +1,25 @@
 import { useTranslation } from '@vitapact/i18n';
-import { Button, ConfirmDialog, TextArea, TextField } from '@vitapact/ui';
+import { Button, ChipGroup, ConfirmDialog, Stack, TextArea, TextField } from '@vitapact/ui';
 import { useState } from 'react';
 import { NOTE_LIMITS, canSave, type NoteDraft } from './notes/noteDraft';
 
 export interface NoteEditorProps {
   initial: NoteDraft;
+  /** Tags of the other notes, offered as one-tap choices (D32). */
+  tagSuggestions: string[];
   onSave: (draft: NoteDraft) => void;
   onClose: () => void;
   /** Present only for a note that is already saved. */
   onDelete?: () => void;
 }
 
-export function NoteEditor({ initial, onSave, onClose, onDelete }: NoteEditorProps) {
+export function NoteEditor({
+  initial,
+  tagSuggestions,
+  onSave,
+  onClose,
+  onDelete,
+}: NoteEditorProps) {
   const { t } = useTranslation('noteboard');
   const [draft, setDraft] = useState(initial);
   const counter = (length: number, max: number) => t('editor.counter', { length, max });
@@ -23,17 +31,47 @@ export function NoteEditor({ initial, onSave, onClose, onDelete }: NoteEditorPro
 
   return (
     <section aria-label={t('editor.label')}>
-      <TextField label={t('editor.title')} {...field('title')} formatCounter={counter} />
-      <TextArea label={t('editor.body')} {...field('body')} />
-      <TextField label={t('editor.tag')} {...field('tag')} description={t('editor.tagHint')} />
-      <Button disabled={!canSave(draft)} onClick={() => onSave(draft)}>
-        {t('actions.save')}
-      </Button>
-      <Button variant="secondary" onClick={onClose}>
-        {t('actions.back')}
-      </Button>
-      {onDelete && <DeleteNote onDelete={onDelete} />}
+      <Stack>
+        <TextField label={t('editor.title')} {...field('title')} formatCounter={counter} />
+        <TextArea label={t('editor.body')} {...field('body')} />
+        <TextField label={t('editor.tag')} {...field('tag')} description={t('editor.tagHint')} />
+        <TagSuggestions
+          tags={tagSuggestions}
+          value={draft.tag}
+          onChange={(tag) => setDraft({ ...draft, tag })}
+        />
+        <Stack horizontal gap="tight">
+          <Button disabled={!canSave(draft)} onClick={() => onSave(draft)}>
+            {t('actions.save')}
+          </Button>
+          <Button variant="secondary" onClick={onClose}>
+            {t('actions.back')}
+          </Button>
+          {onDelete && <DeleteNote onDelete={onDelete} />}
+        </Stack>
+      </Stack>
     </section>
+  );
+}
+
+function TagSuggestions({
+  tags,
+  value,
+  onChange,
+}: {
+  tags: string[];
+  value: string;
+  onChange: (tag: string) => void;
+}) {
+  const { t } = useTranslation('noteboard');
+  if (tags.length === 0) return null;
+  return (
+    <ChipGroup
+      label={t('editor.suggestions')}
+      options={tags.map((tag) => ({ value: tag, label: tag }))}
+      value={value}
+      onChange={onChange}
+    />
   );
 }
 

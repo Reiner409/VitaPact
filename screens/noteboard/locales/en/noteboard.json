@@ -21,7 +21,8 @@
     "body": "Text",
     "tag": "Tag",
     "tagHint": "Optional, e.g. Psychologist or Activity",
-    "counter": "{{length}} / {{max}}"
+    "counter": "{{length}} / {{max}}",
+    "suggestions": "Tags already used"
   },
   "delete": {
     "title": "Delete this note?",
@@ -34,5 +35,17 @@
     "save": "The note could not be saved on this device. Try again.",
     "delete": "The note could not be deleted. Try again.",
     "close": "Close"
+  },
+  "privacy": "These notes are never shared or included in the QR code.",
+  "search": {
+    "label": "Search notes"
+  },
+  "filter": {
+    "label": "Filter by tag",
+    "all": "All"
+  },
+  "noMatch": {
+    "title": "No notes match",
+    "description": "Try another word or another tag."
   }
 }
