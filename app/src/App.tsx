@@ -37,7 +37,8 @@ function Shell({ clock, ...props }: ScreenProps & { clock: Clock }) {
 
   const shown = visibleScreen(current, props.profile);
   const CurrentScreen = screens[shown];
-  if (shown === 'onboarding') return <CurrentScreen {...props} />;
+  // The weigh-in needs a profile, so it waits until onboarding has created one.
+  const onboarding = shown === 'onboarding';
 
   const navItems: AppShellNavItem[] = routes.flatMap(({ id, nav }) =>
     nav
@@ -53,9 +54,13 @@ function Shell({ clock, ...props }: ScreenProps & { clock: Clock }) {
       : [],
   );
   return (
-    <AppShell navLabel={t('nav.label')} navItems={navItems} banner={weighIn.banner}>
+    <AppShell
+      navLabel={t('nav.label')}
+      navItems={navItems}
+      banner={onboarding ? undefined : weighIn.banner}
+    >
       <CurrentScreen {...props} />
-      {weighIn.dialog}
+      {!onboarding && weighIn.dialog}
     </AppShell>
   );
 }
