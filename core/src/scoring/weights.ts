@@ -10,7 +10,7 @@ export const scoreWeights: ScoreWeights = {
 };
 
 export interface ScoreWeights {
-  /** Days logged out of 7. */
+  /** Days logged out of 7; part of the weekly score only. */
   readonly logging: number;
   /** Sunday weigh-in done; never part of the daily score. */
   readonly weighIn: number;

@@ -1,24 +1,24 @@
 import { useTranslation } from '@vitapact/i18n';
-import { Button, ScoreRing, Toast } from '@vitapact/ui';
+import { Button, Toast } from '@vitapact/ui';
 import type { SaveNotice } from './useSaveDay';
 
 export interface SaveDayProps {
   onSave: () => void;
-  /** The score of the saved entry of the day shown, or `null` before its first save. */
-  savedScore: number | null;
+  /** Values changed since the last save: they stay on this screen until "Save day". */
+  changed: boolean;
   notice: SaveNotice;
   onCloseNotice: () => void;
 }
 
-/** F3-TD-06: the save button, the day's score once saved and the confirmation. */
-export function SaveDay({ onSave, savedScore, notice, onCloseNotice }: SaveDayProps) {
+/** F3-TD-06: the save button, a reminder of unsaved changes and the confirmation. */
+export function SaveDay({ onSave, changed, notice, onCloseNotice }: SaveDayProps) {
   const { t } = useTranslation('today');
   return (
     <>
       <div>
         <Button onClick={onSave}>{t('save')}</Button>
       </div>
-      {savedScore !== null && <ScoreRing score={savedScore} label={t('dayScore')} />}
+      {changed && <p>{t('unsaved')}</p>}
       <Toast
         opened={notice !== null}
         tone={notice === 'failed' ? 'error' : 'success'}

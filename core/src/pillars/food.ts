@@ -1,4 +1,4 @@
-import { reachesGoal } from './goals';
+import { ratingShare, reachesGoal } from './goals';
 import type { Pillar } from './types';
 
 /** A day of clean eating is rated 4 or 5 (section 9, `cleanOk`). */
@@ -19,4 +19,5 @@ export const foodPillar: Pillar = {
     editable: false,
   },
   isOnGoal: reachesGoal('rating'),
+  dayProgress: (values) => ratingShare(values.rating),
 };

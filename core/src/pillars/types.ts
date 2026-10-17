@@ -9,11 +9,13 @@ export type DayValues = Readonly<Record<string, PillarValues | undefined>>;
 /** Goals per pillar id, e.g. `{ sleep: 7.5, training: 3, food: 4, sun: 20 }`. */
 export type Goals = Readonly<Record<string, number>>;
 
-/** A field is asked only while another field of the same pillar holds the given value. */
-export interface FieldCondition {
-  readonly key: string;
-  readonly equals: FieldValue;
-}
+/**
+ * A field is asked only while another field of the same pillar holds the given value, or a
+ * number above the given one (sleep quality needs some hours of sleep).
+ */
+export type FieldCondition =
+  | { readonly key: string; readonly equals: FieldValue }
+  | { readonly key: string; readonly above: number };
 
 interface FieldBase {
   readonly key: string;
@@ -75,6 +77,11 @@ export interface Pillar {
   readonly summaryField: string;
   readonly goal: PillarGoal;
   isOnGoal(values: PillarValues, goal: number): boolean;
+  /**
+   * How much of the day's goal was reached, from 0 to 1, for the day score (RF-09). Without it
+   * the day counts as 1 on goal and 0 otherwise.
+   */
+  dayProgress?(values: PillarValues, goal: number): number;
 }
 
 export type FieldErrorCode = 'required' | 'type' | 'range' | 'step' | 'option' | 'unexpected';

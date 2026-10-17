@@ -5,4 +5,4 @@ export { sleepPillar } from './sleep';
 export { sunPillar } from './sun';
 export { trainingPillar, WORKOUT_TYPES } from './training';
 export type * from './types';
-export { validatePillarValues } from './validation';
+export { isAsked, validatePillarValues } from './validation';

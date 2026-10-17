@@ -8,8 +8,10 @@ export type PillarCardValues = Readonly<Record<string, PillarFieldValue | undefi
 
 interface FieldBase {
   readonly key: string;
-  /** The field is asked only while another field holds this value. */
-  readonly askedWhen?: { readonly key: string; readonly equals: PillarFieldValue };
+  /** The field is asked only while another field holds this value, or a number above it. */
+  readonly askedWhen?:
+    | { readonly key: string; readonly equals: PillarFieldValue }
+    | { readonly key: string; readonly above: number };
 }
 
 export type PillarCardField = FieldBase &
@@ -34,5 +36,11 @@ export interface PillarCardPillar {
   readonly fields: readonly PillarCardField[];
 }
 
-export const isAsked = (field: PillarCardField, values: PillarCardValues) =>
-  !field.askedWhen || values[field.askedWhen.key] === field.askedWhen.equals;
+/** Same rule as core's `isAsked`; shared/ui reads the shape only, so it keeps its own copy. */
+export function isAsked(field: PillarCardField, values: PillarCardValues): boolean {
+  const condition = field.askedWhen;
+  if (!condition) return true;
+  const value = values[condition.key];
+  if ('above' in condition) return typeof value === 'number' && value > condition.above;
+  return value === condition.equals;
+}

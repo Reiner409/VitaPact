@@ -25,5 +25,6 @@
     "failed": "The day could not be saved. Try again.",
     "close": "Close"
   },
-  "quickValue": "{{value}} {{unit}}"
+  "quickValue": "{{value}} {{unit}}",
+  "unsaved": "Your changes are not saved yet."
 }
