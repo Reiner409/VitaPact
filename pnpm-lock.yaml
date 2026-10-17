@@ -201,6 +201,9 @@ importers:
       '@vitapact/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
+      '@vitapact/platform':
+        specifier: workspace:*
+        version: link:../../platform
       '@vitapact/ui':
         specifier: workspace:*
         version: link:../../shared/ui
