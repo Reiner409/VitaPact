@@ -24,10 +24,13 @@ export function NoteList({ notes, filter, onFilterChange, onOpen, onCreate }: No
       />
     );
   }
+  const tags = usedTags(notes);
+  // A tag whose last note was deleted or retagged has no chip left to clear it, so it stops applying.
+  const applied = tags.includes(filter.tag) ? filter : { ...filter, tag: '' };
   return (
     <Stack>
-      <NoteFilters tags={usedTags(notes)} filter={filter} onChange={onFilterChange} />
-      <FoundNotes notes={filterNotes(notes, filter)} onOpen={onOpen} />
+      <NoteFilters tags={tags} filter={applied} onChange={onFilterChange} />
+      <FoundNotes notes={filterNotes(notes, applied)} onOpen={onOpen} />
     </Stack>
   );
 }

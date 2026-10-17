@@ -167,6 +167,18 @@ describe('RF-17 Noteboard search and tags', () => {
     expect(screen.getByRole('button', { name: /Session/ })).toBeInTheDocument();
   });
 
+  it('drops the tag filter once no note has that tag any more', async () => {
+    const { user } = renderBoard([savedNote, walkNote]);
+    const filter = await screen.findByRole('radiogroup', { name: en.filter.label });
+    await user.click(within(filter).getByRole('radio', { name: 'Activity' }));
+    await user.click(screen.getByRole('button', { name: /Long walk/ }));
+    await user.click(screen.getByRole('button', { name: en.actions.delete }));
+    await user.click(await screen.findByRole('button', { name: en.delete.confirm }));
+
+    expect(await screen.findByRole('button', { name: /Session/ })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: en.filter.all })).toBeChecked();
+  });
+
   it('keeps the search when the user opens a note and comes back', async () => {
     const { user } = renderBoard([savedNote, walkNote]);
     await user.type(await screen.findByRole('textbox', { name: en.search.label }), 'walk');
