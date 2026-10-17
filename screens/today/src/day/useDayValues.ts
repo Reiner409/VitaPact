@@ -1,7 +1,7 @@
 import type { CalendarDate } from '@vitapact/core/calendar';
 import type { DayValues, FieldValue } from '@vitapact/core/pillars';
 import { getDailyEntry, type VitaPactDatabase } from '@vitapact/core/storage';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { dayValuesOf } from './dayValues';
 
 export interface DayValuesState {
@@ -16,11 +16,14 @@ export interface DayValuesState {
 export function useDayValues(db: VitaPactDatabase, date: CalendarDate): DayValuesState {
   const [values, setValues] = useState<DayValues>({});
   const [changed, setChanged] = useState(false);
+  // An answer given while the saved day is still loading wins over what was saved.
+  const touched = useRef(false);
 
   useEffect(() => {
     let current = true;
+    touched.current = false;
     void getDailyEntry(db, date).then((entry) => {
-      if (!current) return;
+      if (!current || touched.current) return;
       setValues(dayValuesOf(entry));
       setChanged(false);
     });
@@ -30,6 +33,7 @@ export function useDayValues(db: VitaPactDatabase, date: CalendarDate): DayValue
   }, [db, date]);
 
   const setField = useCallback((pillar: string, field: string, value: FieldValue | undefined) => {
+    touched.current = true;
     setValues((day) => ({ ...day, [pillar]: { ...day[pillar], [field]: value } }));
     setChanged(true);
   }, []);
