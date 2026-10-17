@@ -4,8 +4,10 @@ import { getPlatform } from '@vitapact/platform';
 import { PageHeader, Stack } from '@vitapact/ui';
 import { AboutCard } from './about/AboutCard';
 import { copyToClipboard } from './clipboard';
+import { DeleteAllCard } from './danger/DeleteAllCard';
 import { DataCard } from './data/DataCard';
 import type { DataFiles } from './data/dataFiles';
+import { GroupsCard } from './groups/GroupsCard';
 import { FingerprintCard } from './identity/FingerprintCard';
 import { ProfileCard } from './profile/ProfileCard';
 
@@ -43,9 +45,11 @@ export function SettingsScreen({
             onCopyUserId={copyText}
           />
         )}
+        <GroupsCard db={db} now={now} />
         <FingerprintCard publicKey={profile?.signingKeys?.publicKey} />
         <DataCard db={db} files={files} now={now} onImported={onProfileChange} />
         <AboutCard />
+        <DeleteAllCard db={db} onDeleted={onProfileChange} />
       </Stack>
     </>
   );

@@ -68,6 +68,62 @@
       "importFailed": "The data could not be imported. Nothing was changed."
     }
   },
+  "groups": {
+    "title": "Groups",
+    "empty": "No groups yet.",
+    "new": "New group",
+    "stake": "At stake: {{stake}}",
+    "members_one": "{{count}} member",
+    "members": "{{count}} members",
+    "edit": "Edit {{name}}",
+    "delete": "Delete {{name}}",
+    "confirmDelete": {
+      "title": "Delete {{name}}?",
+      "message": "The group and its rankings disappear from this device. Your friends and their reports stay.",
+      "confirm": "Delete group"
+    },
+    "dialog": {
+      "newTitle": "New group",
+      "editTitle": "Edit group",
+      "create": "Create group",
+      "save": "Save group",
+      "cancel": "Cancel",
+      "close": "Close",
+      "name": "Group name",
+      "stake": "Stake",
+      "stakePlaceholder": "e.g. whoever falls behind buys the pizza",
+      "members": "Members",
+      "noFriendsYet": "No friends to add yet. You can add them later, when their first report arrives.",
+      "saveFailed": "The group could not be saved. Try again.",
+      "counter": "{{length}} / {{max}}",
+      "errors": {
+        "nameMissing": "Give the group a name.",
+        "nameTooLong": "Keep the name within {{max}} characters.",
+        "stakeMissing": "Write what is at stake.",
+        "stakeTooLong": "Keep the stake within {{max}} characters."
+      }
+    }
+  },
+  "deleteAll": {
+    "title": "Delete all data",
+    "explanation": "Removes your profile, days, weigh-ins, friends, groups and notes from this device. Export your data first if you may want it back.",
+    "open": "Delete all data",
+    "cancel": "Cancel",
+    "close": "Close",
+    "failed": "The data could not be deleted. Nothing was changed.",
+    "first": {
+      "title": "Delete everything?",
+      "message": "Everything VitaPact keeps on this device will be deleted, including your signing key. This cannot be undone.",
+      "confirm": "Continue"
+    },
+    "second": {
+      "title": "Are you sure?",
+      "message": "Type DELETE to confirm. The app then starts again from the welcome.",
+      "word": "DELETE",
+      "label": "Type DELETE",
+      "confirm": "Delete all data"
+    }
+  },
   "about": {
     "title": "About",
     "version": "Version",
