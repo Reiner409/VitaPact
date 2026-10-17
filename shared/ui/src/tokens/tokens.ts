@@ -24,6 +24,8 @@ const color = {
  */
 export const tokens = {
   color,
+  /** Pure black on white keeps the report QR readable after JPEG compression (RF-12). */
+  qr: { dark: '#000000', light: '#FFFFFF' },
   space: { 1: 4, 2: 8, 3: 12, 4: 16, 5: 24, 6: 32, 7: 48 },
   radius: { sm: 8, md: 12, lg: 16, full: 9999 },
   shadow: {

@@ -25,9 +25,16 @@ function visibleScreen(current: ScreenId, profile: Profile | undefined): ScreenI
   return current === 'onboarding' ? DEFAULT_SCREEN : current;
 }
 
-function Shell({ clock, ...props }: ScreenProps & { clock: Clock }) {
+type ShellProps = Omit<ScreenProps, 'onEditDay' | 'openedDay'> & { clock: Clock };
+
+function Shell({ clock, ...localData }: ShellProps) {
   const { t } = useTranslation('app');
-  const { current, navigate, syncFromLocation } = useNavigation();
+  const { current, dayToOpen, navigate, syncFromLocation } = useNavigation();
+  const props: ScreenProps = {
+    ...localData,
+    onEditDay: (date) => navigate('today', date),
+    openedDay: dayToOpen,
+  };
   const weighIn = useWeighInPrompt(props.db, clock());
 
   useEffect(() => {

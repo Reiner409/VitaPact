@@ -1,4 +1,4 @@
-import { Group, Stack as MantineStack } from '@mantine/core';
+import { Group, Stack as MantineStack, SimpleGrid } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { tokens } from '../../tokens';
 
@@ -10,6 +10,8 @@ export interface StackProps {
   gap?: StackGap;
   /** Side by side, wrapping on narrow windows, e.g. a row of buttons. */
   horizontal?: boolean;
+  /** Equal columns on wide windows, two on tablets and one on phones, e.g. the four pillars. */
+  columns?: number;
 }
 
 const gaps: Record<StackGap, number> = {
@@ -19,7 +21,14 @@ const gaps: Record<StackGap, number> = {
 };
 
 /** Puts blocks one under the other with a token gap, so screens never set their own margins. */
-export function Stack({ children, gap = 'normal', horizontal = false }: StackProps) {
+export function Stack({ children, gap = 'normal', horizontal = false, columns }: StackProps) {
+  if (columns !== undefined) {
+    return (
+      <SimpleGrid cols={{ base: 1, xs: 2, md: columns }} spacing={gaps[gap]} data-gap={gap}>
+        {children}
+      </SimpleGrid>
+    );
+  }
   const Layout = horizontal ? Group : MantineStack;
   return (
     <Layout gap={gaps[gap]} data-gap={gap}>

@@ -4,6 +4,7 @@ import { getDailyEntry, saveDailyEntry } from '@vitapact/core/storage';
 import { openTestDatabase, sampleEntry, sampleProfile } from '@vitapact/core/storage/testing';
 import { renderWithProviders } from '@vitapact/ui/testing';
 import { describe, expect, it } from 'vitest';
+import pillars from '@vitapact/i18n/locales/en/pillars.json';
 import en from '../locales/en/today.json';
 import { TodayScreen, type TodayScreenProps } from './TodayScreen';
 
@@ -19,7 +20,7 @@ async function renderToday(props: Partial<TodayScreenProps> = {}) {
   const db = props.db ?? (await openTestDatabase());
   return renderWithProviders(
     <TodayScreen db={db} profile={sampleProfile} today={MONDAY} {...props} />,
-    { translations: { today: en } },
+    { translations: { today: en, pillars } },
   );
 }
 

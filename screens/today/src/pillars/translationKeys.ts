@@ -1,5 +1,5 @@
 import type { Pillar, PillarField } from '@vitapact/core/pillars';
-import { pillarKey } from './pillarText';
+import { pillarKey } from '@vitapact/i18n';
 
 function fieldKeysOf(pillar: string, field: PillarField): string[] {
   const own = [pillarKey.field(pillar, field.key)];

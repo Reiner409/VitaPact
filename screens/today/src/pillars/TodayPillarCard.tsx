@@ -1,8 +1,8 @@
 import type { Pillar, PillarValues } from '@vitapact/core/pillars';
-import { useTranslation } from '@vitapact/i18n';
+import { pillarKey, useTranslation } from '@vitapact/i18n';
 import { PillarCard, type PillarFieldValue } from '@vitapact/ui';
 import { liveErrorsOf, savedErrorsOf, type ShownErrorCode } from './fieldErrors';
-import { pillarKey, pillarTextOf } from './pillarText';
+import { pillarTextOf } from './pillarText';
 
 export interface TodayPillarCardProps {
   pillar: Pillar;

@@ -1,0 +1,65 @@
+{
+  "sleep": {
+    "name": "Sleep",
+    "fields": {
+      "hours": "Hours slept",
+      "quality": "Sleep quality"
+    },
+    "scale": {
+      "quality": {
+        "1": "Very poor",
+        "2": "Poor",
+        "3": "Fair",
+        "4": "Good",
+        "5": "Excellent"
+      }
+    }
+  },
+  "training": {
+    "name": "Training",
+    "fields": {
+      "trained": "Trained today?",
+      "type": "Workout",
+      "minutes": "Duration"
+    },
+    "options": {
+      "type": {
+        "gym": "Gym",
+        "running": "Running",
+        "cycling": "Cycling",
+        "swimming": "Swimming",
+        "teamSports": "Sport",
+        "other": "Other"
+      }
+    }
+  },
+  "food": {
+    "name": "Clean eating",
+    "fields": {
+      "rating": "How clean did you eat?"
+    },
+    "scale": {
+      "rating": {
+        "1": "Disaster",
+        "2": "Messy",
+        "3": "Decent",
+        "4": "Clean",
+        "5": "Spotless"
+      }
+    }
+  },
+  "sun": {
+    "name": "Sun",
+    "fields": {
+      "minutes": "Minutes in the sun"
+    }
+  },
+  "units": {
+    "hours": "h",
+    "minutes": "min"
+  },
+  "answers": {
+    "yes": "Yes",
+    "no": "No"
+  }
+}
