@@ -4,9 +4,18 @@
     "title": "Profile",
     "nickname": "Nickname",
     "goals": {
-      "sleepHours": { "label": "Sleep goal", "unit": "h" },
-      "workoutsPerWeek": { "label": "Workouts per week", "unit": "/wk" },
-      "sunMinutes": { "label": "Sun per day", "unit": "min" }
+      "sleepHours": {
+        "label": "Sleep goal",
+        "unit": "h"
+      },
+      "workoutsPerWeek": {
+        "label": "Workouts per week",
+        "unit": "/wk"
+      },
+      "sunMinutes": {
+        "label": "Sun per day",
+        "unit": "min"
+      }
     },
     "hideWeight": "Hide my weight in reports",
     "yes": "Yes",
@@ -26,5 +35,45 @@
       "copied": "ID copied.",
       "copyFailed": "The ID could not be copied. Select it and copy it by hand."
     }
+  },
+  "fingerprint": {
+    "title": "Your key fingerprint",
+    "explanation": "Your reports are signed with a key that never leaves this device. Read these characters to a friend in person: if they match what their app shows for you, every report they get from you is really yours.",
+    "missing": "This device has no signing key yet, so there is nothing to compare."
+  },
+  "data": {
+    "title": "Your data",
+    "explanation": "Save all your data to a file you choose, or load it back from one. Nothing is sent anywhere.",
+    "export": "Export data",
+    "import": "Import data",
+    "fileType": "VitaPact backup",
+    "cancel": "Cancel",
+    "closeNotice": "Close",
+    "overwrite": {
+      "title": "Replace your data?",
+      "message": "Importing replaces everything on this device with the content of the file. Your current data cannot be recovered afterwards.",
+      "confirm": "Replace my data"
+    },
+    "otherUser": {
+      "title": "This file belongs to someone else",
+      "message": "The file was exported by another user. If you import it, this device loses its signing key and your friends will see a key change on your next report.",
+      "confirm": "Import anyway"
+    },
+    "notices": {
+      "exported": "Data exported.",
+      "exportFailed": "The data could not be exported. Try again.",
+      "imported": "Data imported.",
+      "importDamaged": "This file is damaged or is not a VitaPact backup. Nothing was changed.",
+      "importUnknownVersion": "This backup comes from a newer version of VitaPact. Update the app, then try again. Nothing was changed.",
+      "importFailed": "The data could not be imported. Nothing was changed."
+    }
+  },
+  "about": {
+    "title": "About",
+    "version": "Version",
+    "licence": "Licence",
+    "sourceCode": "Source code",
+    "dataLocation": "Where your data is",
+    "dataLocationText": "Only on this computer, in the app's own folder (on Windows: %LOCALAPPDATA%\\com.vitapact.app). Nothing is kept online."
   }
 }
