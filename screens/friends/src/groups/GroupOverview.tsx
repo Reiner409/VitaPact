@@ -1,29 +1,24 @@
-import type { Friend, Group } from '@vitapact/core/storage';
+import type { Group } from '@vitapact/core/storage';
 import { useTranslation } from '@vitapact/i18n';
-import { Card } from '@vitapact/ui';
+import { Card, Stack } from '@vitapact/ui';
+import { GroupRankings } from '../ranking/GroupRankings';
+import type { FriendsData } from './groupStore';
 
 export interface GroupOverviewProps {
   group: Group;
-  friends: readonly Friend[];
+  data: FriendsData;
 }
 
-/** The stake and the members of the chosen group; the ranking takes their place in node F3. */
-export function GroupOverview({ group, friends }: GroupOverviewProps) {
+/** The stake of the chosen group, then its rankings (section 5.4). */
+export function GroupOverview({ group, data }: GroupOverviewProps) {
   const { t } = useTranslation('friends');
-  // Friends arrive sorted, so a group lists its members the same way however it was created.
-  const members = friends.filter(({ userId }) => group.memberIds.includes(userId));
   return (
-    <Card>
-      <p>{t('group.stake', { stake: group.stake })}</p>
-      {members.length === 0 ? (
-        <p>{t('group.noMembers')}</p>
-      ) : (
-        <ul aria-label={t('group.members')}>
-          {members.map(({ userId, nickname }) => (
-            <li key={userId}>{nickname}</li>
-          ))}
-        </ul>
-      )}
-    </Card>
+    <Stack>
+      <Card>
+        <p>{t('group.stake', { stake: group.stake })}</p>
+        {group.memberIds.length === 0 && <p>{t('group.noMembers')}</p>}
+      </Card>
+      <GroupRankings data={data} group={group} />
+    </Stack>
   );
 }

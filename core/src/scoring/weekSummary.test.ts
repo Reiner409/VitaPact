@@ -1,4 +1,4 @@
-import type { DailyEntry } from '@vitapact/core/storage';
+import type { DailyEntry } from '../storage';
 import { describe, expect, it } from 'vitest';
 import { summarizeWeek } from './weekSummary';
 

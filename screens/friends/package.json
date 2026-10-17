@@ -10,6 +10,7 @@
   "dependencies": {
     "@vitapact/core": "workspace:*",
     "@vitapact/i18n": "workspace:*",
+    "@vitapact/platform": "workspace:*",
     "@vitapact/ui": "workspace:*",
     "react": "^19.3.0"
   }

@@ -8,7 +8,7 @@ import {
   type WeighIn,
 } from '@vitapact/core/storage';
 import { useEffect, useState } from 'react';
-import { summarizeWeek, type WeekSummary } from './weekSummary';
+import { summarizeWeek, type WeekSummary } from '@vitapact/core/scoring';
 
 export interface WeekData {
   summary: WeekSummary;

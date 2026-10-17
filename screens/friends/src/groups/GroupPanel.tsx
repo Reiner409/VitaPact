@@ -21,7 +21,7 @@ export function GroupPanel({ data, selected, onSelect }: GroupPanelProps) {
         value={selected.id}
         onChange={onSelect}
       />
-      <GroupOverview group={selected} friends={data.friends} />
+      <GroupOverview group={selected} data={data} />
     </>
   );
 }

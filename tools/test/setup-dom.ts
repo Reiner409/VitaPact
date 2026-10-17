@@ -27,3 +27,17 @@ if (!window.ResizeObserver) {
     disconnect() {}
   };
 }
+
+// jsdom's Blob has no stream(); the report encoding pipes one through a CompressionStream.
+if (!('stream' in Blob.prototype)) {
+  Object.defineProperty(Blob.prototype, 'stream', {
+    value(this: Blob) {
+      return new ReadableStream<Uint8Array>({
+        start: async (controller) => {
+          controller.enqueue(new Uint8Array(await this.arrayBuffer()));
+          controller.close();
+        },
+      });
+    },
+  });
+}

@@ -32,6 +32,8 @@ async function renderFriends(seed: { groups?: Group[]; friends?: (typeof sampleF
   return { db, user: userEvent.setup() };
 }
 
+const weekRanking = () => screen.getByRole('list', { name: /Week \d+ ranking/ });
+
 async function fillNewGroup(user: ReturnType<typeof userEvent.setup>, name: string, stake: string) {
   const dialog = await screen.findByRole('dialog', { name: en.newGroup.title });
   if (name) await user.type(within(dialog).getByLabelText(en.newGroup.name), name);
@@ -56,10 +58,10 @@ describe('RF-25 friends screen without groups', () => {
 });
 
 describe('RF-25 group selector', () => {
-  it('opens on the oldest group and shows its stake and members', async () => {
+  it('opens on the oldest group and shows its stake and its members in the ranking', async () => {
     await renderFriends({ groups: [office, sampleGroup], friends: [sampleFriend, ana] });
     expect(await screen.findByText('At stake: brings the coffee')).toBeInTheDocument();
-    expect(screen.getByRole('list', { name: en.group.members })).toHaveTextContent('Ana');
+    expect(weekRanking()).toHaveTextContent('Ana');
   });
 
   it('changing the group updates what the screen shows', async () => {
@@ -70,21 +72,18 @@ describe('RF-25 group selector', () => {
     await user.click(await screen.findByRole('combobox', { name: en.group.select }));
     await user.click(screen.getByRole('option', { name: sampleGroup.name, hidden: true }));
     expect(screen.getByText(`At stake: ${sampleGroup.stake}`)).toBeInTheDocument();
-    const members = screen.getByRole('list', { name: en.group.members });
+    const members = weekRanking();
     expect(members).toHaveTextContent('Sam');
     expect(members).not.toHaveTextContent('Ana');
   });
 
-  it('lists members in nickname order, whatever order they were stored in', async () => {
-    const sam = { ...sampleFriend, nickname: 'Sam' };
-    const group = { ...office, memberIds: [sam.userId, ana.userId] };
-    await renderFriends({ groups: [group], friends: [sam, ana] });
-    const members = await screen.findByRole('list', { name: en.group.members });
-    expect(
-      within(members)
-        .getAllByRole('listitem')
-        .map((item) => item.textContent),
-    ).toEqual(['Ana', 'Sam']);
+  it('RF-14 shows a member without a report this week as waiting, with no score', async () => {
+    await renderFriends({ groups: [office], friends: [ana] });
+    await screen.findByText('At stake: brings the coffee');
+    const [row] = within(weekRanking())
+      .getAllByRole('listitem')
+      .filter((item) => item.textContent?.includes('Ana'));
+    expect(row).toHaveTextContent(en.ranking.waiting);
   });
 
   it('orders two friends with the same nickname by user id', async () => {
@@ -104,7 +103,8 @@ describe('RF-25 group selector', () => {
   it('shows a nickname with markup as plain text (RNF-05)', async () => {
     const tricky = { ...ana, nickname: '<b>Ana</b>' };
     await renderFriends({ groups: [office], friends: [tricky] });
-    expect(await screen.findByText('<b>Ana</b>')).toBeInTheDocument();
+    expect(await screen.findAllByText('<b>Ana</b>')).not.toHaveLength(0);
+    expect(document.querySelector('b')).toBeNull();
   });
 });
 

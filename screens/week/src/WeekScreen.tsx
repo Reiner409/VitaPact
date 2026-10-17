@@ -22,7 +22,7 @@ import { useReport, type SaveFile } from './report/useReport';
 import { WeekScore } from './week/WeekScore';
 import { WeekSelector } from './week/WeekSelector';
 import { useWeekData } from './week/useWeekData';
-import type { WeekDaySummary } from './week/weekSummary';
+import type { WeekDaySummary } from '@vitapact/core/scoring';
 import { WeightChart } from './weight/WeightChart';
 
 export interface WeekScreenProps {

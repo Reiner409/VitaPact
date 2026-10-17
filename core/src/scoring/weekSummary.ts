@@ -1,14 +1,9 @@
-import { addDays, mondayOf, type CalendarDate, type IsoWeek } from '@vitapact/core/calendar';
-import type { DayValues, Goals } from '@vitapact/core/pillars';
-import {
-  dayScore,
-  verdictBand,
-  weekScore,
-  weekStatistics,
-  type VerdictBand,
-  type WeekStatistics,
-} from '@vitapact/core/scoring';
-import type { DailyEntry } from '@vitapact/core/storage';
+import { addDays, mondayOf, type CalendarDate, type IsoWeek } from '../calendar';
+import type { DayValues, Goals } from '../pillars';
+import { dayScore, weekScore } from './score';
+import { weekStatistics, type WeekStatistics } from './statistics';
+import { verdictBand, type VerdictBand } from './verdict';
+import type { DailyEntry } from '../storage';
 
 export interface WeekDaySummary {
   date: CalendarDate;

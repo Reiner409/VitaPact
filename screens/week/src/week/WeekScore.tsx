@@ -1,8 +1,7 @@
 import { pillarRegistry, type Pillar } from '@vitapact/core/pillars';
-import type { PillarStatistics } from '@vitapact/core/scoring';
+import type { PillarStatistics, WeekSummary } from '@vitapact/core/scoring';
 import { contentKey, pillarKey, useTranslation } from '@vitapact/i18n';
 import { PillarSummary, ScoreRing, Stack, VerdictLabel } from '@vitapact/ui';
-import type { WeekSummary } from './weekSummary';
 
 type Translate = ReturnType<typeof useTranslation>['t'];
 

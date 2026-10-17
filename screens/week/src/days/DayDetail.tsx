@@ -3,7 +3,7 @@ import { pillarKey, useTranslation } from '@vitapact/i18n';
 import { Button, Modal, Stack } from '@vitapact/ui';
 import { formatDay } from './formatDay';
 import { answerLines } from './dayText';
-import type { WeekDaySummary } from '../week/weekSummary';
+import type { WeekDaySummary } from '@vitapact/core/scoring';
 
 export interface DayDetailProps {
   day: WeekDaySummary | undefined;

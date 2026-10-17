@@ -8,7 +8,6 @@
   "group": {
     "select": "Group",
     "stake": "At stake: {{stake}}",
-    "members": "Members",
     "noMembers": "Nobody in this group yet. Friends join when you add their reports."
   },
   "newGroup": {
@@ -28,6 +27,48 @@
       "nameTooLong": "Keep the name within {{max}} characters.",
       "stakeMissing": "Write what is at stake.",
       "stakeTooLong": "Keep the stake within {{max}} characters."
+    }
+  },
+  "ranking": {
+    "weekly": "Week {{week}} ranking",
+    "monthly": "{{month}} ranking",
+    "you": "You",
+    "waiting": "Waiting",
+    "comeback": "Comeback +{{points}} points",
+    "weightChange": "{{change}} kg",
+    "average": "{{average}} average",
+    "weeks": "{{count}} weeks",
+    "weeks_one": "{{count}} week"
+  },
+  "addReport": {
+    "open": "Add report",
+    "filterName": "Report image",
+    "pasteHint": "You can also paste a report image here with Ctrl+V.",
+    "title": "Add report",
+    "reading": "Reading the report…",
+    "from": "{{nickname}} · week {{week}}",
+    "score": "Score {{score}} · {{verdict}}",
+    "newFriend": "This is the first report from {{nickname}}.",
+    "groups": "Add {{nickname}} to these groups",
+    "noGroups": "You can add {{nickname}} to a group later, from Settings.",
+    "replaceWeek": "You already added {{nickname}}'s report for week {{week}}. This one replaces it.",
+    "confirm": "Add report",
+    "cancel": "Cancel",
+    "chooseAnother": "Choose another image",
+    "saved": "{{nickname}}'s report was added.",
+    "saveFailed": "The report could not be saved. Try again.",
+    "problems": {
+      "notAnImage": "That file is not a PNG or JPG image.",
+      "imageTooLarge": "The image is too large to be a VitaPact report.",
+      "unreadableImage": "The image could not be opened.",
+      "noQrCode": "No QR code was found in this image. Use the image your friend saved, not a cropped copy.",
+      "notAReport": "This QR code is not a VitaPact report.",
+      "futureVersion": "This report comes from a newer VitaPact. Update the app to read it.",
+      "damaged": "The report in this image is damaged.",
+      "invalidContent": "The report in this image is damaged.",
+      "invalidSignature": "The signature of this report does not match, so it may have been changed.",
+      "ownReport": "This is your own report.",
+      "keyChanged": "This report is signed with a different key than this friend's earlier ones. Compare your key fingerprints in person before trusting it."
     }
   }
 }

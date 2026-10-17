@@ -14,6 +14,7 @@ export { deleteGroup, getGroup, listGroups, saveGroup } from './groups';
 export {
   getFriend,
   getFriendReport,
+  listFriendReports,
   listFriendReportsOf,
   listFriends,
   listFriendReportsOfWeek,
