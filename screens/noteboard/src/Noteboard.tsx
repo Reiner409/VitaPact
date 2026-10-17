@@ -1,7 +1,7 @@
 import type { IsoDate } from '@vitapact/core/storage';
 import { useTranslation } from '@vitapact/i18n';
-import { Banner, Button, PageHeader, Toast } from '@vitapact/ui';
-import { useState } from 'react';
+import { Banner, Button, PageHeader, Stack, Toast } from '@vitapact/ui';
+import { useState, type ReactNode } from 'react';
 import { NoteEditor } from './NoteEditor';
 import { NoteList } from './NoteList';
 import { formatNoteDate } from './notes/formatNoteDate';
@@ -15,6 +15,8 @@ type Board = ReturnType<typeof useNoteboard>;
 export interface NoteboardProps {
   store: NotesStore;
   clock?: NoteboardClock;
+  /** The padlock actions, shown next to "New note" on the list. */
+  lockActions?: ReactNode;
 }
 
 const systemClock: NoteboardClock = {
@@ -23,7 +25,7 @@ const systemClock: NoteboardClock = {
 };
 
 /** One column at a time: the list, or the editor of one note (RF-29). */
-export function Noteboard({ store, clock = systemClock }: NoteboardProps) {
+export function Noteboard({ store, clock = systemClock, lockActions }: NoteboardProps) {
   const { t } = useTranslation('noteboard');
   const board = useNoteboard(store, clock);
   const { view, notes, failure } = board;
@@ -32,7 +34,11 @@ export function Noteboard({ store, clock = systemClock }: NoteboardProps) {
 
   return (
     <>
-      <NoteboardHeader openDate={editing ? board.openDate() : undefined} onCreate={board.create} />
+      <NoteboardHeader
+        openDate={editing ? board.openDate() : undefined}
+        onCreate={board.create}
+        lockActions={lockActions}
+      />
       <Banner tone="info" icon="info">
         {t('privacy')}
       </Banner>
@@ -77,9 +83,11 @@ function OpenNote({ board }: { board: Board }) {
 function NoteboardHeader({
   openDate,
   onCreate,
+  lockActions,
 }: {
   openDate: IsoDate | undefined;
   onCreate: () => void;
+  lockActions: ReactNode;
 }) {
   const { t, i18n } = useTranslation('noteboard');
   if (openDate) {
@@ -88,7 +96,12 @@ function NoteboardHeader({
   return (
     <PageHeader
       title={t('title')}
-      action={<Button onClick={onCreate}>{t('actions.new')}</Button>}
+      action={
+        <Stack horizontal gap="tight">
+          <Button onClick={onCreate}>{t('actions.new')}</Button>
+          {lockActions}
+        </Stack>
+      }
     />
   );
 }
