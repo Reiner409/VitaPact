@@ -121,6 +121,11 @@ describe('RF-03 D6 eating pillar', () => {
 });
 
 describe('RF-03 sun pillar', () => {
+  it('offers 10, 20, 30 and 60 minutes as quick values', () => {
+    const [minutes] = sunPillar.fields;
+    expect(minutes?.kind === 'number' && minutes.quickValues).toEqual([10, 20, 30, 60]);
+  });
+
   it('accepts 0 or more whole minutes', () => {
     expect(validatePillarValues(sunPillar, { minutes: 0 })).toEqual([]);
     expect(errorCodes(sunPillar, { minutes: -1 })).toEqual(['minutes:range']);

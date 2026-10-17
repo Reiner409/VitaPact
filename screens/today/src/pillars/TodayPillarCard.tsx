@@ -1,7 +1,7 @@
 import type { Pillar, PillarValues } from '@vitapact/core/pillars';
 import { useTranslation } from '@vitapact/i18n';
 import { PillarCard, type PillarFieldValue } from '@vitapact/ui';
-import { liveErrorsOf, type LiveErrorCode } from './fieldErrors';
+import { liveErrorsOf, savedErrorsOf, type ShownErrorCode } from './fieldErrors';
 import { pillarKey, pillarTextOf } from './pillarText';
 
 export interface TodayPillarCardProps {
@@ -9,15 +9,18 @@ export interface TodayPillarCardProps {
   goal: number;
   values: PillarValues;
   onChange: (field: string, value: PillarFieldValue | undefined) => void;
+  /** After a save attempt, empty fields are flagged too. */
+  showMissing?: boolean;
 }
 
 type Translate = ReturnType<typeof useTranslation>['t'];
 
-function errorMessage(t: Translate, pillar: Pillar, field: string, code: LiveErrorCode): string {
+function errorMessage(t: Translate, pillar: Pillar, field: string, code: ShownErrorCode): string {
   const limits = pillar.fields.find((candidate) => candidate.key === field);
   const range = limits && 'min' in limits ? { min: limits.min, max: limits.max } : {};
   const step = limits?.kind === 'number' ? limits.step : 1;
-  const messages: Record<LiveErrorCode, () => string> = {
+  const messages: Record<ShownErrorCode, () => string> = {
+    required: () => t('errors.required'),
     range: () => t('errors.range', range),
     step: () => t('errors.step', { step }),
     type: () => t('errors.type'),
@@ -26,13 +29,17 @@ function errorMessage(t: Translate, pillar: Pillar, field: string, code: LiveErr
 }
 
 /** One pillar's card for today, green once the day's goal is reached (section 5.2). */
-export function TodayPillarCard({ pillar, goal, values, onChange }: TodayPillarCardProps) {
+export function TodayPillarCard({
+  pillar,
+  goal,
+  values,
+  onChange,
+  showMissing = false,
+}: TodayPillarCardProps) {
   const { t } = useTranslation('today');
+  const shown = showMissing ? savedErrorsOf(pillar, values) : liveErrorsOf(pillar, values);
   const errors = Object.fromEntries(
-    [...liveErrorsOf(pillar, values)].map(([field, code]) => [
-      field,
-      errorMessage(t, pillar, field, code),
-    ]),
+    [...shown].map(([field, code]) => [field, errorMessage(t, pillar, field, code)]),
   );
   return (
     <PillarCard

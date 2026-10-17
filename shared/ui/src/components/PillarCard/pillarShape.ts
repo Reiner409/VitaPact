@@ -20,6 +20,7 @@ export type PillarCardField = FieldBase &
         readonly min: number;
         readonly max: number;
         readonly step: number;
+        readonly quickValues?: readonly number[];
       }
     | { readonly kind: 'scale'; readonly min: number; readonly max: number }
     | { readonly kind: 'yesNo' }

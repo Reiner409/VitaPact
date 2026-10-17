@@ -1,6 +1,8 @@
+import { Button } from '../Button/Button';
 import { ChipGroup } from '../ChipGroup/ChipGroup';
 import { NumberField, type NumberUnit } from '../NumberField/NumberField';
 import { ScaleInput, type ScaleValue } from '../ScaleInput/ScaleInput';
+import { Stack } from '../Stack/Stack';
 import { YesNoToggle } from '../YesNoToggle/YesNoToggle';
 import type { PillarCardField, PillarFieldValue } from './pillarShape';
 
@@ -10,6 +12,8 @@ export interface PillarCardText {
   unitLabel: (unit: string) => string;
   optionLabel: (field: string, option: string) => string;
   scaleValueLabel: (field: string, value: ScaleValue) => string;
+  /** Name of a quick value button, e.g. "30 min". */
+  quickValueLabel: (unit: string, value: number) => string;
   yes: string;
   no: string;
 }
@@ -55,7 +59,31 @@ export function PillarField(props: PillarFieldProps) {
   }
 }
 
-function NumberPillarField({ field, label, value, text, error, onChange }: KindProps<'number'>) {
+function NumberPillarField(props: KindProps<'number'>) {
+  const { field, text, onChange } = props;
+  if (!field.quickValues?.length) return <PlainNumberPillarField {...props} />;
+  return (
+    <Stack gap="tight">
+      <PlainNumberPillarField {...props} />
+      <Stack horizontal gap="tight">
+        {field.quickValues.map((quick) => (
+          <Button key={quick} variant="secondary" onClick={() => onChange(quick)}>
+            {text.quickValueLabel(field.unit, quick)}
+          </Button>
+        ))}
+      </Stack>
+    </Stack>
+  );
+}
+
+function PlainNumberPillarField({
+  field,
+  label,
+  value,
+  text,
+  error,
+  onChange,
+}: KindProps<'number'>) {
   return (
     <NumberField
       label={label}

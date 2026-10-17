@@ -7,7 +7,15 @@ export const sunPillar: Pillar = {
   color: 'sun',
   icon: 'sun',
   fields: [
-    { kind: 'number', key: 'minutes', unit: 'minutes', min: 0, max: MINUTES_IN_A_DAY, step: 1 },
+    {
+      kind: 'number',
+      key: 'minutes',
+      unit: 'minutes',
+      min: 0,
+      max: MINUTES_IN_A_DAY,
+      step: 1,
+      quickValues: [10, 20, 30, 60],
+    },
   ],
   summaryField: 'minutes',
   goal: { cadence: 'daily', default: 20, min: 5, max: 240, step: 5, editable: true },

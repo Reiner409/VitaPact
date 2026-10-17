@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { saveDailyEntry } from '@vitapact/core/storage';
+import { getDailyEntry, saveDailyEntry } from '@vitapact/core/storage';
 import { openTestDatabase, sampleEntry, sampleProfile } from '@vitapact/core/storage/testing';
 import { renderWithProviders } from '@vitapact/ui/testing';
 import { describe, expect, it } from 'vitest';
@@ -93,6 +93,12 @@ describe('F3-TD-04 clean eating card', () => {
 });
 
 describe('F3-TD-05 sun card', () => {
+  it('RF-03 sets the minutes with a quick button', async () => {
+    await renderToday();
+    await userEvent.click(card('Sun').getByRole('button', { name: '30 min' }));
+    expect(card('Sun').getByRole('textbox', { name: 'Minutes in the sun' })).toHaveValue('30');
+  });
+
   it('RF-03 reaches the goal with the minutes of the profile', async () => {
     await renderToday({ profile: withGoals({ sunMinutes: 30 }) });
     const minutes = card('Sun').getByRole('textbox', { name: 'Minutes in the sun' });
@@ -123,5 +129,65 @@ describe('F3-TD-02 F3-TD-05 the saved day', () => {
     await renderToday({ profile: undefined });
     await userEvent.type(card('Sun').getByRole('textbox', { name: 'Minutes in the sun' }), '20');
     expect(card('Sun').getByText('Goal reached')).toBeInTheDocument();
+  });
+});
+
+async function fillDay() {
+  await userEvent.type(card('Sleep').getByRole('textbox', { name: 'Hours slept' }), '8');
+  await userEvent.click(card('Sleep').getByRole('radio', { name: 'Good' }));
+  await userEvent.click(card('Training').getByRole('button', { name: 'No' }));
+  await userEvent.click(card('Clean eating').getByRole('radio', { name: 'Spotless' }));
+  await userEvent.click(card('Sun').getByRole('button', { name: '30 min' }));
+}
+
+const saveButton = () => screen.getByRole('button', { name: en.save });
+
+describe('F3-TD-06 save day and daily score', () => {
+  it('RF-03 saves the day, confirms it and shows the day score', async () => {
+    const db = await openTestDatabase();
+    await renderToday({ db });
+    await fillDay();
+    await userEvent.click(saveButton());
+    expect(await screen.findByText(en.notices.saved)).toBeInTheDocument();
+    expect(await screen.findByLabelText(en.dayScore)).toBeInTheDocument();
+    expect((await getDailyEntry(db, MONDAY))?.pillars.training).toEqual({ trained: false });
+  });
+
+  it('RF-03 a new save of the same day replaces the old one', async () => {
+    const db = await openTestDatabase();
+    await saveDailyEntry(db, { ...sampleEntry, date: MONDAY });
+    await renderToday({ db });
+    const minutes = card('Sun').getByRole('textbox', { name: 'Minutes in the sun' });
+    await waitFor(() => expect(minutes).toHaveDisplayValue('25'));
+    await userEvent.click(card('Sun').getByRole('button', { name: '60 min' }));
+    await userEvent.click(saveButton());
+    await screen.findByText(en.notices.saved);
+    expect((await getDailyEntry(db, MONDAY))?.pillars.sun).toEqual({ minutes: 60 });
+  });
+
+  it('RF-03 flags the empty fields and saves nothing until they are filled', async () => {
+    const db = await openTestDatabase();
+    await renderToday({ db });
+    await userEvent.click(saveButton());
+    expect(card('Sun').getByText(en.errors.required)).toBeInTheDocument();
+    expect(await getDailyEntry(db, MONDAY)).toBeUndefined();
+  });
+});
+
+describe('F3-TD-07 week strip', () => {
+  it('fills the days already logged and opens one of them', async () => {
+    const db = await openTestDatabase();
+    const tuesday = '2026-10-13';
+    await saveDailyEntry(db, { ...sampleEntry, date: tuesday });
+    await renderToday({ db, today: '2026-10-15' });
+    const strip = within(screen.getByRole('list', { name: en.week.label }));
+    await waitFor(() => expect(strip.getAllByText(en.week.missing)).toHaveLength(6));
+    await userEvent.click(strip.getByRole('button', { name: /^Tue/ }));
+    expect(screen.getByText(/^Tuesday, October 13/)).toBeInTheDocument();
+    await waitFor(() =>
+      expect(card('Sun').getByRole('textbox', { name: 'Minutes in the sun' })).toHaveDisplayValue(
+        '25',
+      ),
+    );
   });
 });
