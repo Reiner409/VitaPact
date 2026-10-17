@@ -82,10 +82,15 @@ function PillarHeading({
   );
 }
 
+/** The check pops in once when the goal is reached; reduced motion turns the pop off. */
+const pop = { animation: 'vp-pop var(--vp-motion-base) var(--vp-motion-easing)' };
+
 function GoalReached({ label }: { label: string }) {
   return (
     <Group gap="xs" wrap="nowrap">
-      <AppIcon name="success" />
+      <span style={{ ...pop, display: 'inline-flex' }}>
+        <AppIcon name="success" />
+      </span>
       <Text fw={tokens.font.weight.semibold} style={{ color: 'var(--vp-color-text)' }}>
         {label}
       </Text>

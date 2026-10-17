@@ -9,6 +9,7 @@ test.describe('F3-TD-06 F3-TD-07 evening check-in (RF-03)', () => {
   }) => {
     await page.clock.setFixedTime(MONDAY_EVENING);
     await startWithProfile(page);
+    await expect(page.getByText('Good evening, Rei')).toBeVisible();
 
     const sleep = page.getByRole('region', { name: 'Sleep' });
     await sleep.getByRole('textbox', { name: 'Hours slept' }).fill('8');
@@ -24,7 +25,7 @@ test.describe('F3-TD-06 F3-TD-07 evening check-in (RF-03)', () => {
     await page.getByRole('region', { name: 'Sun' }).getByRole('button', { name: '30 min' }).click();
     await page.getByRole('button', { name: 'Save day' }).click();
 
-    await expect(page.getByText('Day saved.')).toBeVisible();
+    await expect(page.getByText('Day saved. Nice one!')).toBeVisible();
     await expect(page.getByRole('meter', { name: 'Day score' })).toBeVisible();
     const strip = page.getByRole('list', { name: 'This week' });
     await expect(strip.getByText('Not logged')).toHaveCount(6);

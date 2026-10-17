@@ -40,6 +40,10 @@ describe('Reduced motion', () => {
     );
   });
 
+  it('defines the pop that greets a reached goal', () => {
+    expect(css).toMatch(/@keyframes vp-pop/);
+  });
+
   it('stops every animation and transition when reduced motion is on', () => {
     expect(css).toMatch(/animation-duration: 0ms !important/);
     expect(css).toMatch(/transition-duration: 0ms !important/);

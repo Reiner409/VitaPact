@@ -22,8 +22,21 @@ describe('F2-16 PageHeader', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
+  it('shows the greeting above the title when given', () => {
+    renderWithTheme(<PageHeader title="Today" greeting="Good morning, Rei" />);
+    expect(screen.getByText('Good morning, Rei')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Today' })).toBeInTheDocument();
+  });
+
   it('RNF-10 has no axe violations', async () => {
-    renderWithTheme(<PageHeader title="Week" subtitle="2026-W41" action={<button>Act</button>} />);
+    renderWithTheme(
+      <PageHeader
+        title="Week"
+        greeting="Good evening, Rei"
+        subtitle="2026-W41"
+        action={<button>Act</button>}
+      />,
+    );
     expect(await axeViolations()).toEqual([]);
   });
 });
