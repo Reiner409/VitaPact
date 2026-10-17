@@ -22,4 +22,15 @@ describe('F2-16 Stack', () => {
       `calc(${pixels / 16}rem * var(--mantine-scale))`,
     );
   });
+
+  it('puts blocks side by side when horizontal', () => {
+    renderWithTheme(
+      <Stack horizontal>
+        <p>First</p>
+        <p>Second</p>
+      </Stack>,
+    );
+    const row = screen.getByText('First').parentElement;
+    expect(row?.style.getPropertyValue('--group-gap')).toBe('calc(1rem * var(--mantine-scale))');
+  });
 });

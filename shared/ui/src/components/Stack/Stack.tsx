@@ -1,4 +1,4 @@
-import { Stack as MantineStack } from '@mantine/core';
+import { Group, Stack as MantineStack } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { tokens } from '../../tokens';
 
@@ -8,6 +8,8 @@ export interface StackProps {
   children: ReactNode;
   /** tight 8, normal 16, loose 24 (section 6.1 spacing scale). */
   gap?: StackGap;
+  /** Side by side, wrapping on narrow windows, e.g. a row of buttons. */
+  horizontal?: boolean;
 }
 
 const gaps: Record<StackGap, number> = {
@@ -17,10 +19,11 @@ const gaps: Record<StackGap, number> = {
 };
 
 /** Puts blocks one under the other with a token gap, so screens never set their own margins. */
-export function Stack({ children, gap = 'normal' }: StackProps) {
+export function Stack({ children, gap = 'normal', horizontal = false }: StackProps) {
+  const Layout = horizontal ? Group : MantineStack;
   return (
-    <MantineStack gap={gaps[gap]} data-gap={gap}>
+    <Layout gap={gaps[gap]} data-gap={gap}>
       {children}
-    </MantineStack>
+    </Layout>
   );
 }
