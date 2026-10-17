@@ -36,6 +36,23 @@ test.describe('RF-17 Noteboard notes kept on this device', () => {
   });
 });
 
+test.describe('RF-17 Noteboard search and tags', () => {
+  test('finds a note by a word without its accent and by its tag', async ({ page }) => {
+    await startWithProfile(page, '#/noteboard');
+    await writeNote(page, 'Seduta', 'Perché dormo poco.', 'Psicologa');
+    await writeNote(page, 'Long walk', 'Two hours by the river.', 'Activity');
+
+    await page.getByRole('textbox', { name: 'Search notes' }).fill('perche');
+    await expect(page.getByRole('button', { name: /Seduta/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Long walk/ })).toBeHidden();
+
+    await page.getByRole('textbox', { name: 'Search notes' }).fill('');
+    await page.getByRole('radiogroup', { name: 'Filter by tag' }).getByText('Activity').click();
+    await expect(page.getByRole('button', { name: /Long walk/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Seduta/ })).toBeHidden();
+  });
+});
+
 test.describe('F3-NB-01 Noteboard screenshots for review', () => {
   for (const width of [1280, 390]) {
     test(`shows the list and the editor at ${width} px`, async ({ page }) => {
@@ -45,6 +62,7 @@ test.describe('F3-NB-01 Noteboard screenshots for review', () => {
       await writeNote(page, 'Long walk', 'Two hours by the river, no phone.', 'Activity');
       await page.screenshot({ path: `${SCREENSHOTS}/N1-${width}.png`, fullPage: true });
       await page.getByRole('button', { name: /Session/ }).click();
+      await expect(page.getByRole('textbox', { name: 'Text' })).toBeVisible();
       await page.screenshot({ path: `${SCREENSHOTS}/N1-editor-${width}.png`, fullPage: true });
     });
   }

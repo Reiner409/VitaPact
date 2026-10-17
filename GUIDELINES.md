@@ -169,3 +169,6 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
   for them (unit, min, max, step), and its tests use core's own fixtures.
 - **G9.12** · F2-11 · A new library, even a test-only one, comes in only after a native alternative has
   been ruled out. The pull request lists the pros and cons, and Rei approves it.
+- **G9.13** · F3-NB-02 · A filter whose choices come from the user's data stops applying a chosen
+  value once that value is no longer among the choices, so a list never stays narrowed with no way to
+  clear it.
