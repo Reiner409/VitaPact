@@ -1,5 +1,5 @@
 import type { Note } from '@vitapact/core/storage/notes';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@vitapact/ui/testing';
 import { describe, expect, it } from 'vitest';
@@ -133,5 +133,66 @@ describe('RF-17 Noteboard list and editor', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent(en.errors.save);
     expect(screen.getByRole('textbox', { name: en.editor.title })).toHaveValue('Session');
+  });
+});
+
+const walkNote: Note = {
+  ...savedNote,
+  id: 'note-2',
+  title: 'Long walk',
+  body: 'Two hours by the river.',
+  tag: 'Activity',
+  date: '2026-10-10',
+};
+
+describe('RF-17 Noteboard search and tags', () => {
+  it('narrows the list as the user types, and says when nothing matches', async () => {
+    const { user } = renderBoard([savedNote, walkNote]);
+    const search = await screen.findByRole('textbox', { name: en.search.label });
+    await user.type(search, 'RIVER');
+    expect(screen.getByRole('button', { name: /Long walk/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Session/ })).not.toBeInTheDocument();
+
+    await user.type(search, ' nowhere');
+    expect(screen.getByRole('heading', { name: en.noMatch.title })).toBeInTheDocument();
+  });
+
+  it('filters the list by one of the tags in use', async () => {
+    const { user } = renderBoard([savedNote, walkNote]);
+    const filter = await screen.findByRole('radiogroup', { name: en.filter.label });
+    await user.click(within(filter).getByRole('radio', { name: 'Activity' }));
+    expect(screen.queryByRole('button', { name: /Session/ })).not.toBeInTheDocument();
+
+    await user.click(within(filter).getByRole('radio', { name: en.filter.all }));
+    expect(screen.getByRole('button', { name: /Session/ })).toBeInTheDocument();
+  });
+
+  it('keeps the search when the user opens a note and comes back', async () => {
+    const { user } = renderBoard([savedNote, walkNote]);
+    await user.type(await screen.findByRole('textbox', { name: en.search.label }), 'walk');
+    await user.click(screen.getByRole('button', { name: /Long walk/ }));
+    await user.click(screen.getByRole('button', { name: en.actions.back }));
+    expect(screen.getByRole('textbox', { name: en.search.label })).toHaveValue('walk');
+    expect(screen.queryByRole('button', { name: /Session/ })).not.toBeInTheDocument();
+  });
+
+  it('suggests the tags already used and puts the chosen one in the tag field (D32)', async () => {
+    const { notes, user } = renderBoard([savedNote, walkNote]);
+    await user.click((await screen.findAllByRole('button', { name: en.actions.new }))[0]!);
+    await user.type(screen.getByRole('textbox', { name: en.editor.title }), 'Run');
+    const suggestions = screen.getByRole('radiogroup', { name: en.editor.suggestions });
+    await user.click(within(suggestions).getByRole('radio', { name: 'Activity' }));
+    expect(screen.getByRole('textbox', { name: en.editor.tag })).toHaveValue('Activity');
+    await user.click(screen.getByRole('button', { name: en.actions.save }));
+    await waitFor(() => expect(notes.get('note-new')).toMatchObject({ tag: 'Activity' }));
+  });
+});
+
+describe('RNF-02 Noteboard privacy banner', () => {
+  it('says the notes are never shared, on the list and in the editor', async () => {
+    const { user } = renderBoard([savedNote]);
+    expect(await screen.findByText(en.privacy)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /Session/ }));
+    expect(screen.getByText(en.privacy)).toBeInTheDocument();
   });
 });
