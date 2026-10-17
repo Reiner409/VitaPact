@@ -1,4 +1,4 @@
-import { VisuallyHidden } from '@mantine/core';
+import { Text, VisuallyHidden } from '@mantine/core';
 import { useReducedMotion } from '@mantine/hooks';
 import {
   CategoryScale,
@@ -10,6 +10,7 @@ import {
 } from 'chart.js';
 import { useEffect, useMemo, useRef } from 'react';
 import { tokens } from '../../tokens';
+import { Card } from '../Card/Card';
 import { trendChartConfig, type TrendPoint } from './trendChartConfig';
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale);
@@ -44,11 +45,14 @@ function useLineChart(points: TrendPoint[]) {
   return canvas;
 }
 
-/** Line chart of weight or scores over the weeks; missing weeks stay gaps (section 6.2). */
+/** Titled card with a line chart of weight or scores over the weeks; missing weeks stay gaps (section 6.2). */
 export function TrendChart({ label, points, formatValue, missingLabel }: TrendChartProps) {
   const canvas = useLineChart(points);
   return (
-    <div>
+    <Card>
+      <Text component="h2" fw={tokens.font.weight.semibold} mb={tokens.space[3]}>
+        {label}
+      </Text>
       <div style={{ position: 'relative', height: CHART_HEIGHT }}>
         <canvas ref={canvas} role="img" aria-label={label} />
       </div>
@@ -62,6 +66,6 @@ export function TrendChart({ label, points, formatValue, missingLabel }: TrendCh
           ))}
         </dl>
       </VisuallyHidden>
-    </div>
+    </Card>
   );
 }

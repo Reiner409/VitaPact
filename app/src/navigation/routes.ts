@@ -4,6 +4,7 @@ import { OnboardingScreen } from '@vitapact/screen-onboarding';
 import { SettingsScreen } from '@vitapact/screen-settings';
 import { TodayScreen } from '@vitapact/screen-today';
 import { WeekScreen } from '@vitapact/screen-week';
+import type { CalendarDate } from '@vitapact/core/calendar';
 import type { Profile, VitaPactDatabase } from '@vitapact/core/storage';
 import type { IconName } from '@vitapact/ui';
 import type { ComponentType } from 'react';
@@ -27,6 +28,10 @@ export interface ScreenProps {
   /** Undefined only before onboarding has created it. */
   profile: Profile | undefined;
   onProfileChange: () => Promise<void>;
+  /** Opens a day on Today, e.g. from Week's "Edit" (RF-04). */
+  onEditDay: (date: CalendarDate) => void;
+  /** The day Today opens on, when another screen asked for one. */
+  openedDay: CalendarDate | undefined;
 }
 
 export interface NavRoute {

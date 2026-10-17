@@ -1,3 +1,59 @@
 {
-  "title": "Week"
+  "title": "Week",
+  "selector": {
+    "label": "Week {{week}} · {{from}} to {{to}}",
+    "previous": "Previous week",
+    "next": "Next week"
+  },
+  "score": "Week score",
+  "pillars": {
+    "average": {
+      "sleep": "{{value}} h average",
+      "food": "{{value}} average rating",
+      "sun": "{{value}} min average"
+    },
+    "noAverage": "Nothing logged yet",
+    "totalMinutes": "{{minutes}} min in total",
+    "daysOnGoal": "{{count}} of 7 days on target",
+    "daysOnGoal_one": "{{count}} of 7 days on target",
+    "workouts": "{{done}} of {{goal}} workouts"
+  },
+  "days": {
+    "label": "Days of the week",
+    "missing": "Not logged",
+    "today": "Today"
+  },
+  "day": {
+    "answer": "{{label}}: {{answer}}",
+    "notLogged": "This day was not logged.",
+    "edit": "Edit",
+    "close": "Close"
+  },
+  "weight": {
+    "label": "Weight over the last 12 weeks",
+    "empty": "Your Sunday weigh-ins will show up here.",
+    "value": "{{value}} kg",
+    "missing": "No weigh-in"
+  },
+  "report": {
+    "create": "Create report",
+    "title": "Weekly report",
+    "close": "Close",
+    "making": "Creating your report…",
+    "failed": "The report could not be created. Try again.",
+    "preview": "Your weekly report with its QR code",
+    "save": "Save image",
+    "saved": "Report saved. Send the image to your friends.",
+    "fileName": "vitapact-{{week}}.png",
+    "fileType": "PNG image",
+    "weekLabel": "{{week}}",
+    "period": "{{from}} to {{to}}",
+    "sleep": "{{average}} h · {{days}}/7",
+    "training": "{{done}}/{{goal}} · {{minutes}} min",
+    "days": "{{days}}/7",
+    "weight": "{{weight}} kg",
+    "change": "{{change}} kg",
+    "weightAndChange": "{{weight}} kg ({{change}})",
+    "motto": "Join the VitalityMaxxing lifestyle"
+  }
 }

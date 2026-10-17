@@ -78,3 +78,4 @@ export type {
   PillarCardValues,
   PillarFieldValue,
 } from './components/PillarCard/pillarShape';
+export { reportImageTheme } from './report/reportTheme';

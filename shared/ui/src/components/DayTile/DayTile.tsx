@@ -38,6 +38,9 @@ export function DayTile({
         <BandDot band={band} />
         <Text
           component="span"
+          // The missing label is a phrase, smaller so it fits a quarter of a phone screen.
+          size={logged ? 'md' : 'sm'}
+          miw={0}
           fw={logged ? tokens.font.weight.semibold : tokens.font.weight.regular}
           c={logged ? 'var(--vp-color-text)' : 'var(--vp-color-text-muted)'}
           style={{ fontVariantNumeric: tokens.font.numericVariant }}

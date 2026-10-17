@@ -1,6 +1,8 @@
 import {
   CalendarCheck,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   CircleAlert,
   CircleCheck,
   CircleDot,
@@ -38,6 +40,8 @@ export const appIcons = {
   success: CircleCheck,
   error: CircleAlert,
   image: ImageUp,
+  previous: ChevronLeft,
+  next: ChevronRight,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof appIcons;

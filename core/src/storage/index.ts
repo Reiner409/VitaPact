@@ -5,6 +5,7 @@ export type { SchemaVersion, TableName } from './schema';
 export { PROFILE_ID } from './records';
 export type * from './records';
 export { createProfile, DEFAULT_GOALS, getProfile, saveProfile } from './profile';
+export { pillarGoalsOf } from './pillarGoals';
 export type { FirstLaunchChoices } from './profile';
 export { getDailyEntry, listDailyEntries, saveDailyEntry } from './daily-entries';
 export { getWeighIn, listWeighIns, saveWeighIn } from './weigh-ins';
