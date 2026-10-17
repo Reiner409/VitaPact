@@ -1,0 +1,140 @@
+name: Mobile
+
+# Android and iOS builds from the same Tauri shell (RF-29). They run on main and mobile, by hand, and on pull
+# requests that touch the shell, so the desktop checks stay fast. Signing material lives in
+# repository secrets only; without it the jobs still build an installable or unsigned app.
+on:
+  push:
+    branches: [main, mobile]
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/mobile.yml
+      - src-tauri/**
+
+concurrency:
+  group: mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    name: Android APK
+    runs-on: ubuntu-latest
+    env:
+      NDK_VERSION: 27.0.12077973
+      BUILD_TOOLS: 34.0.0
+      ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22.22
+          cache: pnpm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - name: Android NDK and build tools
+        run: |
+          sdkmanager "ndk;$NDK_VERSION" "build-tools;$BUILD_TOOLS" "platforms;android-34"
+          echo "NDK_HOME=$ANDROID_HOME/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: pnpm install --frozen-lockfile
+      - name: Generate the Android project
+        run: pnpm tauri android init --ci
+      - name: Build the release APK (phones and emulators)
+        run: pnpm tauri android build --apk --target aarch64 --target armv7 --target x86_64
+      - name: Sign the APK
+        # With the ANDROID_KEYSTORE secret every build carries the same signature, so a new APK
+        # installs over the old one. Without it a throwaway key is made: uninstall before updating.
+        run: |
+          set -euo pipefail
+          tools="$ANDROID_HOME/build-tools/$BUILD_TOOLS"
+          unsigned=$(find src-tauri/gen/android -name '*-release-unsigned.apk' | head -n 1)
+          if [ -n "$ANDROID_KEYSTORE" ]; then
+            echo "$ANDROID_KEYSTORE" | base64 --decode > release.jks
+            password="$ANDROID_KEYSTORE_PASSWORD"
+          else
+            password=throwaway
+            keytool -genkeypair -keystore release.jks -storepass "$password" -keypass "$password" \
+              -alias vitapact -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=VitaPact"
+          fi
+          "$tools/zipalign" -f -p 4 "$unsigned" aligned.apk
+          "$tools/apksigner" sign --ks release.jks --ks-pass "pass:$password" \
+            --out vitapact.apk aligned.apk
+          "$tools/apksigner" verify vitapact.apk
+      - uses: actions/upload-artifact@v6
+        with:
+          name: vitapact-android-${{ github.sha }}
+          path: vitapact.apk
+          if-no-files-found: error
+
+  ios:
+    name: iOS app
+    runs-on: macos-latest
+    env:
+      # Read by the Tauri CLI to sign with the distribution certificate and profile.
+      APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
+      IOS_CERTIFICATE: ${{ secrets.IOS_CERTIFICATE }}
+      IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+      IOS_MOBILE_PROVISION: ${{ secrets.IOS_MOBILE_PROVISION }}
+      APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
+      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22.22
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,aarch64-apple-ios-sim
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: pnpm install --frozen-lockfile
+      - name: Generate the Xcode project
+        run: pnpm tauri ios init --ci
+      - name: Signed build for TestFlight
+        if: env.IOS_CERTIFICATE != '' && env.IOS_MOBILE_PROVISION != '' && env.APPLE_DEVELOPMENT_TEAM != ''
+        run: pnpm tauri ios build --export-method app-store-connect
+      - name: Upload to TestFlight
+        if: env.IOS_CERTIFICATE != '' && env.APP_STORE_CONNECT_KEY != ''
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "$APP_STORE_CONNECT_KEY" > ~/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
+          ipa=$(find src-tauri/gen/apple/build -name '*.ipa' | head -n 1)
+          xcrun altool --upload-app --type ios --file "$ipa" \
+            --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID"
+      - name: Unsigned simulator build
+        # Without an Apple certificate the app still has to compile; the result runs in the
+        # iOS Simulator only.
+        if: env.IOS_CERTIFICATE == ''
+        run: |
+          set -euo pipefail
+          pnpm web:build
+          project=$(find src-tauri/gen/apple -maxdepth 1 -name '*.xcodeproj' | head -n 1)
+          scheme=$(xcodebuild -list -json -project "$project" | jq -r '.project.schemes[] | select(endswith("_iOS"))')
+          xcodebuild -project "$project" -scheme "$scheme" -configuration release \
+            -sdk iphonesimulator -arch arm64 -derivedDataPath build/ios \
+            CODE_SIGNING_ALLOWED=NO build
+          app=$(find build/ios/Build/Products -name '*.app' -maxdepth 2 | head -n 1)
+          ditto -c -k --keepParent "$app" vitapact-simulator.zip
+      - uses: actions/upload-artifact@v6
+        with:
+          name: vitapact-ios-${{ github.sha }}
+          path: |
+            src-tauri/gen/apple/build/**/*.ipa
+            vitapact-simulator.zip
+          if-no-files-found: error
