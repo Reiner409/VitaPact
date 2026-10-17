@@ -70,5 +70,24 @@
       "ownReport": "This is your own report.",
       "keyChanged": "This report is signed with a different key than this friend's earlier ones. Compare your key fingerprints in person before trusting it."
     }
+  },
+  "history": {
+    "scores": "Weekly score, last 12 weeks",
+    "score": "{{value}} points",
+    "weight": "Weight, last 12 weeks",
+    "kg": "{{value}} kg",
+    "missing": "No report",
+    "weightHidden": "This friend does not share their weight."
+  },
+  "remove": {
+    "open": "Remove {{nickname}}",
+    "title": "Remove {{nickname}}?",
+    "message": "{{nickname}} leaves every group, and all their reports are deleted from this device. If they send a report again, they start from zero.",
+    "confirm": "Remove friend",
+    "cancel": "Keep",
+    "done": "{{nickname}} was removed."
+  },
+  "payer": {
+    "title": "This weekend"
   }
 }

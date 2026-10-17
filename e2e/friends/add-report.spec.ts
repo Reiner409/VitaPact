@@ -85,6 +85,9 @@ test.describe('F3-FR-03 F3-FR-04 RF-12 add a friend report from the clipboard', 
     const weekRanking = page.getByRole('list', { name: 'Week 41 ranking' });
     await expect(weekRanking).toContainText('Giulia');
     await expect(weekRanking).toContainText('74');
+    const weekend = page.getByRole('region', { name: 'This weekend' });
+    await expect(weekend).toContainText('Giulia');
+    await expect(weekend).toContainText('pays for breakfast');
     await page.screenshot({ path: `${SCREENSHOTS}/F3-ranking-1280.png`, fullPage: true });
 
     await page.getByRole('combobox', { name: 'Group' }).click();
@@ -109,5 +112,31 @@ test.describe('F3-FR-03 F3-FR-04 RF-12 add a friend report from the clipboard', 
     );
     expect(overflow).toBe(0);
     await page.screenshot({ path: `${SCREENSHOTS}/F3-ranking-390.png`, fullPage: true });
+  });
+
+  test('F3-FR-08 F3-FR-09 opens the friend history and removes the friend', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await createGroup(page, 'Office', 'brings the coffee');
+    await pasteImage(page, await giuliaImage());
+    const add = page.getByRole('dialog', { name: 'Add report' });
+    await add.getByText('Office', { exact: true }).click();
+    await add.getByRole('button', { name: 'Add report' }).click();
+    await expect(add).toBeHidden();
+
+    await page
+      .getByRole('list', { name: 'Week 41 ranking' })
+      .getByRole('button', { name: /Giulia/ })
+      .click();
+    const history = page.getByRole('dialog', { name: 'Giulia' });
+    await expect(history.getByText('Weekly score, last 12 weeks')).toBeVisible();
+    await page.screenshot({ path: `${SCREENSHOTS}/F4-history-1280.png` });
+    await history.getByRole('button', { name: 'Remove Giulia' }).click();
+    await page
+      .getByRole('dialog', { name: 'Remove Giulia?' })
+      .getByRole('button', { name: 'Remove friend' })
+      .click();
+    await expect(page.getByText('Giulia was removed.')).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole('list', { name: 'Week 41 ranking' })).not.toContainText('Giulia');
   });
 });

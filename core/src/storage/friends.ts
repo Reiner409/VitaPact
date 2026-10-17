@@ -45,3 +45,22 @@ export const listFriendReportsOf = (
 /** Every friend's reports, for the rankings to pick from. */
 export const listFriendReports = (db: VitaPactDatabase): Promise<FriendReport[]> =>
   db.friendReports.toArray();
+
+/**
+ * RF-16: removes a friend, every report of theirs and their place in every group, all or none.
+ * A later report from them starts again from zero, with whatever key it carries.
+ */
+export async function removeFriend(db: VitaPactDatabase, userId: string): Promise<void> {
+  await db.transaction('rw', db.friends, db.friendReports, db.groups, async () => {
+    await db.friends.delete(userId);
+    await db.friendReports.where('userId').equals(userId).delete();
+    const groups = await db.groups.toArray();
+    const memberOf = groups.filter((group) => group.memberIds.includes(userId));
+    await db.groups.bulkPut(
+      memberOf.map((group) => ({
+        ...group,
+        memberIds: group.memberIds.filter((id) => id !== userId),
+      })),
+    );
+  });
+}

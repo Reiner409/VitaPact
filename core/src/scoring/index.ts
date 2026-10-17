@@ -4,7 +4,7 @@ export { VERDICT_BANDS, verdictBand } from './verdict';
 export type { VerdictBand } from './verdict';
 export { scoreWeights } from './weights';
 export type { ScoreWeights } from './weights';
-export { WEIGHT_SERIES_WEEKS, weekStatistics, weightSeries } from './statistics';
+export { WEIGHT_SERIES_WEEKS, weekStatistics, weeksEndingWith, weightSeries } from './statistics';
 export type { PillarStatistics, WeekStatistics, WeighInWeight, WeightPoint } from './statistics';
 export { dayValuesOf, summarizeWeek } from './weekSummary';
 export type { WeekDaySummary, WeekSummary } from './weekSummary';

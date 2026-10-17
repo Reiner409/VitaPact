@@ -18,6 +18,7 @@ export {
   listFriendReportsOf,
   listFriends,
   listFriendReportsOfWeek,
+  removeFriend,
   saveFriend,
   saveFriendReport,
 } from './friends';
