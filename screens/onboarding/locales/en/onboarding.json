@@ -11,6 +11,17 @@
     "unprintable": "Remove the hidden characters from the nickname."
   },
   "goals": {
-    "title": "Your goals"
+    "sleepHours": { "label": "Sleep each night", "unit": "h" },
+    "workoutsPerWeek": { "label": "Workouts per week", "unit": "/wk" },
+    "sunMinutes": { "label": "Sun each day", "unit": "min" },
+    "outOfRange": "Choose a value from {{min}} to {{max}}."
+  },
+  "privacy": {
+    "title": "Everything stays on this PC",
+    "local": "Your days, your weight and your notes are saved only on this computer. VitaPact has no account, no cloud and never goes online.",
+    "sharing": "Friends see only the weekly report you choose to send them as an image.",
+    "motto": "Join the VitalityMaxxing lifestyle",
+    "accept": "Accept your VitaPact.",
+    "failed": "Your profile could not be saved. Try again."
   }
 }
