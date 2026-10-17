@@ -1,8 +1,7 @@
 import type { CalendarDate } from '@vitapact/core/calendar';
-import { verdictBand } from '@vitapact/core/scoring';
+import { verdictBand, type WeekDaySummary } from '@vitapact/core/scoring';
 import { useTranslation } from '@vitapact/i18n';
 import { WeekStrip } from '@vitapact/ui';
-import type { WeekDaySummary } from '../week/weekSummary';
 import { formatDay } from './formatDay';
 
 export interface WeekDaysProps {

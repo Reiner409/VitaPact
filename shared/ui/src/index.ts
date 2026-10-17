@@ -53,6 +53,11 @@ export { TextArea, TextField, type TextFieldProps } from './components/TextField
 export { PasswordField, type PasswordFieldProps } from './components/PasswordField/PasswordField';
 export { Select, type SelectOption, type SelectProps } from './components/Select/Select';
 export { Badge, type BadgeProps, type BadgeVariant } from './components/Badge/Badge';
+export {
+  RankingList,
+  type RankingListProps,
+  type RankingListRow,
+} from './components/RankingList/RankingList';
 export { Stack, type StackGap, type StackProps } from './components/Stack/Stack';
 export {
   FilePicker,

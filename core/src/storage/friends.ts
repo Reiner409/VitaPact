@@ -41,3 +41,7 @@ export const listFriendReportsOf = (
   db: VitaPactDatabase,
   userId: string,
 ): Promise<FriendReport[]> => db.friendReports.where('userId').equals(userId).sortBy('week');
+
+/** Every friend's reports, for the rankings to pick from. */
+export const listFriendReports = (db: VitaPactDatabase): Promise<FriendReport[]> =>
+  db.friendReports.toArray();

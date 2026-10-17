@@ -4,6 +4,7 @@ import { getDailyEntry, listDailyEntries, saveDailyEntry } from './daily-entries
 import {
   getFriend,
   getFriendReport,
+  listFriendReports,
   listFriendReportsOf,
   listFriendReportsOfWeek,
   listFriends,
@@ -181,6 +182,7 @@ describe('RNF-11 friendReports table', () => {
     expect(await listFriendReportsOfWeek(db, '2026-W41')).toHaveLength(2);
     const weeks = (await listFriendReportsOf(db, sampleFriend.userId)).map(({ week }) => week);
     expect(weeks).toEqual(['2026-W40', '2026-W41']);
+    expect(await listFriendReports(db)).toHaveLength(3);
   });
 });
 
