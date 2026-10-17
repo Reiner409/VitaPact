@@ -1,6 +1,6 @@
-import { DEFAULT_GOALS } from '@vitapact/core/storage';
 import { describe, expect, it } from 'vitest';
 import { pillarGoalsOf } from './pillarGoals';
+import { DEFAULT_GOALS } from './profile';
 
 describe('F3-TD-05 goals of the pillar cards', () => {
   it('RF-03 reads the sleep, training and sun goals from the profile', () => {

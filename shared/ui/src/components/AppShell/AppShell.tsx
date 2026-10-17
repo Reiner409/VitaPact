@@ -32,9 +32,10 @@ export function AppShell({ navLabel, navItems, banner, children }: AppShellProps
 
   return (
     <MantineAppShell
-      {...(wide
-        ? { navbar: { width: sidebarWidth, breakpoint: 0 } }
-        : { footer: { height: bottomBarHeight } })}
+      // Both bars stay configured and the hidden one is collapsed, so resizing the window across
+      // the breakpoint clears the offset the other one left on the content.
+      navbar={{ width: sidebarWidth, breakpoint: 0, collapsed: { desktop: !wide, mobile: !wide } }}
+      footer={{ height: bottomBarHeight, collapsed: wide }}
       padding="lg"
     >
       {wide ? (

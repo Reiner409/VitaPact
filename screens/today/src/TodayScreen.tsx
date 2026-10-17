@@ -1,13 +1,17 @@
 import { toCalendarDate, type CalendarDate } from '@vitapact/core/calendar';
 import { pillarRegistry } from '@vitapact/core/pillars';
-import { DEFAULT_GOALS, type Profile, type VitaPactDatabase } from '@vitapact/core/storage';
+import {
+  DEFAULT_GOALS,
+  pillarGoalsOf,
+  type Profile,
+  type VitaPactDatabase,
+} from '@vitapact/core/storage';
 import { Stack } from '@vitapact/ui';
 import { useState } from 'react';
 import { DayHeader } from './day/DayHeader';
 import { useDayValues } from './day/useDayValues';
 import { SaveDay } from './day/SaveDay';
 import { useSaveDay } from './day/useSaveDay';
-import { pillarGoalsOf } from './pillars/pillarGoals';
 import { TodayPillarCard } from './pillars/TodayPillarCard';
 import { TodayWeekStrip } from './week/TodayWeekStrip';
 import { useWeekDays } from './week/useWeekDays';
@@ -17,6 +21,8 @@ export interface TodayScreenProps {
   profile: Profile | undefined;
   /** Injected by tests; the app shows the user's own day. */
   today?: CalendarDate;
+  /** A day of this week another screen asked to edit (RF-04); today otherwise. */
+  openedDay?: CalendarDate | undefined;
   now?: () => Date;
 }
 
@@ -24,9 +30,10 @@ export function TodayScreen({
   db,
   profile,
   today = toCalendarDate(new Date()),
+  openedDay,
   now = () => new Date(),
 }: TodayScreenProps) {
-  const [day, setDay] = useState(today);
+  const [day, setDay] = useState(openedDay ?? today);
   const { values, setField } = useDayValues(db, day);
   const goals = pillarGoalsOf(profile?.goals ?? DEFAULT_GOALS);
   const week = useWeekDays(db, today, goals);

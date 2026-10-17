@@ -1,5 +1,5 @@
-import { foodPillar, type Goals as PillarGoals } from '@vitapact/core/pillars';
-import type { Goals as ProfileGoals } from '@vitapact/core/storage';
+import { foodPillar, type Goals as PillarGoals } from '../pillars';
+import type { Goals as ProfileGoals } from './records';
 
 /** The profile keeps goals by name; the pillar modules read them by pillar id. */
 export function pillarGoalsOf(goals: ProfileGoals): PillarGoals {
