@@ -1,7 +1,7 @@
 import type { CalendarDate } from '@vitapact/core/calendar';
 import type { Profile, VitaPactDatabase } from '@vitapact/core/storage';
 import { useTranslation } from '@vitapact/i18n';
-import type { SaveFileRequest, SaveFileOutcome } from '@vitapact/platform';
+import type { CopyImage, SaveFileRequest, SaveFileOutcome } from '@vitapact/platform';
 import { useEffect, useState } from 'react';
 import type { WeekData } from '../week/useWeekData';
 import { reportCardOf } from './reportCard';
@@ -14,7 +14,15 @@ export type ReportState =
   | { status: 'closed' }
   | { status: 'making' }
   | { status: 'failed' }
-  | { status: 'ready'; png: Blob; previewUrl: string; saved: boolean };
+  | { status: 'ready'; png: Blob; previewUrl: string; notice?: ReportNotice };
+
+/** What the last action on a ready report did: saved, copied, or could not copy. */
+export type ReportNotice = 'saved' | 'copied' | 'copyFailed';
+
+export interface ReportActions {
+  saveFile: SaveFile;
+  copyImage: CopyImage;
+}
 
 export interface ReportContext {
   db: VitaPactDatabase;
@@ -34,8 +42,11 @@ async function makePng(
   return reportPng(reportCardOf(t, language, input, content));
 }
 
-/** F3-WK-06: makes the signed report image on request and saves it where the user chooses. */
-export function useReport(context: ReportContext | undefined, saveFile: SaveFile) {
+/** F3-WK-06: makes the signed report image on request, then saves or copies it. */
+export function useReport(
+  context: ReportContext | undefined,
+  { saveFile, copyImage }: ReportActions,
+) {
   const { t, i18n } = useTranslation('week');
   const [state, setState] = useState<ReportState>({ status: 'closed' });
   const previewUrl = state.status === 'ready' ? state.previewUrl : undefined;
@@ -52,7 +63,7 @@ export function useReport(context: ReportContext | undefined, saveFile: SaveFile
     setState({ status: 'making' });
     try {
       const png = await makePng(context, t, i18n.language);
-      setState({ status: 'ready', png, previewUrl: URL.createObjectURL(png), saved: false });
+      setState({ status: 'ready', png, previewUrl: URL.createObjectURL(png) });
     } catch {
       setState({ status: 'failed' });
     }
@@ -65,8 +76,15 @@ export function useReport(context: ReportContext | undefined, saveFile: SaveFile
       contents: new Uint8Array(await state.png.arrayBuffer()),
       filter: { name: t('report.fileType'), extensions: ['png'] },
     });
-    if (outcome === 'saved') setState({ ...state, saved: true });
+    if (outcome === 'saved') setState({ ...state, notice: 'saved' });
   };
 
-  return { state, open, save, close: () => setState({ status: 'closed' }) };
+  /** RF-10: the image on the clipboard, ready to paste into the group chat. */
+  const copy = async () => {
+    if (state.status !== 'ready') return;
+    const outcome = await copyImage(state.png);
+    setState({ ...state, notice: outcome === 'copied' ? 'copied' : 'copyFailed' });
+  };
+
+  return { state, open, save, copy, close: () => setState({ status: 'closed' }) };
 }

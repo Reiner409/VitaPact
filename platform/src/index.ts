@@ -13,6 +13,7 @@ export type {
   SaveFileOutcome,
   SaveFileRequest,
 } from './platform';
+export { copyImage, type CopyImage, type CopyImageOutcome } from './clipboard';
 export { NotAnImageError } from './imageFiles';
 export {
   readImagePixels,

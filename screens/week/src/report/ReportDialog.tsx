@@ -1,15 +1,32 @@
 import { useTranslation } from '@vitapact/i18n';
 import { Banner, Button, Modal, Stack } from '@vitapact/ui';
-import type { ReportState } from './useReport';
+import type { ReportNotice, ReportState } from './useReport';
 
 export interface ReportDialogProps {
   state: ReportState;
   onSave: () => void;
+  onCopy: () => void;
   onClose: () => void;
 }
 
-/** F3-WK-06: the report preview and the button that saves it as a PNG. */
-export function ReportDialog({ state, onSave, onClose }: ReportDialogProps) {
+function NoticeBanner({ notice }: { notice: ReportNotice }) {
+  const { t } = useTranslation('week');
+  if (notice === 'copyFailed') {
+    return (
+      <Banner tone="warning" icon="error">
+        {t('report.copyFailed')}
+      </Banner>
+    );
+  }
+  return (
+    <Banner tone="info" icon="success">
+      {notice === 'saved' ? t('report.saved') : t('report.copied')}
+    </Banner>
+  );
+}
+
+/** F3-WK-06: the report preview, with the buttons that save it as a PNG or copy it. */
+export function ReportDialog({ state, onSave, onCopy, onClose }: ReportDialogProps) {
   const { t } = useTranslation('week');
   return (
     <Modal
@@ -29,14 +46,13 @@ export function ReportDialog({ state, onSave, onClose }: ReportDialogProps) {
         {state.status === 'ready' && (
           <>
             <img src={state.previewUrl} alt={t('report.preview')} width="100%" />
-            {state.saved && (
-              <Banner tone="info" icon="success">
-                {t('report.saved')}
-              </Banner>
-            )}
-            <div>
+            {state.notice && <NoticeBanner notice={state.notice} />}
+            <Stack horizontal gap="tight">
               <Button onClick={onSave}>{t('report.save')}</Button>
-            </div>
+              <Button variant="secondary" onClick={onCopy}>
+                {t('report.copy')}
+              </Button>
+            </Stack>
           </>
         )}
       </Stack>

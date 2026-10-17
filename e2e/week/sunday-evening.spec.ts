@@ -61,6 +61,26 @@ test.describe('F3-WK-01..06 Sunday evening on the week (RF-04, RF-08, RF-10)', (
     await expect(dialog.getByText('Report saved. Send the image to your friends.')).toBeVisible();
   });
 
+  test('copies the report image to the clipboard, ready to paste in a chat', async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.getByRole('button', { name: 'Create report' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Weekly report' });
+    await dialog.getByRole('button', { name: 'Copy image' }).click();
+    await expect(
+      dialog.getByText('Image copied. Paste it in your group chat with Ctrl+V.'),
+    ).toBeVisible();
+    const copied = await page.evaluate(async () => {
+      const [item] = await navigator.clipboard.read();
+      const png = await item?.getType('image/png');
+      return png ? [...new Uint8Array(await png.arrayBuffer()).subarray(0, 4)] : [];
+    });
+    expect(copied).toEqual(PNG_SIGNATURE);
+    await page.screenshot({ path: 'e2e/week/screenshots/W3-copied-1280.png' });
+  });
+
   test('RF-29 fits a phone-width window after the window shrinks', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(page.getByRole('navigation')).toHaveAttribute('data-placement', 'bottomBar');

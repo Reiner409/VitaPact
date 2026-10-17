@@ -12,7 +12,7 @@ import {
   type VitaPactDatabase,
 } from '@vitapact/core/storage';
 import { useTranslation } from '@vitapact/i18n';
-import { getPlatform } from '@vitapact/platform';
+import { copyImage as copyImageToClipboard, getPlatform, type CopyImage } from '@vitapact/platform';
 import { Button, PageHeader, Stack } from '@vitapact/ui';
 import { useState } from 'react';
 import { DayDetail } from './days/DayDetail';
@@ -33,6 +33,7 @@ export interface WeekScreenProps {
   /** Injected by tests; the app shows the user's own week. */
   today?: CalendarDate;
   saveFile?: SaveFile;
+  copyImage?: CopyImage;
 }
 
 const nextWeekOf = (week: string) => isoWeekOf(addDays(mondayOf(week), 7));
@@ -47,6 +48,7 @@ function useWeekState({
   onEditDay,
   today,
   saveFile,
+  copyImage,
 }: Required<Omit<WeekScreenProps, 'profile' | 'onEditDay'>> &
   Pick<WeekScreenProps, 'profile' | 'onEditDay'>) {
   const currentWeek = isoWeekOf(today);
@@ -54,7 +56,10 @@ function useWeekState({
   const [openDay, setOpenDay] = useState<WeekDaySummary>();
   const goals = profile?.goals ?? DEFAULT_GOALS;
   const data = useWeekData(db, week, pillarGoalsOf(goals));
-  const report = useReport(profile && data && { db, profile, data, today }, saveFile);
+  const report = useReport(profile && data && { db, profile, data, today }, {
+    saveFile,
+    copyImage,
+  });
   // Only days of the open week that have already come can still be changed (RF-04).
   const canEdit = week === currentWeek && openDay !== undefined && openDay.date <= today;
   const editOpenDay = canEdit && onEditDay ? () => onEditDay(openDay.date) : undefined;
@@ -87,10 +92,11 @@ function WeekContent({ state, today }: { state: WeekState; today: CalendarDate }
 export function WeekScreen({
   today = toCalendarDate(new Date()),
   saveFile = defaultSaveFile,
+  copyImage = copyImageToClipboard,
   ...props
 }: WeekScreenProps) {
   const { t } = useTranslation('week');
-  const state = useWeekState({ ...props, today, saveFile });
+  const state = useWeekState({ ...props, today, saveFile, copyImage });
   const { week, report } = state;
 
   return (
@@ -113,7 +119,12 @@ export function WeekScreen({
         onEdit={state.editOpenDay}
         onClose={() => state.setOpenDay(undefined)}
       />
-      <ReportDialog state={report.state} onSave={() => void report.save()} onClose={report.close} />
+      <ReportDialog
+        state={report.state}
+        onSave={() => void report.save()}
+        onCopy={() => void report.copy()}
+        onClose={report.close}
+      />
     </Stack>
   );
 }
