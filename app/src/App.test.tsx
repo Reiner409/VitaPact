@@ -47,11 +47,20 @@ describe('F1-01 app shell', () => {
 describe('RF-01 first launch', () => {
   beforeEach(() => openTo(''));
 
-  it('shows onboarding, without the navigation, while there is no profile', async () => {
+  it('shows onboarding inside the app frame while there is no profile', async () => {
     const db = await openTestDatabase();
     render(<App openDatabase={() => Promise.resolve(db)} clock={wednesday} />);
     expect(await heading('Welcome')).toBeInTheDocument();
-    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
+  });
+
+  it('stays on onboarding when a sidebar item is chosen before the profile exists', async () => {
+    const db = await openTestDatabase();
+    render(<App openDatabase={() => Promise.resolve(db)} clock={wednesday} />);
+    await heading('Welcome');
+    const nav = screen.getByRole('navigation', { name: 'Main navigation' });
+    await userEvent.click(within(nav).getByRole('button', { name: 'Week' }));
+    expect(await heading('Welcome')).toBeInTheDocument();
   });
 
   it('keeps showing onboarding when another screen is asked for by address', async () => {

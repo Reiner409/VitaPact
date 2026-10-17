@@ -1,6 +1,6 @@
 import type { Friend } from '@vitapact/core/storage';
 import { useTranslation } from '@vitapact/i18n';
-import { Banner, Button, Modal } from '@vitapact/ui';
+import { Banner, Button, Modal, Stack } from '@vitapact/ui';
 import { GroupFields } from './GroupFields';
 import type { NewGroup } from './groupStore';
 import { useNewGroupForm } from './useNewGroupForm';
@@ -19,18 +19,20 @@ export function NewGroupDialog({ opened, friends, onCreate, onClose }: NewGroupD
   return (
     <Modal opened={opened} onClose={close} title={t('newGroup.title')} closeLabel={t('close')}>
       <form onSubmit={(event) => void submit(event)} noValidate>
-        <GroupFields fields={fields} friends={friends} />
-        {saveFailed && (
-          <Banner tone="warning" icon="error">
-            {t('newGroup.saveFailed')}
-          </Banner>
-        )}
-        <Button type="submit" loading={saving}>
-          {t('newGroup.create')}
-        </Button>
-        <Button variant="subtle" onClick={close}>
-          {t('newGroup.cancel')}
-        </Button>
+        <Stack>
+          <GroupFields fields={fields} friends={friends} />
+          {saveFailed && (
+            <Banner tone="warning" icon="error">
+              {t('newGroup.saveFailed')}
+            </Banner>
+          )}
+          <Button type="submit" loading={saving}>
+            {t('newGroup.create')}
+          </Button>
+          <Button variant="subtle" onClick={close}>
+            {t('newGroup.cancel')}
+          </Button>
+        </Stack>
       </form>
     </Modal>
   );

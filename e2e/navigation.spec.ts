@@ -20,10 +20,10 @@ test.describe('F1-01 smoke: navigation between the screens', () => {
 });
 
 test.describe('RF-01 first launch', () => {
-  test('opens on the welcome screen, without the navigation, on a new device', async ({ page }) => {
+  test('opens on the welcome screen, inside the app frame, on a new device', async ({ page }) => {
     await page.goto('/#/today');
     await expect(page.getByRole('heading', { level: 1, name: 'Welcome' })).toBeVisible();
-    await expect(page.getByRole('navigation')).toHaveCount(0);
+    await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
   });
 
   test('keeps the profile after a reload and never shows the welcome screen again', async ({

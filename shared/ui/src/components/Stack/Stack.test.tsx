@@ -1,0 +1,25 @@
+import { screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { tokens } from '../../tokens';
+import { renderWithTheme } from '../../testing/renderWithTheme';
+import { Stack } from './Stack';
+
+describe('F2-16 Stack', () => {
+  it.each([
+    ['tight', tokens.space[2]],
+    ['normal', tokens.space[4]],
+    ['loose', tokens.space[5]],
+  ] as const)('the %s gap leaves %i px between blocks', (gap, pixels) => {
+    renderWithTheme(
+      <Stack gap={gap}>
+        <p>First</p>
+        <p>Second</p>
+      </Stack>,
+    );
+    const stack = screen.getByText('First').parentElement;
+    expect(stack).toHaveAttribute('data-gap', gap);
+    expect(stack?.style.getPropertyValue('--stack-gap')).toBe(
+      `calc(${pixels / 16}rem * var(--mantine-scale))`,
+    );
+  });
+});
