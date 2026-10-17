@@ -4,7 +4,7 @@ import type { VitaPactDatabase } from '../database';
 import { saveDailyEntry } from '../daily-entries';
 import { saveFriendReport } from '../friends';
 import { saveGroup } from '../groups';
-import { saveNote, type ProtectedNote } from '../notes';
+import { openNote, saveNote, setNotesPassword, unlockNotes, type ProtectedNote } from '../notes';
 import { getProfile, saveProfile } from '../profile';
 import type { Profile } from '../records';
 import { SCHEMA_VERSION, TABLE_NAMES } from '../schema';
@@ -108,6 +108,20 @@ describe('RF-19 data import', () => {
     expect(await importData(db, text)).toEqual({ ok: true });
 
     expect(await snapshot(db)).toEqual(before);
+  });
+
+  it('RF-18 carries the Noteboard password lock, so imported notes open with the same password', async () => {
+    const db = await openTestDatabase();
+    await fillDatabase(db);
+    await setNotesPassword(db, 'blue whale');
+    const text = await exportData(db, EXPORTED_AT);
+    await clearAll(db);
+
+    expect(await importData(db, text)).toEqual({ ok: true });
+
+    const key = await unlockNotes(db, 'blue whale');
+    const [stored] = await db.notes.toArray();
+    expect(stored && (await openNote(stored, key))).toEqual(sampleNote);
   });
 
   it('replaces the data already on the device', async () => {

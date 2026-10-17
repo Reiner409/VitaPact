@@ -1,3 +1,4 @@
+import type { NoteLock } from '../crypto/notes';
 /** A calendar day as `YYYY-MM-DD`. */
 export type IsoDate = string;
 /** An ISO week as `YYYY-Www`, e.g. `2026-W41`. */
@@ -22,6 +23,8 @@ export interface Profile {
   hideWeight: boolean;
   /** Kept on the device only: never exported, never put in a report. */
   signingKeys?: CryptoKeyPair;
+  /** Set while the Noteboard has a password (RF-18): the salt and a sealed check, never the key. */
+  noteLock?: NoteLock;
   createdAt: Timestamp;
 }
 

@@ -31,6 +31,9 @@ const isProfile = shape({
   }),
   theme: isLiteral('light'),
   hideWeight: isBoolean,
+  noteLock: optional(
+    shape({ salt: isString, check: shape({ ciphertext: isString, iv: isString }) }),
+  ),
   createdAt: isString,
 });
 
