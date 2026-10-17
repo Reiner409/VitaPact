@@ -41,6 +41,9 @@ export const tokens = {
     bottomBarHeight: 64,
     contentMaxWidth: 960,
     mobileBreakpoint: 768,
+    /** From this window width a list and its detail sit side by side (SplitView). */
+    splitBreakpoint: 1024,
+    splitListWidth: 320,
     minTouchTarget: 44,
     /** Number steppers stay compact instead of spanning a wide card. */
     fieldMaxWidth: 320,

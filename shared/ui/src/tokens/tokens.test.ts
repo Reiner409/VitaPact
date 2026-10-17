@@ -64,6 +64,8 @@ describe('Section 6.1 size tokens', () => {
       bottomBarHeight: 64,
       contentMaxWidth: 960,
       mobileBreakpoint: 768,
+      splitBreakpoint: 1024,
+      splitListWidth: 320,
       minTouchTarget: 44,
       fieldMaxWidth: 320,
     });

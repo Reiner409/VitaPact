@@ -1,8 +1,8 @@
 import type { Note } from '@vitapact/core/storage/notes';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '@vitapact/ui/testing';
-import { describe, expect, it } from 'vitest';
+import { renderWithProviders, setViewportWidth } from '@vitapact/ui/testing';
+import { afterEach, describe, expect, it } from 'vitest';
 import en from '../locales/en/noteboard.json';
 import { Noteboard } from './Noteboard';
 import type { NotesStore } from './notes/notesStore';
@@ -206,5 +206,26 @@ describe('RNF-02 Noteboard privacy banner', () => {
     expect(await screen.findByText(en.privacy)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /Session/ }));
     expect(screen.getByText(en.privacy)).toBeInTheDocument();
+  });
+});
+
+describe('RF-17 RF-29 Noteboard on a wide window', () => {
+  afterEach(() => setViewportWidth(390));
+
+  it('keeps the list beside the open note and opens another note from it', async () => {
+    setViewportWidth(1280);
+    const other: Note = { ...savedNote, id: 'note-2', title: 'Long walk', body: 'By the river.' };
+    const { user } = renderBoard([savedNote, other]);
+    expect(await screen.findByRole('heading', { name: en.pick.title })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Session/ }));
+    expect(screen.getByRole('textbox', { name: en.editor.body })).toHaveValue(
+      'We talked about sleep.',
+    );
+    expect(screen.queryByRole('heading', { name: en.pick.title })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Long walk/ }));
+    expect(screen.getByRole('textbox', { name: en.editor.body })).toHaveValue('By the river.');
+    expect(screen.getAllByRole('button', { name: en.actions.new })).toHaveLength(1);
   });
 });
