@@ -65,7 +65,9 @@ describe('F3-ST-03 key fingerprint in settings', () => {
 describe('F3-ST-05 about', () => {
   it('reads version and licence from the package, matching the app release', async () => {
     await renderScreen();
-    const root = JSON.parse(readFileSync('package.json', 'utf8')) as { version: string };
+    const root = JSON.parse(
+      readFileSync('package.json', 'utf8'),
+    ) as { version: string };
     const about = screen.getByRole('region', { name: en.about.title });
     expect(within(about).getByText(root.version)).toBeInTheDocument();
     expect(within(about).getByText('GPL-3.0-only')).toBeInTheDocument();

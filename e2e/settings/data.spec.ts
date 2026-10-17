@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test, type Page } from '../fixtures';
+import { sampleProfile } from '@vitapact/core/storage/testing';
 import { startWithProfile } from '../support/localData';
 
 const SCREENSHOTS = 'e2e/settings/screenshots';
@@ -30,7 +31,9 @@ test.describe('RF-19 export and import from settings', () => {
     await expect(page.getByText('Data imported.')).toBeVisible();
 
     await page.reload();
-    await expect(page.getByRole('textbox', { name: 'Nickname' })).not.toHaveValue('Changed');
+    await expect(page.getByRole('textbox', { name: 'Nickname' })).toHaveValue(
+      sampleProfile.nickname,
+    );
   });
 });
 

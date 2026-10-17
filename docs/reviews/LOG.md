@@ -2,6 +2,14 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-17 · F3-ST-03, F3-ST-05, F3-ST-06 · #43 · Approved
+
+- Checks: verify ✔, e2e ✔. One fix before approval: the import e2e test now checks the restored nickname
+  instead of "not the changed one" (G7.5).
+- Covered: RF-19 (settings part), section 10.1 fingerprint, D22, D27. Follow-ups: `KeyFingerprint` and a
+  key-value list in `shared/ui`; ST-02 and ST-04 wait on the shared group dialog and `deleteAllData`.
+- New rules: none.
+
 ## 2026-10-12 · F2-12 · #28 · Approved
 
 - Checks: CI green; verify ✔, e2e ✔. Main merged in after #26, and both export sets were kept in `report/index.ts`.
