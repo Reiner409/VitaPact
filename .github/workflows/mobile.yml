@@ -136,8 +136,9 @@ jobs:
           cp src-tauri/target/aarch64-apple-ios-sim/release/libvitapact_lib.a \
             src-tauri/gen/apple/Externals/arm64/release/libapp.a
           project=$(find src-tauri/gen/apple -maxdepth 1 -name '*.xcodeproj' | head -n 1)
-          perl -0pi -e 's/shellScript = "[^"]*tauri ios xcode-script[^"]*";/shellScript = "true";/g' \
+          perl -0pi -e 's/shellScript = "(?:[^"\\]|\\.)*xcode-script(?:[^"\\]|\\.)*";/shellScript = "true";/g' \\
             "$project/project.pbxproj"
+          grep -q 'shellScript = "true"' "$project/project.pbxproj"
           scheme=$(xcodebuild -list -json -project "$project" | jq -r '.project.schemes[] | select(endswith("_iOS"))')
           xcodebuild -project "$project" -scheme "$scheme" -configuration release \
             -sdk iphonesimulator -arch arm64 -derivedDataPath build/ios \
