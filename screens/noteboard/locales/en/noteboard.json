@@ -76,5 +76,9 @@
       "password": "Current password",
       "confirm": "Remove password"
     }
+  },
+  "pick": {
+    "title": "Pick a note to read it",
+    "description": "Or start a new one with New note."
   }
 }

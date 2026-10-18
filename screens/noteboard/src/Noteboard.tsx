@@ -1,6 +1,16 @@
 import type { IsoDate } from '@vitapact/core/storage';
+import type { PlainNote } from '@vitapact/core/storage/notes';
 import { useTranslation } from '@vitapact/i18n';
-import { Banner, Button, PageHeader, Stack, Toast } from '@vitapact/ui';
+import {
+  Banner,
+  Button,
+  EmptyState,
+  PageHeader,
+  SplitView,
+  Stack,
+  Toast,
+  useSplitLayout,
+} from '@vitapact/ui';
 import { useState, type ReactNode } from 'react';
 import { NoteEditor } from './NoteEditor';
 import { NoteList } from './NoteList';
@@ -24,13 +34,12 @@ const systemClock: NoteboardClock = {
   newId: () => crypto.randomUUID(),
 };
 
-/** One column at a time: the list, or the editor of one note (RF-29). */
+/** The list and the open note side by side on a wide window, one at a time on a narrow one (RF-29). */
 export function Noteboard({ store, clock = systemClock, lockActions }: NoteboardProps) {
   const { t } = useTranslation('noteboard');
   const board = useNoteboard(store, clock);
-  const { view, notes, failure } = board;
-  const editing = view.kind !== 'list';
-  const [filter, setFilter] = useState(noFilter);
+  const { failure } = board;
+  const editing = board.view.kind !== 'list';
 
   return (
     <>
@@ -42,16 +51,7 @@ export function Noteboard({ store, clock = systemClock, lockActions }: Noteboard
       <Banner tone="info" icon="info">
         {t('privacy')}
       </Banner>
-      {!editing && notes && (
-        <NoteList
-          notes={notes}
-          filter={filter}
-          onFilterChange={setFilter}
-          onCreate={board.create}
-          onOpen={board.open}
-        />
-      )}
-      {editing && <OpenNote board={board} />}
+      {board.notes && <NotesAndOpenNote board={board} notes={board.notes} />}
       <Toast
         opened={failure !== undefined}
         tone="error"
@@ -60,6 +60,26 @@ export function Noteboard({ store, clock = systemClock, lockActions }: Noteboard
         onClose={board.dismissFailure}
       />
     </>
+  );
+}
+
+/** The searchable list of notes and, beside it or in its place, the open note. */
+function NotesAndOpenNote({ board, notes }: { board: Board; notes: PlainNote[] }) {
+  const [filter, setFilter] = useState(noFilter);
+  return (
+    <SplitView
+      list={
+        <NoteList
+          notes={notes}
+          filter={filter}
+          onFilterChange={setFilter}
+          onCreate={board.create}
+          onOpen={board.open}
+        />
+      }
+      detail={board.view.kind === 'list' ? undefined : <OpenNote board={board} />}
+      placeholder={notes.length > 0 ? <NoNoteOpen /> : undefined}
+    />
   );
 }
 
@@ -79,7 +99,15 @@ function OpenNote({ board }: { board: Board }) {
   );
 }
 
-/** The open note's date under the title while editing; the "New note" action on the list. */
+/** Beside the list on a wide window while no note is open. */
+function NoNoteOpen() {
+  const { t } = useTranslation('noteboard');
+  return (
+    <EmptyState icon="noteboard" title={t('pick.title')} description={t('pick.description')} />
+  );
+}
+
+/** The open note's date under the title while editing; the "New note" action wherever the list shows. */
 function NoteboardHeader({
   openDate,
   onCreate,
@@ -90,17 +118,18 @@ function NoteboardHeader({
   lockActions: ReactNode;
 }) {
   const { t, i18n } = useTranslation('noteboard');
-  if (openDate) {
-    return <PageHeader title={t('title')} subtitle={formatNoteDate(openDate, i18n.language)} />;
-  }
+  const listShown = useSplitLayout() || !openDate;
   return (
     <PageHeader
       title={t('title')}
+      {...(openDate && { subtitle: formatNoteDate(openDate, i18n.language) })}
       action={
-        <Stack horizontal gap="tight">
-          <Button onClick={onCreate}>{t('actions.new')}</Button>
-          {lockActions}
-        </Stack>
+        listShown && (
+          <Stack horizontal gap="tight">
+            <Button onClick={onCreate}>{t('actions.new')}</Button>
+            {lockActions}
+          </Stack>
+        )
       }
     />
   );
