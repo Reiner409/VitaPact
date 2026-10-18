@@ -52,7 +52,15 @@ jobs:
           workspaces: src-tauri
       - run: pnpm install --frozen-lockfile
       - name: Generate the Android project
-        run: pnpm tauri android init --ci
+        # The generated MainActivity is swapped for ours, which keeps the app clear of the
+        # system bars; it keeps the generated package line.
+        run: |
+          set -euo pipefail
+          pnpm tauri android init --ci
+          main=$(find src-tauri/gen/android -name MainActivity.kt | head -n 1)
+          echo "Generated $main:" && cat "$main"
+          { grep -m 1 '^package ' "$main"; tail -n +2 src-tauri/android/MainActivity.kt; } > main.kt
+          mv main.kt "$main"
       - name: Build the release APK (phones and emulators)
         run: pnpm tauri android build --apk --target aarch64 --target armv7 --target x86_64
       - name: Sign the APK
