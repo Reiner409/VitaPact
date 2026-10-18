@@ -18,6 +18,8 @@ export interface CardProps {
    * A clickable card therefore holds only text and icons, never buttons, fields or blocks.
    */
   onClick?: () => void;
+  /** Tighter padding for small cards packed in a row, such as the days of the week on a phone. */
+  dense?: boolean;
 }
 
 const background: Record<CardTone, string> = {
@@ -28,12 +30,18 @@ const background: Record<CardTone, string> = {
 const buttonReset = { display: 'block', font: 'inherit', color: 'inherit', cursor: 'pointer' };
 
 /** Container with border, radius 12 and padding 16 (section 6.2). */
-export function Card({ children, accent, tone = 'surface', onClick }: CardProps) {
+export function Card({ children, accent, tone = 'surface', onClick, dense = false }: CardProps) {
   const style = {
     backgroundColor: background[tone],
     borderLeft: accent ? `${tokens.space[1]}px solid ${accentColor(accent)}` : undefined,
   };
-  const shared = { withBorder: true, radius: 'md', p: 'md', shadow: 'sm', 'data-accent': accent };
+  const shared = {
+    withBorder: true,
+    radius: 'md',
+    p: dense ? 'xs' : 'md',
+    shadow: 'sm',
+    'data-accent': accent,
+  };
   if (!onClick) {
     return (
       <Paper {...shared} style={style}>
