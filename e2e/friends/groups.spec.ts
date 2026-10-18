@@ -15,7 +15,7 @@ test.describe('RF-25 groups on the Friends screen', () => {
       await page.getByRole('button', { name: 'New group' }).click();
       const dialog = page.getByRole('dialog', { name: 'New group' });
       await dialog.getByLabel('Group name').fill('Five-a-side');
-      await dialog.getByLabel('Stake').fill('whoever falls behind buys the pizza');
+      await dialog.getByLabel('Stake', { exact: true }).fill('whoever falls behind buys the pizza');
       await dialog.getByRole('button', { name: 'Create group' }).click();
       await expect(dialog).toBeHidden();
 

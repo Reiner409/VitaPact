@@ -18,6 +18,12 @@ export interface GroupDialogText {
   cancel: string;
   close: string;
   name: string;
+  /** Label of the choice between a stake of the group's own and one that rotates (RF-25). */
+  stakeChoice: string;
+  stakeOwn: string;
+  stakeRotating: string;
+  /** Says what a rotating stake is, in place of the stake field. */
+  stakeRotatingHint: string;
   stake: string;
   stakePlaceholder: string;
   members: string;

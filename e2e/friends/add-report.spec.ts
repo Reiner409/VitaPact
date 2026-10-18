@@ -52,7 +52,7 @@ async function createGroup(page: Page, name: string, stake: string) {
   await page.getByRole('button', { name: 'New group' }).first().click();
   const dialog = page.getByRole('dialog', { name: 'New group' });
   await dialog.getByLabel('Group name').fill(name);
-  await dialog.getByLabel('Stake').fill(stake);
+  await dialog.getByLabel('Stake', { exact: true }).fill(stake);
   await dialog.getByRole('button', { name: 'Create group' }).click();
   await expect(page.getByText(`At stake: ${stake}`)).toBeVisible();
 }

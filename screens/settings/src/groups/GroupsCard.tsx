@@ -20,7 +20,9 @@ function GroupRow({ group, onAction }: GroupRowProps) {
   return (
     <Card>
       <h3>{group.name}</h3>
-      <p>{t('groups.stake', { stake: group.stake })}</p>
+      <p>
+        {group.stakeRotates ? t('groups.stakeRotates') : t('groups.stake', { stake: group.stake })}
+      </p>
       <p>{t('groups.members', { count: group.memberIds.length })}</p>
       <Stack horizontal gap="tight">
         <Button variant="secondary" onClick={() => onAction({ kind: 'edit', group })}>

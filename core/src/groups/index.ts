@@ -15,3 +15,4 @@ export { PAYER_HISTORY_WEEKS, weekendPayer, type PhraseCounts, type WeekendPayer
 export { monthlyRanking, type MonthlyRankedRow, type MonthlyRankingRow } from './monthly';
 export { weeklyRanking, type RankedReport, type RankingRow, type WeeklyRankedRow } from './ranking';
 export { friendStanding, isWaiting, type FriendStanding } from './standing';
+export { weeklyStakeIndex } from './stake';

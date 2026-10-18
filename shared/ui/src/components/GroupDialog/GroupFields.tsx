@@ -30,10 +30,43 @@ function MemberChoice({ fields, friends, text }: GroupFieldsProps) {
   );
 }
 
+type ErrorOf = (...kinds: GroupDetailsError[]) => { error: string } | undefined;
+
+/** RF-25: a stake the group writes itself, or a new one from the app's list every week. */
+function StakeChoice({ fields, text, errorOf }: GroupFieldsProps & { errorOf: ErrorOf }) {
+  const rotates = fields.stakeRotates === true;
+  return (
+    <>
+      <ChipGroup
+        label={text.stakeChoice}
+        options={[
+          { value: 'own', label: text.stakeOwn },
+          { value: 'rotating', label: text.stakeRotating },
+        ]}
+        value={rotates ? 'rotating' : 'own'}
+        onChange={(choice) => fields.setStakeRotates(choice === 'rotating')}
+      />
+      {rotates ? (
+        <p>{text.stakeRotatingHint}</p>
+      ) : (
+        <TextField
+          label={text.stake}
+          value={fields.stake}
+          onChange={fields.setStake}
+          maxLength={GROUP_STAKE_MAX_LENGTH}
+          formatCounter={text.counter}
+          placeholder={text.stakePlaceholder}
+          {...errorOf('stakeMissing', 'stakeTooLong')}
+        />
+      )}
+    </>
+  );
+}
+
 /** Name, stake and members of a group, each with the error core found in it. */
 export function GroupFields(props: GroupFieldsProps) {
   const { fields, text } = props;
-  const errorOf = (...kinds: GroupDetailsError[]) => {
+  const errorOf: ErrorOf = (...kinds) => {
     const error = firstOf(fields.errors, ...kinds);
     return error && { error: text.errors[error] };
   };
@@ -47,15 +80,7 @@ export function GroupFields(props: GroupFieldsProps) {
         formatCounter={text.counter}
         {...errorOf('nameMissing', 'nameTooLong')}
       />
-      <TextField
-        label={text.stake}
-        value={fields.stake}
-        onChange={fields.setStake}
-        maxLength={GROUP_STAKE_MAX_LENGTH}
-        formatCounter={text.counter}
-        placeholder={text.stakePlaceholder}
-        {...errorOf('stakeMissing', 'stakeTooLong')}
-      />
+      <StakeChoice {...props} errorOf={errorOf} />
       <MemberChoice {...props} />
     </>
   );

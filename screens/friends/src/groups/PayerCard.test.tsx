@@ -2,6 +2,8 @@ import { screen } from '@testing-library/react';
 import { sampleFriend, sampleGroup } from '@vitapact/core/storage/testing';
 import content from '@vitapact/i18n/locales/en/content.json';
 import { renderWithProviders } from '@vitapact/ui/testing';
+import { weeklyStakeIndex } from '@vitapact/core/groups';
+import type { Group } from '@vitapact/core/storage';
 import { describe, expect, it } from 'vitest';
 import en from '../../locales/en/friends.json';
 import type { FriendsData } from './groupStore';
@@ -17,7 +19,7 @@ const report = (uid: string, nick: string, score: number) => ({
 });
 const group = { ...sampleGroup, stake: 'the pizza', memberIds: [sampleFriend.userId] };
 
-function renderCard(reports: FriendsData['reports']) {
+function renderCard(reports: FriendsData['reports'], shown: Group = group) {
   const data: FriendsData = {
     groups: [group],
     friends: [sampleFriend],
@@ -26,7 +28,7 @@ function renderCard(reports: FriendsData['reports']) {
     ownNickname: 'Rei',
     rankingWeek: '2026-W41',
   };
-  renderWithProviders(<PayerCard group={group} data={data} />, {
+  renderWithProviders(<PayerCard group={shown} data={data} />, {
     translations: { friends: en, content },
   });
 }
@@ -50,6 +52,16 @@ describe('F3-FR-07 RF-26 the weekend card', () => {
     renderCard([report(own, 'Rei', 40), report(sampleFriend.userId, sampleFriend.nickname, 80)]);
     const payerPhrases = Object.values(content.weekend.payer).map((phrase) => fill(phrase, 'Rei'));
     expect(payerPhrases.some((phrase) => phraseText().includes(phrase))).toBe(true);
+  });
+
+  it('F3-FR-10 puts the stake of the week in the phrase when the stake rotates', () => {
+    const rotating = { ...group, stake: '', stakeRotates: true };
+    renderCard(
+      [report(own, 'Rei', 80), report(sampleFriend.userId, sampleFriend.nickname, 40)],
+      rotating,
+    );
+    const stakes = Object.values(content.stakes);
+    expect(phraseText()).toContain(stakes[weeklyStakeIndex('2026-W41', stakes.length)]);
   });
 
   it('shows no card when nobody pays', () => {

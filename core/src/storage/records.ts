@@ -31,7 +31,10 @@ export interface Profile {
 export interface Group {
   id: string;
   name: string;
+  /** Empty when the stake rotates. */
   stake: string;
+  /** RF-25: a new stake from a fixed list every week; absent in groups saved before it existed. */
+  stakeRotates?: boolean;
   memberIds: string[];
   createdAt: Timestamp;
 }

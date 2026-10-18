@@ -15,7 +15,7 @@ describe('RF-25 group name and stake', () => {
   it('accepts a name and a stake, trimmed', () => {
     expect(checkGroupDetails({ name: '  Office ', stake: ' buys the pizza ' })).toEqual({
       ok: true,
-      details: { name: 'Office', stake: 'buys the pizza' },
+      details: { name: 'Office', stake: 'buys the pizza', stakeRotates: false },
     });
   });
 
@@ -33,6 +33,22 @@ describe('RF-25 group name and stake', () => {
     expect(checkGroupDetails({ name: `${name}🍕`, stake: `${stake}🍺` })).toEqual({
       ok: false,
       errors: ['nameTooLong', 'stakeTooLong'],
+    });
+  });
+});
+
+describe('F3-FR-10 RF-25 a stake that rotates every week', () => {
+  it('needs no stake text and drops what was typed before switching', () => {
+    expect(checkGroupDetails({ name: 'Office', stake: ' the beer ', stakeRotates: true })).toEqual({
+      ok: true,
+      details: { name: 'Office', stake: '', stakeRotates: true },
+    });
+  });
+
+  it('still asks for the name', () => {
+    expect(checkGroupDetails({ name: '', stake: '', stakeRotates: true })).toEqual({
+      ok: false,
+      errors: ['nameMissing'],
     });
   });
 });

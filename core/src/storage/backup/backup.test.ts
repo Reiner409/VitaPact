@@ -110,6 +110,17 @@ describe('RF-19 data import', () => {
     expect(await snapshot(db)).toEqual(before);
   });
 
+  it('F3-FR-10 keeps a group whose stake rotates every week', async () => {
+    const db = await openTestDatabase();
+    await saveGroup(db, { ...sampleGroup, stake: '', stakeRotates: true });
+    const text = await exportData(db, EXPORTED_AT);
+    await clearAll(db);
+
+    expect(await importData(db, text)).toEqual({ ok: true });
+
+    expect(await db.groups.toArray()).toEqual([{ ...sampleGroup, stake: '', stakeRotates: true }]);
+  });
+
   it('RF-18 carries the Noteboard password lock, so imported notes open with the same password', async () => {
     const db = await openTestDatabase();
     await fillDatabase(db);
@@ -199,10 +210,13 @@ describe('RF-19 import validation', () => {
     badNoteDate.tables.notes[0].date = 'yesterday';
     const missingTable = await validFile();
     delete missingTable.tables.friends;
+    const badRotation = await validFile();
+    badRotation.tables.groups[0].stakeRotates = 'yes';
 
     await expectRejected(JSON.stringify(extraField), 'damaged');
     await expectRejected(JSON.stringify(badDate), 'damaged');
     await expectRejected(JSON.stringify(badNoteDate), 'damaged');
+    await expectRejected(JSON.stringify(badRotation), 'damaged');
     await expectRejected(JSON.stringify(missingTable), 'damaged');
   });
 });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import content from '../locales/en/content.json';
-import { contentKey, WEEKEND_PHRASE_COUNTS, type VerdictBandId } from './contentKey';
+import { contentKey, STAKE_COUNT, WEEKEND_PHRASE_COUNTS, type VerdictBandId } from './contentKey';
 
 const BANDS: VerdictBandId[] = ['pauseWeek', 'lightWeek', 'solidBase', 'onIt', 'greatShape'];
 
@@ -32,5 +32,15 @@ describe('F2-14 RF-26 weekend phrase keys', () => {
       payer: Object.keys(content.weekend.payer).length,
     });
     expect(lookup(contentKey.weekendFriends(WEEKEND_PHRASE_COUNTS.friends))).toBeUndefined();
+  });
+});
+
+describe('F3-FR-10 RF-25 rotating stake keys', () => {
+  it('finds every stake by index, numbered from 01 with no gap', () => {
+    expect(STAKE_COUNT).toBeGreaterThan(1);
+    for (let index = 0; index < STAKE_COUNT; index += 1) {
+      expect(typeof lookup(contentKey.stake(index))).toBe('string');
+    }
+    expect(lookup(contentKey.stake(STAKE_COUNT))).toBeUndefined();
   });
 });
