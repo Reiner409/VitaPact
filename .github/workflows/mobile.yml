@@ -124,12 +124,20 @@ jobs:
             --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID"
       - name: Unsigned simulator build
         # Without an Apple certificate the app still has to compile; the result runs in the
-        # iOS Simulator only.
+        # iOS Simulator only. Xcode's "Build Rust Code" phase needs a running `tauri ios build`,
+        # so the Rust library is built here and that phase is skipped.
         if: env.IOS_CERTIFICATE == ''
         run: |
           set -euo pipefail
           pnpm web:build
+          cargo build --manifest-path src-tauri/Cargo.toml --release --lib \
+            --target aarch64-apple-ios-sim --features tauri/custom-protocol
+          mkdir -p src-tauri/gen/apple/Externals/arm64/release
+          cp src-tauri/target/aarch64-apple-ios-sim/release/libvitapact_lib.a \
+            src-tauri/gen/apple/Externals/arm64/release/libapp.a
           project=$(find src-tauri/gen/apple -maxdepth 1 -name '*.xcodeproj' | head -n 1)
+          perl -0pi -e 's/shellScript = "[^"]*tauri ios xcode-script[^"]*";/shellScript = "true";/g' \
+            "$project/project.pbxproj"
           scheme=$(xcodebuild -list -json -project "$project" | jq -r '.project.schemes[] | select(endswith("_iOS"))')
           xcodebuild -project "$project" -scheme "$scheme" -configuration release \
             -sdk iphonesimulator -arch arm64 -derivedDataPath build/ios \
