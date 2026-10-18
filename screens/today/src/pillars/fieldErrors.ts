@@ -9,12 +9,17 @@ import {
  * Codes shown while the user types. A missing value is reported only when the day is saved, and a
  * value of a field that is no longer asked is dropped before saving.
  */
-export type LiveErrorCode = Extract<FieldErrorCode, 'range' | 'step' | 'type'>;
+export type LiveErrorCode = Extract<FieldErrorCode, 'range' | 'step' | 'type' | 'option'>;
 
 /** After a save attempt, empty fields are flagged too. */
 export type ShownErrorCode = LiveErrorCode | 'required';
 
-const LIVE_CODES: ReadonlySet<FieldErrorCode> = new Set<LiveErrorCode>(['range', 'step', 'type']);
+const LIVE_CODES: ReadonlySet<FieldErrorCode> = new Set<LiveErrorCode>([
+  'range',
+  'step',
+  'type',
+  'option',
+]);
 
 const isLive = (code: FieldErrorCode): code is LiveErrorCode => LIVE_CODES.has(code);
 

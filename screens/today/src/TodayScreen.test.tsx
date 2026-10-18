@@ -192,7 +192,11 @@ describe('F3-TD-06 save day and daily score', () => {
     await userEvent.click(saveButton());
     expect(scrolled.mock.contexts[0]).toHaveTextContent(en.errors.required);
     expect(card('Sun').getByText(en.errors.required)).toBeInTheDocument();
-    expect(await screen.findByText(en.notices.incomplete)).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        'Check Sleep, Training, Clean eating, Sun: the answers marked in red are missing or not valid.',
+      ),
+    ).toBeInTheDocument();
     expect(await getDailyEntry(db, MONDAY)).toBeUndefined();
   });
 });

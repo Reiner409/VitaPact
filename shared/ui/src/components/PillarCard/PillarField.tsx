@@ -1,4 +1,8 @@
+import { Box, Text } from '@mantine/core';
+import type { ReactNode } from 'react';
+import { tokens } from '../../tokens';
 import { Button } from '../Button/Button';
+import { fieldErrorProps } from '../fieldProps';
 import { ChipGroup } from '../ChipGroup/ChipGroup';
 import { NumberField, type NumberUnit } from '../NumberField/NumberField';
 import { ScaleInput, type ScaleValue } from '../ScaleInput/ScaleInput';
@@ -42,6 +46,29 @@ type FieldOf<Kind extends PillarCardField['kind']> = Extract<PillarCardField, { 
 interface KindProps<Kind extends PillarCardField['kind']> extends Omit<PillarFieldProps, 'field'> {
   field: FieldOf<Kind>;
   label: string;
+}
+
+/**
+ * The faces, yes/no and chips have no input box to turn red, so an error draws a danger-coloured
+ * frame around the whole answer and says what is wrong under it, as NumberField does for numbers.
+ */
+function ErrorFrame({ error, children }: { error: string | undefined; children: ReactNode }) {
+  if (!error) return children;
+  return (
+    <Box
+      data-error="true"
+      p={tokens.space[2]}
+      style={{
+        border: `${tokens.border.strongWidth}px solid var(--vp-color-danger)`,
+        borderRadius: tokens.radius.md,
+      }}
+    >
+      {children}
+      <Text size="sm" mt={tokens.space[1]} {...fieldErrorProps}>
+        {error}
+      </Text>
+    </Box>
+  );
 }
 
 /** One field of a pillar, drawn with the base component of its kind. */
@@ -98,40 +125,46 @@ function PlainNumberPillarField({
   );
 }
 
-function ScalePillarField({ field, label, value, text, onChange }: KindProps<'scale'>) {
+function ScalePillarField({ field, label, value, text, error, onChange }: KindProps<'scale'>) {
   return (
-    <ScaleInput
-      label={label}
-      value={asNumber(value) as ScaleValue | null}
-      onChange={onChange}
-      getValueLabel={(dot) => text.scaleValueLabel(field.key, dot)}
-    />
+    <ErrorFrame error={error}>
+      <ScaleInput
+        label={label}
+        value={asNumber(value) as ScaleValue | null}
+        onChange={onChange}
+        getValueLabel={(dot) => text.scaleValueLabel(field.key, dot)}
+      />
+    </ErrorFrame>
   );
 }
 
-function YesNoPillarField({ label, value, text, onChange }: KindProps<'yesNo'>) {
+function YesNoPillarField({ label, value, text, error, onChange }: KindProps<'yesNo'>) {
   return (
-    <YesNoToggle
-      label={label}
-      yesLabel={text.yes}
-      noLabel={text.no}
-      value={typeof value === 'boolean' ? value : null}
-      onChange={onChange}
-    />
+    <ErrorFrame error={error}>
+      <YesNoToggle
+        label={label}
+        yesLabel={text.yes}
+        noLabel={text.no}
+        value={typeof value === 'boolean' ? value : null}
+        onChange={onChange}
+      />
+    </ErrorFrame>
   );
 }
 
-function ChoicePillarField({ field, label, value, text, onChange }: KindProps<'choice'>) {
+function ChoicePillarField({ field, label, value, text, error, onChange }: KindProps<'choice'>) {
   const options = field.options.map((option) => ({
     value: option,
     label: text.optionLabel(field.key, option),
   }));
   return (
-    <ChipGroup
-      label={label}
-      options={options}
-      value={typeof value === 'string' ? value : null}
-      onChange={onChange}
-    />
+    <ErrorFrame error={error}>
+      <ChipGroup
+        label={label}
+        options={options}
+        value={typeof value === 'string' ? value : null}
+        onChange={onChange}
+      />
+    </ErrorFrame>
   );
 }
