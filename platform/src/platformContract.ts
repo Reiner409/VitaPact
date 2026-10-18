@@ -15,7 +15,7 @@ export interface PlatformHarness {
 }
 
 const JSON_FILTER: FileFilter = { name: 'VitaPact backup', extensions: ['json'] };
-const pngBytes = () => new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
+const pngBytes = () => new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
 /** Byte arrays from jsdom and from Node are different classes, so compare their contents. */
 const withPlainBytes = <T extends { bytes: Uint8Array }>(file: T | undefined) =>
@@ -26,6 +26,7 @@ export function describePlatformContract(makeHarness: () => PlatformHarness) {
   describe('F2-03 platform contract', () => {
     describeSaving(makeHarness);
     describeOpening(makeHarness);
+    describeImageType(makeHarness);
   });
 }
 
@@ -83,11 +84,36 @@ function describeOpening(makeHarness: () => PlatformHarness) {
       });
     });
 
+    it('RF-12 resolves to nothing when the user closes the dialog', async () => {
+      const { platform, userChoosesFile } = makeHarness();
+      userChoosesFile(undefined);
+
+      expect(await platform.openImageFile('Images')).toBeUndefined();
+    });
+  });
+}
+
+function describeImageType(makeHarness: () => PlatformHarness) {
+  describe('image type', () => {
     it('RF-12 recognises a JPG image whatever the case of its extension', async () => {
       const { platform, userChoosesFile } = makeHarness();
-      userChoosesFile({ name: 'WhatsApp Image.JPEG', bytes: new Uint8Array([0xff, 0xd8]) });
+      userChoosesFile({ name: 'WhatsApp Image.JPEG', bytes: new Uint8Array([0xff, 0xd8, 0xff]) });
 
       expect((await platform.openImageFile('Images'))?.mimeType).toBe('image/jpeg');
+    });
+
+    it('RF-12 recognises an image by its bytes when the name has no extension, as on Android', async () => {
+      const { platform, userChoosesFile } = makeHarness();
+      userChoosesFile({ name: 'image:1000012345', bytes: pngBytes() });
+
+      expect((await platform.openImageFile('Images'))?.mimeType).toBe('image/png');
+    });
+
+    it('RF-12 rejects a file named .png whose bytes are not an image', async () => {
+      const { platform, userChoosesFile } = makeHarness();
+      userChoosesFile({ name: 'luca.png', bytes: new Uint8Array([0x47, 0x49, 0x46]) });
+
+      await expect(platform.openImageFile('Images')).rejects.toBeInstanceOf(NotAnImageError);
     });
 
     it('RF-12 rejects a file that is not a PNG or JPG image', async () => {
@@ -102,13 +128,6 @@ function describeOpening(makeHarness: () => PlatformHarness) {
       userChoosesFile({ name: 'luca.constructor', bytes: new Uint8Array([0x47]) });
 
       await expect(platform.openImageFile('Images')).rejects.toBeInstanceOf(NotAnImageError);
-    });
-
-    it('RF-12 resolves to nothing when the user closes the dialog', async () => {
-      const { platform, userChoosesFile } = makeHarness();
-      userChoosesFile(undefined);
-
-      expect(await platform.openImageFile('Images')).toBeUndefined();
     });
   });
 }

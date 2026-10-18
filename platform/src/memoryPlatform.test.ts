@@ -40,9 +40,9 @@ describe('F2-03 memory platform for tests', () => {
     platform.chooseNextFile(first);
     platform.chooseNextFile(second);
 
-    expect((await platform.openImageFile('Images'))?.name).toBe('a.png');
-    expect((await platform.openImageFile('Images'))?.name).toBe('b.png');
-    expect(await platform.openImageFile('Images')).toBeUndefined();
+    expect((await platform.openFile({ name: 'Images', extensions: ['png'] }))?.name).toBe('a.png');
+    expect((await platform.openFile({ name: 'Images', extensions: ['png'] }))?.name).toBe('b.png');
+    expect(await platform.openFile({ name: 'Images', extensions: ['png'] })).toBeUndefined();
   });
 });
 
