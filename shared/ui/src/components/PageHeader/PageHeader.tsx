@@ -1,6 +1,7 @@
 import { Group, Stack, Text, Title } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { tokens } from '../../tokens';
+import { usePhoneLayout } from '../phoneLayout';
 
 export interface PageHeaderProps {
   title: string;
@@ -10,20 +11,45 @@ export interface PageHeaderProps {
   action?: ReactNode;
 }
 
-/** Screen title with an optional greeting and subtitle, and an optional action on the right. */
+/**
+ * Screen title with an optional greeting and subtitle, and an optional action: on the right on a
+ * wide window, on its own row under the title on a phone, where the title needs the whole width.
+ */
 export function PageHeader({ title, subtitle, greeting, action }: PageHeaderProps) {
+  const phone = usePhoneLayout();
+  const heading = <HeadingText title={title} subtitle={subtitle} greeting={greeting} />;
+  if (phone) {
+    return (
+      <Stack gap="md" mb="lg">
+        {heading}
+        {action}
+      </Stack>
+    );
+  }
   return (
     <Group justify="space-between" align="flex-start" wrap="nowrap" gap="md" mb="lg">
-      <Stack gap={0}>
-        {greeting && (
-          <Text fw={tokens.font.weight.semibold} c="var(--vp-color-primary-strong)">
-            {greeting}
-          </Text>
-        )}
-        <Title order={1}>{title}</Title>
-        {subtitle && <Text c="var(--vp-color-text-muted)">{subtitle}</Text>}
-      </Stack>
+      {heading}
       {action}
     </Group>
+  );
+}
+
+interface HeadingTextProps {
+  title: string;
+  subtitle: string | undefined;
+  greeting: string | undefined;
+}
+
+function HeadingText({ title, subtitle, greeting }: HeadingTextProps) {
+  return (
+    <Stack gap={0}>
+      {greeting && (
+        <Text fw={tokens.font.weight.semibold} c="var(--vp-color-primary-strong)">
+          {greeting}
+        </Text>
+      )}
+      <Title order={1}>{title}</Title>
+      {subtitle && <Text c="var(--vp-color-text-muted)">{subtitle}</Text>}
+    </Stack>
   );
 }

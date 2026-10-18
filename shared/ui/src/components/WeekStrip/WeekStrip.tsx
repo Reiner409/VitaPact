@@ -1,4 +1,6 @@
 import { SimpleGrid } from '@mantine/core';
+import { tokens } from '../../tokens';
+import { usePhoneLayout } from '../phoneLayout';
 import { DayTile } from '../DayTile/DayTile';
 import type { ScoreBand } from '../scoreBand';
 
@@ -21,7 +23,7 @@ export interface WeekStripProps {
   onSelectDay: (index: number) => void;
 }
 
-/** Seven DayTiles from Monday to Sunday with today highlighted; four per row on narrow screens. */
+/** Seven DayTiles from Monday to Sunday in one row, with today highlighted; compact on phones. */
 export function WeekStrip({
   label,
   days,
@@ -30,12 +32,13 @@ export function WeekStrip({
   todayLabel,
   onSelectDay,
 }: WeekStripProps) {
+  const compact = usePhoneLayout();
   return (
     <SimpleGrid
       component="ul"
       aria-label={label}
-      cols={{ base: 4, sm: 7 }}
-      spacing="xs"
+      cols={7}
+      spacing={compact ? tokens.space[1] : 'xs'}
       style={{ listStyle: 'none', margin: 0, padding: 0 }}
     >
       {days.map((day, index) => (
@@ -45,6 +48,7 @@ export function WeekStrip({
             missingLabel={missingLabel}
             todayLabel={todayLabel}
             today={index === todayIndex}
+            compact={compact}
             onClick={() => onSelectDay(index)}
           />
         </li>

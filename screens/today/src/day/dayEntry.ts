@@ -25,6 +25,13 @@ const storedValuesOf = (values: PillarValues): Record<string, PillarValue> =>
     ),
   );
 
+/** The pillars with an empty or invalid answer, named in the notice when the day is not saved. */
+export const incompletePillars = (pillars: readonly Pillar[], values: DayValues): Pillar[] =>
+  pillars.filter(
+    (pillar) =>
+      validatePillarValues(pillar, withoutUnasked(pillar, values[pillar.id] ?? {})).length > 0,
+  );
+
 /**
  * The entry to save for the day, or `undefined` while a field is empty or invalid. Every pillar
  * must be answered: an unanswered pillar would count as a missed goal in the week (RF-03).

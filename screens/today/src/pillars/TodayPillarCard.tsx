@@ -24,6 +24,7 @@ function errorMessage(t: Translate, pillar: Pillar, field: string, code: ShownEr
     range: () => t('errors.range', range),
     step: () => t('errors.step', { step }),
     type: () => t('errors.type'),
+    option: () => t('errors.option'),
   };
   return messages[code]();
 }

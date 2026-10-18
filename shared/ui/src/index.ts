@@ -5,6 +5,7 @@ export { AppShell, type AppShellNavItem, type AppShellProps } from './components
 export { NavItem, type NavItemProps, type NavPlacement } from './components/NavItem/NavItem';
 export { PageHeader, type PageHeaderProps } from './components/PageHeader/PageHeader';
 export { SplitView, useSplitLayout, type SplitViewProps } from './components/SplitView/SplitView';
+export { usePhoneLayout } from './components/phoneLayout';
 export { Card, type CardAccent, type CardProps, type CardTone } from './components/Card/Card';
 export { Button, type ButtonProps, type ButtonVariant } from './components/Button/Button';
 export {

@@ -1,0 +1,89 @@
+name: Mobile
+
+# The Android build of the Tauri shell (RF-29). It runs on main and mobile, by hand, and on pull
+# requests that touch the shell, so the desktop checks stay fast. The signing key lives in
+# repository secrets only; without it the job still builds an installable APK. The iOS job is
+# left out until there is an Apple licence: it ran from 3104d91 to a16b730 if it is needed again.
+on:
+  push:
+    branches: [main, mobile]
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/mobile.yml
+      - src-tauri/**
+
+concurrency:
+  group: mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    name: Android APK
+    runs-on: ubuntu-latest
+    env:
+      NDK_VERSION: 27.0.12077973
+      BUILD_TOOLS: 34.0.0
+      ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22.22
+          cache: pnpm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Android NDK and build tools
+        # The runner already ships the Android SDK; only the pieces Tauri needs are added.
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "ndk;$NDK_VERSION" "build-tools;$BUILD_TOOLS" "platforms;android-34"
+          echo "NDK_HOME=$ANDROID_HOME/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: pnpm install --frozen-lockfile
+      - name: Generate the Android project
+        # The generated MainActivity is swapped for ours, which keeps the app clear of the
+        # system bars; it keeps the generated package line.
+        run: |
+          set -euo pipefail
+          pnpm tauri android init --ci
+          main=$(find src-tauri/gen/android -name MainActivity.kt | head -n 1)
+          echo "Generated $main:" && cat "$main"
+          { grep -m 1 '^package ' "$main"; tail -n +2 src-tauri/android/MainActivity.kt; } > main.kt
+          mv main.kt "$main"
+      - name: Build the release APK (phones and emulators)
+        run: pnpm tauri android build --apk --target aarch64 --target armv7 --target x86_64
+      - name: Sign the APK
+        # With the ANDROID_KEYSTORE secret every build carries the same signature, so a new APK
+        # installs over the old one. Without it a throwaway key is made: uninstall before updating.
+        run: |
+          set -euo pipefail
+          tools="$ANDROID_HOME/build-tools/$BUILD_TOOLS"
+          unsigned=$(find src-tauri/gen/android -name '*-release-unsigned.apk' | head -n 1)
+          if [ -n "$ANDROID_KEYSTORE" ]; then
+            echo "$ANDROID_KEYSTORE" | base64 --decode > release.jks
+            password="$ANDROID_KEYSTORE_PASSWORD"
+          else
+            password=throwaway
+            keytool -genkeypair -keystore release.jks -storepass "$password" -keypass "$password" \
+              -alias vitapact -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=VitaPact"
+          fi
+          "$tools/zipalign" -f -p 4 "$unsigned" aligned.apk
+          "$tools/apksigner" sign --ks release.jks --ks-pass "pass:$password" \
+            --out vitapact.apk aligned.apk
+          "$tools/apksigner" verify vitapact.apk
+      - uses: actions/upload-artifact@v6
+        with:
+          name: vitapact-android-${{ github.sha }}
+          path: vitapact.apk
+          if-no-files-found: error

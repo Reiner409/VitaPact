@@ -84,6 +84,8 @@ describe('F2-03 Tauri platform', () => {
     const { api } = fakeTauri();
     vi.mocked(api.open).mockResolvedValueOnce('/home/rei/luca.png');
 
-    expect((await createTauriPlatform(api).openImageFile('Images'))?.name).toBe('luca.png');
+    expect(
+      (await createTauriPlatform(api).openFile({ name: 'Images', extensions: ['png'] }))?.name,
+    ).toBe('luca.png');
   });
 });

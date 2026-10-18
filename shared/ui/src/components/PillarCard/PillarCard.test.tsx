@@ -172,6 +172,31 @@ describe('F2-18 PillarCard', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('At most 1440 minutes');
   });
 
+  it.each([
+    ['the faces', food, {}, 'rating'],
+    ['yes or no', training, {}, 'trained'],
+    ['the chips', training, { trained: true }, 'type'],
+  ] as const)(
+    'frames %s in the danger colour with the error under them',
+    (_, pillar, values, key) => {
+      renderWithTheme(
+        <PillarCard
+          pillar={pillar}
+          title="Pillar"
+          text={text}
+          values={values}
+          errors={{ [key]: 'This answer is missing' }}
+          onChange={vi.fn()}
+        />,
+      );
+      const alert = screen.getByRole('alert');
+      expect(alert).toHaveTextContent('This answer is missing');
+      expect(alert.closest('[data-error="true"]')?.getAttribute('style')).toContain(
+        'var(--vp-color-danger)',
+      );
+    },
+  );
+
   it('G4.2 colours the icon with the pillar, and the title stays in the text colour', () => {
     renderWithTheme(<StatefulCard pillar={sleep} title="Sleep" />);
     expect(document.querySelector('[data-icon="sleep"]')?.parentElement).toHaveStyle({

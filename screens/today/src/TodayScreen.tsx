@@ -7,7 +7,7 @@ import {
   type VitaPactDatabase,
 } from '@vitapact/core/storage';
 import { ScoreRing, Stack } from '@vitapact/ui';
-import { useTranslation } from '@vitapact/i18n';
+import { pillarKey, useTranslation } from '@vitapact/i18n';
 import { dayScore } from '@vitapact/core/scoring';
 import { useState } from 'react';
 import { DayHeader } from './day/DayHeader';
@@ -72,6 +72,8 @@ export function TodayScreen(props: TodayScreenProps) {
         onSave={() => void saving.save(day, values)}
         changed={changed}
         notice={saving.notice}
+        incompleteTries={saving.incompleteTries}
+        incompletePillars={saving.incomplete.map((id) => t(pillarKey.name(id)))}
         onCloseNotice={saving.closeNotice}
       />
     </Stack>

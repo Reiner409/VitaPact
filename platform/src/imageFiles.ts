@@ -1,12 +1,15 @@
 import type { FileFilter, ImageMimeType, OpenedFile, OpenedImage } from './platform';
 
-const MIME_TYPE_BY_EXTENSION: ReadonlyMap<string, ImageMimeType> = new Map([
-  ['png', 'image/png'],
-  ['jpg', 'image/jpeg'],
-  ['jpeg', 'image/jpeg'],
-]);
+export const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg'];
 
-export const IMAGE_EXTENSIONS = [...MIME_TYPE_BY_EXTENSION.keys()];
+/** The first bytes of every PNG and JPG file. */
+const SIGNATURES: readonly { mimeType: ImageMimeType; bytes: readonly number[] }[] = [
+  { mimeType: 'image/png', bytes: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a] },
+  { mimeType: 'image/jpeg', bytes: [0xff, 0xd8, 0xff] },
+];
+
+const startsWith = (bytes: Uint8Array, prefix: readonly number[]) =>
+  prefix.every((byte, index) => bytes[index] === byte);
 
 export function imageFilter(filterName: string): FileFilter {
   return { name: filterName, extensions: IMAGE_EXTENSIONS };
@@ -16,12 +19,14 @@ export function fileNameOf(path: string): string {
   return path.split(/[\\/]/).at(-1) ?? path;
 }
 
-/** The dialog only offers images, but a typed name can still bypass the filter, hence the check. */
+/**
+ * The type comes from the file's own bytes, not its name: Android hands over a `content://` link
+ * without an extension, and a typed name can bypass the dialog's filter anyway.
+ */
 export function asImage(file: OpenedFile): OpenedImage {
-  const extension = file.name.split('.').at(-1)?.toLowerCase() ?? '';
-  const mimeType = MIME_TYPE_BY_EXTENSION.get(extension);
-  if (!mimeType) throw new NotAnImageError(file.name);
-  return { ...file, mimeType };
+  const signature = SIGNATURES.find(({ bytes }) => startsWith(file.bytes, bytes));
+  if (!signature) throw new NotAnImageError(file.name);
+  return { ...file, mimeType: signature.mimeType };
 }
 
 export class NotAnImageError extends Error {

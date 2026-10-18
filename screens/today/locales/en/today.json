@@ -11,7 +11,8 @@
     "range": "Enter a value from {{min}} to {{max}}",
     "step": "Use steps of {{step}}",
     "type": "Enter a number",
-    "required": "Fill in this field"
+    "required": "This answer is missing",
+    "option": "Pick one of the choices"
   },
   "week": {
     "label": "This week",
@@ -23,6 +24,7 @@
   "notices": {
     "saved": "Day saved. Nice one!",
     "failed": "The day could not be saved. Try again.",
+    "incomplete": "Check {{pillars}}: the answers marked in red are missing or not valid.",
     "close": "Close"
   },
   "quickValue": "{{value}} {{unit}}",

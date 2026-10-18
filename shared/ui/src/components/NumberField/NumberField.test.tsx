@@ -89,6 +89,12 @@ describe('F2-17 NumberField limits', () => {
     expect(onValue).not.toHaveBeenCalledWith(24);
   });
 
+  it('RF-29 takes a comma as the decimal key, as phone keyboards in Italian offer it', async () => {
+    const { field, onValue } = renderField({ unit: 'hours' });
+    await userEvent.type(field, '7,5');
+    expect(onValue).toHaveBeenLastCalledWith(7.5);
+  });
+
   it('reports an emptied field as null', async () => {
     const { field, onValue } = renderField({ unit: 'kg', initial: 70 });
     await userEvent.clear(field);

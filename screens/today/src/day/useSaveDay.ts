@@ -2,19 +2,29 @@ import type { CalendarDate } from '@vitapact/core/calendar';
 import { pillarRegistry, type DayValues } from '@vitapact/core/pillars';
 import { saveDailyEntry, type VitaPactDatabase } from '@vitapact/core/storage';
 import { useState } from 'react';
-import { dayEntryOf } from './dayEntry';
+import { dayEntryOf, incompletePillars } from './dayEntry';
 
-export type SaveNotice = 'saved' | 'failed' | null;
+/** `incomplete`: an answer is missing, so nothing was saved and the fields say which. */
+export type SaveNotice = 'saved' | 'failed' | 'incomplete' | null;
 
 /** Saves the day; a new save of the same day replaces the old one (RF-03). */
 export function useSaveDay(db: VitaPactDatabase, onSaved: () => void, now: () => Date) {
   const [triedToSave, setTriedToSave] = useState(false);
   const [notice, setNotice] = useState<SaveNotice>(null);
+  const [incomplete, setIncomplete] = useState<string[]>([]);
+  /** Counts the saves stopped by a missing answer, so each one shows the first missing field. */
+  const [incompleteTries, setIncompleteTries] = useState(0);
 
   const save = async (date: CalendarDate, values: DayValues) => {
     setTriedToSave(true);
-    const entry = dayEntryOf(pillarRegistry.list(), values, date, now());
-    if (!entry) return;
+    const pillars = pillarRegistry.list();
+    const entry = dayEntryOf(pillars, values, date, now());
+    if (!entry) {
+      setIncomplete(incompletePillars(pillars, values).map((pillar) => pillar.id));
+      setNotice('incomplete');
+      setIncompleteTries((tries) => tries + 1);
+      return;
+    }
     try {
       await saveDailyEntry(db, entry);
       setTriedToSave(false);
@@ -24,5 +34,12 @@ export function useSaveDay(db: VitaPactDatabase, onSaved: () => void, now: () =>
       setNotice('failed');
     }
   };
-  return { triedToSave, notice, closeNotice: () => setNotice(null), save };
+  return {
+    triedToSave,
+    notice,
+    incomplete,
+    incompleteTries,
+    closeNotice: () => setNotice(null),
+    save,
+  };
 }

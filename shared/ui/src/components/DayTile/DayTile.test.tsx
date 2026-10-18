@@ -42,6 +42,20 @@ describe('F2-18 DayTile', () => {
     expect(tile).toHaveAttribute('data-accent', 'primary');
   });
 
+  it('RF-29 keeps the same name in the compact phone tile, the labels only read aloud', () => {
+    renderWithTheme(<DayTile {...base} score={null} band={null} today compact />);
+    const tile = screen.getByRole('button', { name: 'Wed Not logged Today' });
+    expect(tile).toHaveAttribute('data-accent', 'primary');
+    expect(tile.querySelector('[data-band="none"]')).not.toBeNull();
+  });
+
+  it('G4.6 keeps the compact tile at least 44 px wide and tall', () => {
+    renderWithTheme(<DayTile {...base} compact />);
+    const tile = screen.getByRole('button', { name: 'Wed 72' });
+    expect(tile).toHaveStyle({ minHeight: '44px' });
+    expect(tile.firstElementChild).toHaveStyle({ minWidth: '44px' });
+  });
+
   it('other days carry no accent', () => {
     renderWithTheme(<DayTile {...base} />);
     expect(screen.getByRole('button')).not.toHaveAttribute('data-accent');
