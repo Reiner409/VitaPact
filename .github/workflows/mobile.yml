@@ -36,10 +36,12 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: android-actions/setup-android@v3
       - name: Android NDK and build tools
+        # The runner already ships the Android SDK; only the pieces Tauri needs are added.
         run: |
-          sdkmanager "ndk;$NDK_VERSION" "build-tools;$BUILD_TOOLS" "platforms;android-34"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "ndk;$NDK_VERSION" "build-tools;$BUILD_TOOLS" "platforms;android-34"
           echo "NDK_HOME=$ANDROID_HOME/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
       - uses: dtolnay/rust-toolchain@stable
         with:
