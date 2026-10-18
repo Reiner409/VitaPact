@@ -26,7 +26,7 @@ test.describe('F3-ST-02 RF-25 groups in settings', () => {
     await page.getByRole('button', { name: 'New group' }).click();
     const dialog = page.getByRole('dialog', { name: 'New group' });
     await dialog.getByLabel('Group name').fill('Office');
-    await dialog.getByLabel('Stake').fill('brings the coffee');
+    await dialog.getByLabel('Stake', { exact: true }).fill('brings the coffee');
     await dialog.getByRole('button', { name: 'Create group' }).click();
     await expect(page.getByRole('heading', { name: 'Office' })).toBeVisible();
     await expect(dialog).toBeHidden();

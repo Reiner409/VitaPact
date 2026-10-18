@@ -8,12 +8,17 @@
   "group": {
     "select": "Group",
     "stake": "At stake: {{stake}}",
+    "stakeRotating": "At stake: {{stake}}. A new one every week.",
     "noMembers": "Nobody in this group yet. Friends join when you add their reports."
   },
   "newGroup": {
     "open": "New group",
     "title": "New group",
     "name": "Group name",
+    "stakeChoice": "How do you pick the stake?",
+    "stakeOwn": "We choose it",
+    "stakeRotating": "A new one every week",
+    "stakeRotatingHint": "Every week the app picks the stake for you, like the pizza or a round of beers. Everyone in the group sees the same one.",
     "stake": "Stake",
     "stakePlaceholder": "e.g. whoever falls behind buys the pizza",
     "members": "Members",

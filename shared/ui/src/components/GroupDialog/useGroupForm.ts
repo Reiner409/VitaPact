@@ -10,7 +10,7 @@ export interface GroupDraft extends GroupDetails {
   memberIds: readonly string[];
 }
 
-export const EMPTY_GROUP: GroupDraft = { name: '', stake: '', memberIds: [] };
+export const EMPTY_GROUP: GroupDraft = { name: '', stake: '', stakeRotates: false, memberIds: [] };
 
 const NAME_ERRORS: readonly GroupDetailsError[] = ['nameMissing', 'nameTooLong'];
 const isNameError = (error: GroupDetailsError) => NAME_ERRORS.includes(error);
@@ -53,6 +53,7 @@ export function useGroupForm(
     errors,
     setName: (name: string) => edit({ name }, (error) => !isNameError(error)),
     setStake: (stake: string) => edit({ stake }, isNameError),
+    setStakeRotates: (stakeRotates: boolean) => edit({ stakeRotates }, isNameError),
     setMemberIds: (memberIds: string[]) => setGroup((current) => ({ ...current, memberIds })),
   };
   return { fields, saving, saveFailed, submit };

@@ -74,5 +74,10 @@
         "05": "A week to be proud of. Keep the rhythm going."
       }
     }
+  },
+  "stakes": {
+    "01": "the pizza",
+    "02": "a round of beers",
+    "03": "the coffees"
   }
 }

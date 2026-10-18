@@ -56,13 +56,14 @@ export async function loadFriendsData(
 
 export async function createGroup(
   db: VitaPactDatabase,
-  { name, stake, memberIds }: NewGroup,
+  { name, stake, stakeRotates = false, memberIds }: NewGroup,
   createdAt: Date,
 ): Promise<Group> {
   const group: Group = {
     id: crypto.randomUUID(),
     name,
     stake,
+    stakeRotates,
     memberIds: [...memberIds],
     createdAt: createdAt.toISOString(),
   };

@@ -66,8 +66,23 @@ describe('F3-ST-02 RF-25 groups in settings', () => {
     await user.click(within(edit).getByRole('button', { name: en.groups.dialog.save }));
     expect(await screen.findByRole('heading', { name: 'Night owls' })).toBeInTheDocument();
     expect(await listGroups(db)).toEqual([
-      { ...sampleGroup, name: 'Night owls', memberIds: [...sampleGroup.memberIds] },
+      {
+        ...sampleGroup,
+        name: 'Night owls',
+        stakeRotates: false,
+        memberIds: [...sampleGroup.memberIds],
+      },
     ]);
+  });
+
+  it('F3-FR-10 switches a group to a stake that rotates every week', async () => {
+    const { db, user } = await renderCard();
+    await user.click(await screen.findByRole('button', { name: `Edit ${sampleGroup.name}` }));
+    const edit = await dialog(en.groups.dialog.editTitle);
+    await user.click(within(edit).getByRole('radio', { name: en.groups.dialog.stakeRotating }));
+    await user.click(within(edit).getByRole('button', { name: en.groups.dialog.save }));
+    expect(await screen.findByText(en.groups.stakeRotates)).toBeInTheDocument();
+    expect((await listGroups(db))[0]).toMatchObject({ stake: '', stakeRotates: true });
   });
 
   it('deletes a group only after confirming', async () => {

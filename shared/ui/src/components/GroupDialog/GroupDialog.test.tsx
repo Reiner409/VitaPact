@@ -10,6 +10,10 @@ const text: GroupDialogText = {
   cancel: 'Cancel',
   close: 'Close',
   name: 'Group name',
+  stakeChoice: 'How do you pick the stake?',
+  stakeOwn: 'We choose it',
+  stakeRotating: 'A new one every week',
+  stakeRotatingHint: 'The app picks one every week.',
   stake: 'Stake',
   stakePlaceholder: 'e.g. pizza',
   members: 'Members',
@@ -49,8 +53,30 @@ describe('F3-ST-02 RF-25 GroupDialog', () => {
     expect(screen.getByRole('textbox', { name: 'Group name' })).toHaveValue('Office');
     await user.click(screen.getByRole('checkbox', { name: 'Bo' }));
     await user.click(screen.getByRole('button', { name: 'Save group' }));
-    expect(props.onSave).toHaveBeenCalledWith({ ...office, memberIds: ['u1', 'u2'] });
+    expect(props.onSave).toHaveBeenCalledWith({
+      ...office,
+      stakeRotates: false,
+      memberIds: ['u1', 'u2'],
+    });
     expect(props.onClose).toHaveBeenCalled();
+  });
+
+  it('F3-FR-10 lets the stake rotate every week, with no stake to write', async () => {
+    const user = userEvent.setup();
+    const { props } = renderDialog({ initial: office });
+    await user.click(screen.getByRole('radio', { name: 'A new one every week' }));
+    expect(screen.queryByRole('textbox', { name: 'Stake' })).not.toBeInTheDocument();
+    expect(screen.getByText('The app picks one every week.')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Save group' }));
+    expect(props.onSave).toHaveBeenCalledWith({ ...office, stake: '', stakeRotates: true });
+  });
+
+  it("F3-FR-10 goes back to a stake of the group's own", async () => {
+    const user = userEvent.setup();
+    renderDialog({ initial: { ...office, stake: '', stakeRotates: true } });
+    expect(screen.getByRole('radio', { name: 'A new one every week' })).toBeChecked();
+    await user.click(screen.getByRole('radio', { name: 'We choose it' }));
+    expect(screen.getByRole('textbox', { name: 'Stake' })).toHaveValue('');
   });
 
   it('shows the error core finds and saves nothing', async () => {
