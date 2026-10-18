@@ -84,7 +84,7 @@ jobs:
     runs-on: macos-latest
     env:
       # Read by the Tauri CLI to sign with the distribution certificate and profile.
-      APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
+      TEAM_SECRET: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
       IOS_CERTIFICATE: ${{ secrets.IOS_CERTIFICATE }}
       IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
       IOS_MOBILE_PROVISION: ${{ secrets.IOS_MOBILE_PROVISION }}
@@ -105,10 +105,13 @@ jobs:
         with:
           workspaces: src-tauri
       - run: pnpm install --frozen-lockfile
+      - name: Apple team
+        # Tauri refuses an empty team. The unsigned build never signs, so a placeholder will do.
+        run: echo "APPLE_DEVELOPMENT_TEAM=${TEAM_SECRET:-UNSIGNED00}" >> "$GITHUB_ENV"
       - name: Generate the Xcode project
         run: pnpm tauri ios init --ci
       - name: Signed build for TestFlight
-        if: env.IOS_CERTIFICATE != '' && env.IOS_MOBILE_PROVISION != '' && env.APPLE_DEVELOPMENT_TEAM != ''
+        if: env.IOS_CERTIFICATE != '' && env.IOS_MOBILE_PROVISION != '' && env.TEAM_SECRET != ''
         run: pnpm tauri ios build --export-method app-store-connect
       - name: Upload to TestFlight
         if: env.IOS_CERTIFICATE != '' && env.APP_STORE_CONNECT_KEY != ''
