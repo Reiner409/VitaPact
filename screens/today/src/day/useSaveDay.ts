@@ -4,7 +4,8 @@ import { saveDailyEntry, type VitaPactDatabase } from '@vitapact/core/storage';
 import { useState } from 'react';
 import { dayEntryOf } from './dayEntry';
 
-export type SaveNotice = 'saved' | 'failed' | null;
+/** `incomplete`: an answer is missing, so nothing was saved and the fields say which. */
+export type SaveNotice = 'saved' | 'failed' | 'incomplete' | null;
 
 /** Saves the day; a new save of the same day replaces the old one (RF-03). */
 export function useSaveDay(db: VitaPactDatabase, onSaved: () => void, now: () => Date) {
@@ -14,7 +15,10 @@ export function useSaveDay(db: VitaPactDatabase, onSaved: () => void, now: () =>
   const save = async (date: CalendarDate, values: DayValues) => {
     setTriedToSave(true);
     const entry = dayEntryOf(pillarRegistry.list(), values, date, now());
-    if (!entry) return;
+    if (!entry) {
+      setNotice('incomplete');
+      return;
+    }
     try {
       await saveDailyEntry(db, entry);
       setTriedToSave(false);

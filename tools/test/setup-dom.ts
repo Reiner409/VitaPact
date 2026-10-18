@@ -41,3 +41,8 @@ if (!('stream' in Blob.prototype)) {
     },
   });
 }
+
+// jsdom does no layout, so it has no scrolling either; the Today screen scrolls to a missing answer.
+if (!Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = () => undefined;
+}

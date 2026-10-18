@@ -127,6 +127,8 @@ export function NumberField({
       {...optional('description', description)}
       {...optional('error', error)}
       {...fixedProps}
+      // Phone keyboards in many languages offer a comma as the decimal key.
+      allowedDecimalSeparators={[',', '.']}
       leftSection={<StepButton icon="decrease" onStep={() => stepBy(-step)} />}
       suffix={UNIT_GAP + unitLabel}
       rightSection={<StepButton icon="increase" onStep={() => stepBy(step)} />}

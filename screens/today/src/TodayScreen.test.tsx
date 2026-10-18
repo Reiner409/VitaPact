@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { getDailyEntry, saveDailyEntry } from '@vitapact/core/storage';
 import { openTestDatabase, sampleEntry, sampleProfile } from '@vitapact/core/storage/testing';
 import { renderWithProviders } from '@vitapact/ui/testing';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import pillars from '@vitapact/i18n/locales/en/pillars.json';
 import en from '../locales/en/today.json';
 import { TodayScreen, type TodayScreenProps } from './TodayScreen';
@@ -185,11 +185,14 @@ describe('F3-TD-06 save day and daily score', () => {
     expect((await getDailyEntry(db, MONDAY))?.pillars.sun).toEqual({ minutes: 60 });
   });
 
-  it('RF-03 flags the empty fields and saves nothing until they are filled', async () => {
+  it('RF-03 flags the empty fields, shows the first one and saves nothing until they are filled', async () => {
     const db = await openTestDatabase();
+    const scrolled = vi.spyOn(Element.prototype, 'scrollIntoView');
     await renderToday({ db });
     await userEvent.click(saveButton());
+    expect(scrolled.mock.contexts[0]).toHaveTextContent(en.errors.required);
     expect(card('Sun').getByText(en.errors.required)).toBeInTheDocument();
+    expect(await screen.findByText(en.notices.incomplete)).toBeInTheDocument();
     expect(await getDailyEntry(db, MONDAY)).toBeUndefined();
   });
 });

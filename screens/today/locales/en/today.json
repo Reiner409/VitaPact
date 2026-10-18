@@ -23,6 +23,7 @@
   "notices": {
     "saved": "Day saved. Nice one!",
     "failed": "The day could not be saved. Try again.",
+    "incomplete": "Some answers are missing. Fill in the highlighted fields, then save.",
     "close": "Close"
   },
   "quickValue": "{{value}} {{unit}}",
