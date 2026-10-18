@@ -316,7 +316,7 @@ interface ScreenProps {
 #### F2-17 · Base components, fields (T13)
 
 - **Depends on:** F1-02, F1-03 · **Requirements:** section 6.2, RNF-10
-- **Goal:** NumberField (hours 0.5, minutes 5, kg 0.1), ScaleInput, YesNoToggle, ChipGroup (single and multiple), TextField/TextArea, PasswordField, Select, Badge, FilePicker.
+- **Goal:** NumberField (hours 0.5, minutes 5, kg 0.1; Apple-style stepper, centred value with its unit spelled out, at most 320 px), ScaleInput, YesNoToggle, ChipGroup (single and multiple), TextField/TextArea, PasswordField, Select, Badge, FilePicker.
 - **Acceptance criteria:** error under the field, announced to the screen reader.
 - **Tests to write:** NumberField steps and limits; ScaleInput with keyboard arrows; FilePicker with drag and drop, non-image file, error; axe on each one.
 
@@ -381,13 +381,13 @@ Common dependencies: the lane table in section 3a.
 #### F3-TD-01 · Day header
 
 - **Requirements:** section 5.2
-- **Goal:** date, ISO week, days left until Sunday.
-- **Tests to write:** with an injected date, Monday → 6 days, Sunday → "today" (oggi).
+- **Goal:** greeting with the nickname by the hour, date, ISO week, days left until Sunday.
+- **Tests to write:** with an injected date, Monday → 6 days, Sunday → "today" (oggi); greeting boundaries at 5, 12, 18 and 23; no greeting without a profile.
 
 #### F3-TD-02 · Sleep card
 
 - **Requirements:** RF-03
-- **Goal:** hours in steps of 0.5 and 5 quality stars.
+- **Goal:** hours in steps of 0.5 and quality on the shared 5-face scale, asked only when hours are above 0.
 - **Tests to write:** values saved in the day's entry; card green when the goal is reached.
 
 #### F3-TD-03 · Training card
@@ -411,7 +411,7 @@ Common dependencies: the lane table in section 3a.
 #### F3-TD-06 · Save day and daily score
 
 - **Requirements:** RF-03, RNF-06
-- **Goal:** "Save day" (Salva giornata) button, the day's ScoreRing, confirmation Toast; a new save overwrites.
+- **Goal:** "Save day" (Salva giornata) button, the day's ScoreRing that follows the answers live, confirmation Toast; the day stays editable and a new save overwrites; nothing is stored before "Save day".
 - **Acceptance criteria:** complete check-in in less than 30 seconds (1.0 goal).
 - **Tests to write:** save and reopen with the values; end-to-end of the evening check-in ("Evening check-in" (Check-in serale) scenario).
 
@@ -479,7 +479,7 @@ Common dependencies: the lane table in section 3a.
 #### F3-WK-06 · Generate report
 
 - **Requirements:** RF-10, RF-11, D10, D11
-- **Goal:** a button that opens ReportPreview; "Save image" (Salva immagine) uses `platform.saveFile`.
+- **Goal:** a button that opens ReportPreview; "Save image" (Salva immagine) uses `platform.saveFile`; "Copy image" (Copia immagine) puts the PNG on the clipboard.
 - **Tests to write:** preview with nickname, UUID and period; weight hidden if `hideWeight`; end-to-end "Sunday evening" (Domenica sera) with the PNG saved and read back.
 
 ### Friends · `screens/friends` (T18)
@@ -501,13 +501,13 @@ Common dependencies: the lane table in section 3a.
 #### F3-FR-03 · Add report
 
 - **Requirements:** RF-12, RF-28, RNF-05
-- **Goal:** ReportImport: choosing the image, preview of who it is, confirmation; messages for each outcome of F2-12.
+- **Goal:** ReportImport: pasting the image from the clipboard or choosing it, preview of who it is, confirmation; messages for each outcome of F2-12.
 - **Tests to write:** one test for each outcome; end-to-end "Friend import" (Import dell'amico).
 
 #### F3-FR-04 · New friend in groups
 
 - **Requirements:** RF-25
-- **Goal:** on a friend's first report the app asks which groups to add them to.
+- **Goal:** on a friend's first report the app asks which groups to add them to, with several groups selectable at once.
 - **Tests to write:** choosing no group is allowed; the friend appears in the chosen groups.
 
 #### F3-FR-05 · Weekly ranking
