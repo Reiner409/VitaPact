@@ -2,9 +2,11 @@ name: Release
 
 # A tag such as v0.1.0 builds the Windows installer and portable and publishes them as a
 # GitHub release (F4-03). The tag must match the version in src-tauri/tauri.conf.json.
+# Run by hand from main, the workflow makes the tag of the current version itself.
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -25,21 +27,27 @@ jobs:
         with:
           workspaces: src-tauri
       - run: pnpm install --frozen-lockfile
-      - name: Tag matches the app version
+      - name: Version and tag
         shell: bash
         run: |
           version=$(node -p "require('./src-tauri/tauri.conf.json').version")
-          test "v$version" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME, app $version"; exit 1; }
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            test "v$version" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME, app $version"; exit 1; }
+          fi
+          echo "TAG=v$version" >> "$GITHUB_ENV"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
       - name: Build NSIS installer and executable
         run: pnpm tauri build
       - name: Installer under 15 MB (RNF-09)
         run: pnpm check:installer-size src-tauri/target/release/bundle
       - name: Name the portable after the version
         shell: bash
-        run: cp src-tauri/target/release/vitapact.exe "VitaPact_${GITHUB_REF_NAME#v}_x64-portable.exe"
+        run: cp src-tauri/target/release/vitapact.exe "VitaPact_${VERSION}_x64-portable.exe"
       - uses: softprops/action-gh-release@v2
         with:
-          name: VitaPact ${{ github.ref_name }}
+          tag_name: ${{ env.TAG }}
+          target_commitish: ${{ github.sha }}
+          name: VitaPact ${{ env.TAG }}
           generate_release_notes: true
           fail_on_unmatched_files: true
           files: |
