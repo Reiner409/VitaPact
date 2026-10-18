@@ -1,0 +1,47 @@
+name: Release
+
+# A tag such as v0.1.0 builds the Windows installer and portable and publishes them as a
+# GitHub release (F4-03). The tag must match the version in src-tauri/tauri.conf.json.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Windows release
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22.22
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: pnpm install --frozen-lockfile
+      - name: Tag matches the app version
+        shell: bash
+        run: |
+          version=$(node -p "require('./src-tauri/tauri.conf.json').version")
+          test "v$version" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME, app $version"; exit 1; }
+      - name: Build NSIS installer and executable
+        run: pnpm tauri build
+      - name: Installer under 15 MB (RNF-09)
+        run: pnpm check:installer-size src-tauri/target/release/bundle
+      - name: Name the portable after the version
+        shell: bash
+        run: cp src-tauri/target/release/vitapact.exe "VitaPact_${GITHUB_REF_NAME#v}_x64-portable.exe"
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: VitaPact ${{ github.ref_name }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            VitaPact_*_x64-portable.exe

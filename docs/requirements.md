@@ -104,13 +104,14 @@ The elements of the model become the shared components: sidebar and header (AppS
 
 ### 5.2 Today
 
-- At the top: date, week number, days left until Sunday.
+- At the top: a greeting with the nickname that follows the hour ("Good morning", "Good afternoon", "Good evening", "Still up?" at night), then date, week number, days left until Sunday.
 - Four side-by-side cards, one per pillar (Sleep (Sonno), Training (Allenamento), Eating (Alimentazione), Sun (Sole)), each with its own colour and an icon.
-  - Sleep: hours field (step 0.5) and 5 stars for quality.
+  - Sleep: hours field (step 0.5) and quality on the shared 5-face scale. The quality question appears only once some sleep is logged; with 0 hours it is hidden and does not count.
   - Training: yes/no toggle, type menu (Gym (Palestra), Running (Corsa), Cycling (Bici), Swimming (Nuoto), Team sports (Sport di squadra), Other (Altro)), duration in minutes.
-  - Eating: 1-5 scale with labels (from "Disaster (Disastro)" to "Spotless (Pulitissima)").
+  - Eating: the same 5-face scale, with labels from "Disaster (Disastro)" to "Spotless (Pulitissima)". Every 1-5 rating in the app uses this one scale (😭 😟 😐 🙂 😁).
   - Sun: minutes with quick buttons 10/20/30/60.
-- Button "Save day (Salva giornata)". The card turns green when the goal is reached.
+- Number fields (hours, minutes, kg) are Apple-style steppers: value centred with its unit spelled out in the app's language ("7.5 hours", "30 minutes"), − and + on the sides, at most 320 px wide so they never stretch to the edge.
+- Button "Save day (Salva giornata)" with a friendly confirmation ("Day saved. Nice one!"). The day score follows the answers live; the day stays editable after saving, and only "Save day" stores it. The card turns green when the goal is reached, and its check pops in once (no animation with reduced motion).
 - Strip of the 7 days of the week with one dot per day: filled if logged, empty if missing.
 
 ### 5.3 Week
@@ -124,7 +125,7 @@ The elements of the model become the shared components: sidebar and header (AppS
 ### 5.4 Friends
 
 - At the top, the group selector (a user can have several). For the selected group: the stake, the current month's ranking with the average of weekly scores, and the weekend card with who pays and the phrase of the week (section 9.1), for example "This weekend Marco is buying the pizza: see you Saturday!".
-- Button "Add report (Aggiungi resoconto)" that opens the file picker for the image received from the friend.
+- Button "Add report (Aggiungi resoconto)". The image received from the friend can be pasted from the clipboard (Ctrl+V, e.g. copied from WhatsApp) or chosen with the file picker. The import goes in steps: reading the image, a preview of who it is with the identity check, then the confirmation. On a friend's first report the user can pick several groups at once to add them to.
 - Weekly ranking: position, nickname, score, encouraging verdict, weight change. Someone on a comeback has a "Comeback" badge, and their row is highlighted with the improvement in points. Someone who has not sent their report yet appears as "Waiting".
 - Click on a friend: history of their weekly scores and weight trend.
 - A "You (Tu)" row is always present in the ranking for comparison.
@@ -147,7 +148,7 @@ The elements of the model become the shared components: sidebar and header (AppS
 ### 5.7 Modals
 
 - **Sunday weigh-in:** kg field, required checkbox "I weighed myself on an empty stomach, before breakfast (Mi sono pesato a digiuno, prima della colazione)", buttons "Save (Salva)" and "Later (Più tardi)". On the following days, the same dialog reopens from the warning to catch up on the weigh-in.
-- **Report:** preview of the card (nickname, week, score, 4 indicators, weight, QR code and, under the QR code, nickname, UUID and period in plain text), buttons "Save image (Salva immagine)" and "Close (Chiudi)".
+- **Report:** preview of the card (nickname, week, score, 4 indicators, weight, QR code and, under the QR code, nickname, UUID and period in plain text), buttons "Save image (Salva immagine)", "Copy image (Copia immagine)" to paste it straight into a group chat, and "Close (Chiudi)".
 - **New group:** asks for the name and the stake, then lets the user choose which already-imported friends belong to it. When a report from a new friend arrives, the app asks which groups to add them to.
 
 ## 6. Colour palette, typography and UI guidelines
