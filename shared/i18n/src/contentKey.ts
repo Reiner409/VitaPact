@@ -9,6 +9,8 @@ export const contentKey = {
   /** Section 9.1: a 0-based phrase index from core's `weekendPayer` to its key, e.g. "01". */
   weekendFriends: (index: number) => `content:weekend.friends.${phraseId(index)}` as const,
   weekendPayer: (index: number) => `content:weekend.payer.${phraseId(index)}` as const,
+  /** RF-25: a 0-based index from core's `weeklyStakeIndex` to the stake of the week. */
+  stake: (index: number) => `content:stakes.${phraseId(index)}` as const,
 };
 
 const phraseId = (index: number) => String(index + 1).padStart(2, '0');
@@ -18,3 +20,6 @@ export const WEEKEND_PHRASE_COUNTS = {
   friends: Object.keys(content.weekend.friends).length,
   payer: Object.keys(content.weekend.payer).length,
 };
+
+/** How many stakes a rotating group goes through, one per week. */
+export const STAKE_COUNT = Object.keys(content.stakes).length;

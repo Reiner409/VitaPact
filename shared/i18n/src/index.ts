@@ -6,5 +6,5 @@ export {
   type TranslationTree,
 } from './resources';
 export { I18nextProvider as I18nProvider, useTranslation } from 'react-i18next';
-export { contentKey, WEEKEND_PHRASE_COUNTS, type VerdictBandId } from './contentKey';
+export { contentKey, STAKE_COUNT, WEEKEND_PHRASE_COUNTS, type VerdictBandId } from './contentKey';
 export { pillarKey } from './pillarKey';

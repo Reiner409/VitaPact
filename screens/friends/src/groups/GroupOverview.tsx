@@ -4,6 +4,7 @@ import { Card, Stack } from '@vitapact/ui';
 import { GroupRankings } from '../ranking/GroupRankings';
 import type { FriendsData } from './groupStore';
 import { PayerCard } from './PayerCard';
+import { stakeOf } from './stakeText';
 
 export interface GroupOverviewProps {
   group: Group;
@@ -14,10 +15,11 @@ export interface GroupOverviewProps {
 /** The stake of the chosen group, who pays this weekend, then its rankings (section 5.4). */
 export function GroupOverview({ group, data, onSelectFriend }: GroupOverviewProps) {
   const { t } = useTranslation('friends');
+  const stake = stakeOf(t, group, data.rankingWeek);
   return (
     <Stack>
       <Card>
-        <p>{t('group.stake', { stake: group.stake })}</p>
+        <p>{t(group.stakeRotates ? 'group.stakeRotating' : 'group.stake', { stake })}</p>
         {group.memberIds.length === 0 && <p>{t('group.noMembers')}</p>}
       </Card>
       <PayerCard group={group} data={data} />

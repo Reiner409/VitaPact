@@ -4,7 +4,10 @@ export const GROUP_STAKE_MAX_LENGTH = 80;
 
 export interface GroupDetails {
   readonly name: string;
+  /** Empty when the stake rotates. */
   readonly stake: string;
+  /** RF-25: the app picks a new stake from a fixed list every week (`weeklyStakeIndex`). */
+  readonly stakeRotates?: boolean;
 }
 
 export type GroupDetailsError = 'nameMissing' | 'nameTooLong' | 'stakeMissing' | 'stakeTooLong';
@@ -26,11 +29,19 @@ function textError(
   return [...text].length > maxLength ? tooLong : undefined;
 }
 
+/** A rotating stake needs no text of its own, so whatever was typed before switching is dropped. */
 export function checkGroupDetails(input: GroupDetails): GroupDetailsResult {
-  const details = { name: input.name.trim(), stake: input.stake.trim() };
+  const stakeRotates = input.stakeRotates === true;
+  const details = {
+    name: input.name.trim(),
+    stake: stakeRotates ? '' : input.stake.trim(),
+    stakeRotates,
+  };
   const errors = [
     textError(details.name, GROUP_NAME_MAX_LENGTH, ['nameMissing', 'nameTooLong']),
-    textError(details.stake, GROUP_STAKE_MAX_LENGTH, ['stakeMissing', 'stakeTooLong']),
+    stakeRotates
+      ? undefined
+      : textError(details.stake, GROUP_STAKE_MAX_LENGTH, ['stakeMissing', 'stakeTooLong']),
   ].filter((error) => error !== undefined);
   return errors.length === 0 ? { ok: true, details } : { ok: false, errors };
 }

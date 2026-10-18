@@ -2,6 +2,8 @@ import { listGroups, saveFriend, saveGroup, type Group } from '@vitapact/core/st
 import { openTestDatabase, sampleFriend, sampleGroup } from '@vitapact/core/storage/testing';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { weeklyStakeIndex } from '@vitapact/core/groups';
+import content from '@vitapact/i18n/locales/en/content.json';
 import { renderWithProviders } from '@vitapact/ui/testing';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import en from '../locales/en/friends.json';
@@ -22,13 +24,20 @@ const office: Group = {
   createdAt: '2026-10-04T09:00:00.000Z',
 };
 
-async function renderFriends(seed: { groups?: Group[]; friends?: (typeof sampleFriend)[] } = {}) {
+async function renderFriends(
+  seed: { groups?: Group[]; friends?: (typeof sampleFriend)[]; today?: string } = {},
+) {
   const db = await openTestDatabase();
   await Promise.all([
     ...(seed.groups ?? []).map((group) => saveGroup(db, group)),
     ...(seed.friends ?? []).map((friend) => saveFriend(db, friend)),
   ]);
-  renderWithProviders(<FriendsScreen db={db} now={now} />, { translations: { friends: en } });
+  renderWithProviders(
+    <FriendsScreen db={db} now={now} {...(seed.today && { today: seed.today })} />,
+    {
+      translations: { friends: en, content },
+    },
+  );
   return { db, user: userEvent.setup() };
 }
 
@@ -62,6 +71,27 @@ describe('RF-25 group selector', () => {
     await renderFriends({ groups: [office, sampleGroup], friends: [sampleFriend, ana] });
     expect(await screen.findByText('At stake: brings the coffee')).toBeInTheDocument();
     expect(weekRanking()).toHaveTextContent('Ana');
+  });
+
+  it('F3-FR-10 shows the stake of the week for a group whose stake rotates', async () => {
+    const rotating = { ...office, stake: '', stakeRotates: true };
+    await renderFriends({ groups: [rotating], friends: [ana], today: '2026-10-12' });
+    // On Monday 12 October the ranking, and so the stake, is the one of week 41.
+    const stakes = Object.values(content.stakes);
+    const stake = stakes[weeklyStakeIndex('2026-W41', stakes.length)];
+    expect(
+      await screen.findByText(`At stake: ${stake}. A new one every week.`),
+    ).toBeInTheDocument();
+  });
+
+  it('F3-FR-10 creates a group whose stake rotates, with no stake to write', async () => {
+    const { db, user } = await renderFriends();
+    await user.click(await screen.findByRole('button', { name: en.newGroup.open }));
+    const dialog = await fillNewGroup(user, 'Office', '');
+    await user.click(within(dialog).getByRole('radio', { name: en.newGroup.stakeRotating }));
+    await user.click(within(dialog).getByRole('button', { name: en.newGroup.create }));
+    await screen.findByText(/A new one every week\./);
+    expect((await listGroups(db))[0]).toMatchObject({ stake: '', stakeRotates: true });
   });
 
   it('changing the group updates what the screen shows', async () => {

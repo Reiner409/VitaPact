@@ -528,6 +528,12 @@ Common dependencies: the lane table in section 3a.
 - **Goal:** PayerCard with who pays and the phrase of the week; the "who pays" version if it is the user's turn; no card if nobody pays.
 - **Tests to write:** friends phrase vs personal phrase; the group's stake substituted; no forbidden word visible.
 
+#### F3-FR-10 · Stake that rotates every week
+
+- **Requirements:** RF-25, section 9.1
+- **Goal:** in the group dialog the stake is written by the group or picked by the app every week from a fixed list; the friends screen, the weekend phrase and settings show the stake of the week.
+- **Tests to write:** same week, same stake on any phone; never the same stake two weeks in a row, also across the new year; no stake text needed for a rotating group; backup keeps the choice.
+
 #### F3-FR-08 · A friend's history
 
 - **Requirements:** RF-13

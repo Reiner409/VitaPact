@@ -3,6 +3,7 @@ import type { Group } from '@vitapact/core/storage';
 import { contentKey, useTranslation, WEEKEND_PHRASE_COUNTS } from '@vitapact/i18n';
 import { Card } from '@vitapact/ui';
 import type { FriendsData } from './groupStore';
+import { stakeOf } from './stakeText';
 
 export interface PayerCardProps {
   group: Group;
@@ -29,7 +30,7 @@ export function PayerCard({ group, data }: PayerCardProps) {
     <section aria-label={t('payer.title')}>
       <Card tone="soft">
         <h2>{t('payer.title')}</h2>
-        <p>{t(phrase, { name, stake: group.stake })}</p>
+        <p>{t(phrase, { name, stake: stakeOf(t, group, data.rankingWeek) })}</p>
       </Card>
     </section>
   );

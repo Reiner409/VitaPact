@@ -41,6 +41,7 @@ const isGroup = shape({
   id: isString,
   name: isString,
   stake: isString,
+  stakeRotates: optional(isBoolean),
   memberIds: arrayOf(isString),
   createdAt: isString,
 });
