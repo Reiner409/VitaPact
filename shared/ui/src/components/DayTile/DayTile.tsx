@@ -1,5 +1,6 @@
 import { Group, Stack, Text, VisuallyHidden } from '@mantine/core';
 import { tokens } from '../../tokens';
+import { touchTarget } from '../touchTarget';
 import { BandDot } from '../BandDot';
 import { Card } from '../Card/Card';
 import type { ScoreBand } from '../scoreBand';
@@ -35,7 +36,12 @@ function CompactContent({
   logged,
 }: TileContentProps) {
   return (
-    <Stack component="span" gap={tokens.space[1]} align="center">
+    <Stack
+      component="span"
+      gap={tokens.space[1]}
+      align="center"
+      style={{ minWidth: touchTarget.minWidth }}
+    >
       <Text component="span" display="block" size="sm" fw={tokens.font.weight.semibold}>
         {dayName}
       </Text>

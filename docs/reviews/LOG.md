@@ -2,6 +2,20 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-18 · mobile (Android APK, phone layout) · #55 · Changes requested
+
+- Checks: verify ✔ (b13bf95, run by the reviewer); e2e ✔ (run by the author).
+- Findings:
+  - `shared/ui/src/components/WeekStrip/WeekStrip.tsx:40` + `DayTile.tsx` (compact) → compact day
+    tiles measure 41.1 × 54 px at a 360 px window (35.4 px at 320); 45.4 px only at 390. That breaks
+    G4.6/G9.6 on the most common Android width. Make 7 × 44 px + gaps fit at 360 px (for example
+    `padding` `sm` instead of `lg` on phones in `AppShell.tsx:39`, and `touchTarget.minWidth` on the
+    compact tile), and add a test that checks the compact tile's size (G9.6).
+  - Non-blocking: `SaveDay.tsx:20-23` scrolls again only when `notice` changes, so a second tap on
+    Save within the 4 s toast does not scroll. `platformContract.ts:98,128`: the titles still talk
+    about extensions now that the type comes from the bytes (G9.1).
+- New rules: none until approval.
+
 ## 2026-10-18 · F3-FR-10 · #58 · Changes requested
 
 - Checks: verify ✔, e2e ✔ (run by the author, branch at 75c3da2).

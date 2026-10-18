@@ -12,6 +12,8 @@ export function useSaveDay(db: VitaPactDatabase, onSaved: () => void, now: () =>
   const [triedToSave, setTriedToSave] = useState(false);
   const [notice, setNotice] = useState<SaveNotice>(null);
   const [incomplete, setIncomplete] = useState<string[]>([]);
+  /** Counts the saves stopped by a missing answer, so each one shows the first missing field. */
+  const [incompleteTries, setIncompleteTries] = useState(0);
 
   const save = async (date: CalendarDate, values: DayValues) => {
     setTriedToSave(true);
@@ -20,6 +22,7 @@ export function useSaveDay(db: VitaPactDatabase, onSaved: () => void, now: () =>
     if (!entry) {
       setIncomplete(incompletePillars(pillars, values).map((pillar) => pillar.id));
       setNotice('incomplete');
+      setIncompleteTries((tries) => tries + 1);
       return;
     }
     try {
@@ -31,5 +34,12 @@ export function useSaveDay(db: VitaPactDatabase, onSaved: () => void, now: () =>
       setNotice('failed');
     }
   };
-  return { triedToSave, notice, incomplete, closeNotice: () => setNotice(null), save };
+  return {
+    triedToSave,
+    notice,
+    incomplete,
+    incompleteTries,
+    closeNotice: () => setNotice(null),
+    save,
+  };
 }

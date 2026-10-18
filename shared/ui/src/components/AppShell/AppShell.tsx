@@ -36,7 +36,8 @@ export function AppShell({ navLabel, navItems, banner, children }: AppShellProps
       // the breakpoint clears the offset the other one left on the content.
       navbar={{ width: sidebarWidth, breakpoint: 0, collapsed: { desktop: !wide, mobile: !wide } }}
       footer={{ height: bottomBarHeight, collapsed: wide }}
-      padding="lg"
+      // A phone keeps a narrower margin, so seven 44 px day tiles fit a 360 px screen (G4.6).
+      padding={{ base: 'sm', sm: 'lg' }}
     >
       {wide ? (
         <MantineAppShell.Navbar {...navProps} p="sm" bg="var(--vp-color-sidebar)" withBorder>

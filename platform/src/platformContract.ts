@@ -95,7 +95,7 @@ function describeOpening(makeHarness: () => PlatformHarness) {
 
 function describeImageType(makeHarness: () => PlatformHarness) {
   describe('image type', () => {
-    it('RF-12 recognises a JPG image whatever the case of its extension', async () => {
+    it('RF-12 recognises a JPG image by its bytes', async () => {
       const { platform, userChoosesFile } = makeHarness();
       userChoosesFile({ name: 'WhatsApp Image.JPEG', bytes: new Uint8Array([0xff, 0xd8, 0xff]) });
 
@@ -123,7 +123,7 @@ function describeImageType(makeHarness: () => PlatformHarness) {
       await expect(platform.openImageFile('Images')).rejects.toBeInstanceOf(NotAnImageError);
     });
 
-    it('RF-12 rejects a name whose extension is an object key such as .constructor', async () => {
+    it('RF-12 rejects a file whose bytes are not an image, whatever its name', async () => {
       const { platform, userChoosesFile } = makeHarness();
       userChoosesFile({ name: 'luca.constructor', bytes: new Uint8Array([0x47]) });
 

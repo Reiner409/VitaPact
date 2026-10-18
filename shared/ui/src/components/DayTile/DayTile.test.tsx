@@ -49,6 +49,13 @@ describe('F2-18 DayTile', () => {
     expect(tile.querySelector('[data-band="none"]')).not.toBeNull();
   });
 
+  it('G4.6 keeps the compact tile at least 44 px wide and tall', () => {
+    renderWithTheme(<DayTile {...base} compact />);
+    const tile = screen.getByRole('button', { name: 'Wed 72' });
+    expect(tile).toHaveStyle({ minHeight: '44px' });
+    expect(tile.firstElementChild).toHaveStyle({ minWidth: '44px' });
+  });
+
   it('other days carry no accent', () => {
     renderWithTheme(<DayTile {...base} />);
     expect(screen.getByRole('button')).not.toHaveAttribute('data-accent');

@@ -10,6 +10,8 @@ export interface SaveDayProps {
   notice: SaveNotice;
   /** Translated names of the pillars still to answer, shown when the day is not saved. */
   incompletePillars: readonly string[];
+  /** Grows with every save stopped by a missing answer. */
+  incompleteTries: number;
   onCloseNotice: () => void;
 }
 
@@ -17,11 +19,11 @@ export interface SaveDayProps {
  * On a phone the first missing answer is often far above the button, so the page goes there:
  * the field's announced error is the first alert inside a pillar card.
  */
-function useShowFirstMissing(notice: SaveNotice) {
+function useShowFirstMissing(incompleteTries: number) {
   useEffect(() => {
-    if (notice !== 'incomplete') return;
+    if (incompleteTries === 0) return;
     document.querySelector('section [role="alert"]')?.scrollIntoView({ block: 'center' });
-  }, [notice]);
+  }, [incompleteTries]);
 }
 
 /** F3-TD-06: the save button, a reminder of unsaved changes and the confirmation. */
@@ -30,10 +32,11 @@ export function SaveDay({
   changed,
   notice,
   incompletePillars,
+  incompleteTries,
   onCloseNotice,
 }: SaveDayProps) {
   const { t } = useTranslation('today');
-  useShowFirstMissing(notice);
+  useShowFirstMissing(incompleteTries);
   const messages: Record<NonNullable<SaveNotice>, string> = {
     saved: t('notices.saved'),
     failed: t('notices.failed'),

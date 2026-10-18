@@ -72,6 +72,7 @@ export function TodayScreen(props: TodayScreenProps) {
         onSave={() => void saving.save(day, values)}
         changed={changed}
         notice={saving.notice}
+        incompleteTries={saving.incompleteTries}
         incompletePillars={saving.incomplete.map((id) => t(pillarKey.name(id)))}
         onCloseNotice={saving.closeNotice}
       />
