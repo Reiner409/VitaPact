@@ -1,6 +1,6 @@
 import { SimpleGrid } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 import { tokens } from '../../tokens';
+import { usePhoneLayout } from '../phoneLayout';
 import { DayTile } from '../DayTile/DayTile';
 import type { ScoreBand } from '../scoreBand';
 
@@ -23,8 +23,6 @@ export interface WeekStripProps {
   onSelectDay: (index: number) => void;
 }
 
-const WIDE_WINDOW = `(min-width: ${tokens.layout.mobileBreakpoint}px)`;
-
 /** Seven DayTiles from Monday to Sunday in one row, with today highlighted; compact on phones. */
 export function WeekStrip({
   label,
@@ -34,7 +32,7 @@ export function WeekStrip({
   todayLabel,
   onSelectDay,
 }: WeekStripProps) {
-  const compact = !useMediaQuery(WIDE_WINDOW, false, { getInitialValueInEffect: false });
+  const compact = usePhoneLayout();
   return (
     <SimpleGrid
       component="ul"

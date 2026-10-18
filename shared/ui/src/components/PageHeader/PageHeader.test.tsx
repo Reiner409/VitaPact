@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
-import { axeViolations } from '../../testing';
+import { afterEach, describe, expect, it } from 'vitest';
+import { axeViolations, setViewportWidth } from '../../testing';
 import { renderWithTheme } from '../../testing/renderWithTheme';
 import { PageHeader } from './PageHeader';
 
@@ -20,6 +20,26 @@ describe('F2-16 PageHeader', () => {
     renderWithTheme(<PageHeader title="Week" />);
     expect(screen.queryByText('2026-W41')).not.toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
+  });
+
+  describe('RF-29 on a phone', () => {
+    afterEach(() => setViewportWidth(390));
+
+    it('puts the action on its own row under the title', () => {
+      setViewportWidth(390);
+      renderWithTheme(<PageHeader title="Friends" action={<button>Add report</button>} />);
+      expect(
+        screen.getByRole('button', { name: 'Add report' }).closest('.mantine-Group-root'),
+      ).toBeNull();
+    });
+
+    it('keeps the action beside the title on a wide window', () => {
+      setViewportWidth(1280);
+      renderWithTheme(<PageHeader title="Friends" action={<button>Add report</button>} />);
+      expect(
+        screen.getByRole('button', { name: 'Add report' }).closest('.mantine-Group-root'),
+      ).not.toBeNull();
+    });
   });
 
   it('shows the greeting above the title when given', () => {

@@ -1,7 +1,7 @@
 import { toCalendarDate, type CalendarDate } from '@vitapact/core/calendar';
 import type { Friend, Group, Profile, VitaPactDatabase } from '@vitapact/core/storage';
 import { useTranslation } from '@vitapact/i18n';
-import { Banner, Button, EmptyState, PageHeader, Stack } from '@vitapact/ui';
+import { Banner, Button, EmptyState, PageHeader, Stack, usePhoneLayout } from '@vitapact/ui';
 import { useState } from 'react';
 import { FriendDialog } from './friend/FriendDialog';
 import { createGroup, type NewGroup } from './groups/groupStore';
@@ -93,13 +93,17 @@ function useFriendDetail(friends: readonly Friend[], reload: () => Promise<void>
   };
 }
 
+/** On a phone the buttons take the whole width, one under the other, easy to reach with a thumb. */
 function FriendsActions({ screen }: { screen: FriendsScreenState }) {
   const { t } = useTranslation('friends');
+  const phone = usePhoneLayout();
   return (
-    <Stack horizontal gap="tight">
-      <Button onClick={() => void screen.addReport.open()}>{t('addReport.open')}</Button>
+    <Stack horizontal={!phone} gap="tight">
+      <Button fullWidth={phone} onClick={() => void screen.addReport.open()}>
+        {t('addReport.open')}
+      </Button>
       {screen.selected && (
-        <Button variant="secondary" onClick={() => screen.setCreating(true)}>
+        <Button fullWidth={phone} variant="secondary" onClick={() => screen.setCreating(true)}>
           {t('newGroup.open')}
         </Button>
       )}
@@ -141,11 +145,13 @@ export function FriendsScreen(props: FriendsScreenProps) {
   const { t } = useTranslation('friends');
   const screen = useFriendsScreen(props);
   const { data, selected } = screen;
+  // A phone has no Ctrl+V, so the paste hint is for desktop windows only.
+  const phone = usePhoneLayout();
   return (
     <Stack>
       <PageHeader
         title={t('title')}
-        subtitle={t('addReport.pasteHint')}
+        {...(phone ? {} : { subtitle: t('addReport.pasteHint') })}
         action={<FriendsActions screen={screen} />}
       />
       {screen.detail.removed !== undefined && (
