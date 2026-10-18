@@ -1,8 +1,9 @@
 name: Mobile
 
-# Android and iOS builds from the same Tauri shell (RF-29). They run on main and mobile, by hand, and on pull
-# requests that touch the shell, so the desktop checks stay fast. Signing material lives in
-# repository secrets only; without it the jobs still build an installable or unsigned app.
+# The Android build of the Tauri shell (RF-29). It runs on main and mobile, by hand, and on pull
+# requests that touch the shell, so the desktop checks stay fast. The signing key lives in
+# repository secrets only; without it the job still builds an installable APK. The iOS job is
+# left out until there is an Apple licence: it ran from 3104d91 to a16b730 if it is needed again.
 on:
   push:
     branches: [main, mobile]
@@ -77,78 +78,4 @@ jobs:
         with:
           name: vitapact-android-${{ github.sha }}
           path: vitapact.apk
-          if-no-files-found: error
-
-  ios:
-    name: iOS app
-    runs-on: macos-latest
-    env:
-      # Read by the Tauri CLI to sign with the distribution certificate and profile.
-      TEAM_SECRET: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
-      IOS_CERTIFICATE: ${{ secrets.IOS_CERTIFICATE }}
-      IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
-      IOS_MOBILE_PROVISION: ${{ secrets.IOS_MOBILE_PROVISION }}
-      APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
-      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-    steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22.22
-          cache: pnpm
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: aarch64-apple-ios,aarch64-apple-ios-sim
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: src-tauri
-      - run: pnpm install --frozen-lockfile
-      - name: Apple team
-        # Tauri refuses an empty team. The unsigned build never signs, so a placeholder will do.
-        run: echo "APPLE_DEVELOPMENT_TEAM=${TEAM_SECRET:-UNSIGNED00}" >> "$GITHUB_ENV"
-      - name: Generate the Xcode project
-        run: pnpm tauri ios init --ci
-      - name: Signed build for TestFlight
-        if: env.IOS_CERTIFICATE != '' && env.IOS_MOBILE_PROVISION != '' && env.TEAM_SECRET != ''
-        run: pnpm tauri ios build --export-method app-store-connect
-      - name: Upload to TestFlight
-        if: env.IOS_CERTIFICATE != '' && env.APP_STORE_CONNECT_KEY != ''
-        run: |
-          set -euo pipefail
-          mkdir -p ~/.appstoreconnect/private_keys
-          echo "$APP_STORE_CONNECT_KEY" > ~/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8
-          ipa=$(find src-tauri/gen/apple/build -name '*.ipa' | head -n 1)
-          xcrun altool --upload-app --type ios --file "$ipa" \
-            --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID"
-      - name: Unsigned simulator build
-        # Without an Apple certificate the app still has to compile; the result runs in the
-        # iOS Simulator only. Xcode's "Build Rust Code" phase needs a running `tauri ios build`,
-        # so the Rust library is built here and that phase is skipped.
-        if: env.IOS_CERTIFICATE == ''
-        run: |
-          set -euo pipefail
-          pnpm web:build
-          cargo build --manifest-path src-tauri/Cargo.toml --release --lib \
-            --target aarch64-apple-ios-sim --features tauri/custom-protocol
-          mkdir -p src-tauri/gen/apple/Externals/arm64/release
-          cp src-tauri/target/aarch64-apple-ios-sim/release/libvitapact_lib.a \
-            src-tauri/gen/apple/Externals/arm64/release/libapp.a
-          project=$(find src-tauri/gen/apple -maxdepth 1 -name '*.xcodeproj' | head -n 1)
-          perl -0pi -e 's/shellScript = "(?:[^"\\]|\\.)*xcode-script(?:[^"\\]|\\.)*";/shellScript = "true";/g' \
-            "$project/project.pbxproj"
-          grep -q 'shellScript = "true"' "$project/project.pbxproj"
-          scheme=$(xcodebuild -list -json -project "$project" | jq -r '.project.schemes[] | select(endswith("_iOS"))')
-          xcodebuild -project "$project" -scheme "$scheme" -configuration release \
-            -sdk iphonesimulator -arch arm64 -derivedDataPath build/ios \
-            CODE_SIGNING_ALLOWED=NO build
-          app=$(find build/ios/Build/Products -name '*.app' -maxdepth 2 | head -n 1)
-          ditto -c -k --keepParent "$app" vitapact-simulator.zip
-      - uses: actions/upload-artifact@v6
-        with:
-          name: vitapact-ios-${{ github.sha }}
-          path: |
-            src-tauri/gen/apple/build/**/*.ipa
-            vitapact-simulator.zip
           if-no-files-found: error
