@@ -2,6 +2,23 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-18 · F3-FR-10 · #58 · Changes requested
+
+- Checks: verify ✔, e2e ✔ (run by the author, branch at 75c3da2).
+- Findings:
+  - `screens/settings/src/groups/GroupsCard.tsx:23-25` → the task goal asks Settings to show the stake
+    of the week; it shows only "a new one every week". Give `SettingsScreen` an injected
+    `today?: CalendarDate` (as `FriendsScreen` does) and render the stake of the ranking week, or have
+    Rei narrow the goal in `docs/tasks.md` and fix the PR body, which claims it is done.
+  - `screens/friends/src/groups/stakeText.ts:1-11` and `screens/friends/src/ranking/ownReports.ts:29` →
+    Settings needs both, so do not copy them: move `rankingWeekOf` to `core/src/groups` (with its test)
+    and `stakeOf` to `shared/ui` (which already depends on core and i18n); both screens import them.
+  - `core/src/groups/stake.test.ts:5-7` → the test compares a call with itself and cannot fail. Pin the
+    value: `expect(weeklyStakeIndex('2026-W42', 8)).toBe(1)` (145 weeks after 2024-01-01).
+  - `shared/i18n/locales/en/content.json` `stakes` → content lane text: record Rei's word-for-word
+    approval of the eight stakes in the PR body, as for the weekend phrases (G5.6).
+- New rules: none yet (decide at approval).
+
 ## 2026-10-17 · F3-ST-03, F3-ST-05, F3-ST-06 · #43 · Approved
 
 - Checks: verify ✔, e2e ✔. One fix before approval: the import e2e test now checks the restored nickname

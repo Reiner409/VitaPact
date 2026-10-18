@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { weeklyStakeIndex } from './stake';
 
 describe('F3-FR-10 RF-25 the stake of the week', () => {
-  it('is the same for the same week, on any phone', () => {
-    expect(weeklyStakeIndex('2026-W42', 8)).toBe(weeklyStakeIndex('2026-W42', 8));
+  it('depends on the week alone, so every phone picks the same stake', () => {
+    // 2026-W42 starts 145 weeks after Monday 1 January 2024, and 145 mod 8 is 1.
+    expect(weeklyStakeIndex('2026-W42', 8)).toBe(1);
   });
 
   it('changes every week and goes through the whole list before repeating', () => {
