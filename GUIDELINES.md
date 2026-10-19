@@ -174,3 +174,7 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
   clear it.
 - **G9.14** · F4-04 · A workflow starts at `permissions: contents: read` and passes a called
   workflow only the secrets it declares. Only the job that publishes gets write access.
+- **G9.15** · F4-01 · An end-to-end step used by more than one spec lives once in `e2e/support/`,
+  and every spec imports it instead of keeping a local copy.
+- **G9.16** · F4-01 · A test of an exclusion rule sets up its data so that the excluded person would
+  be chosen without the rule, and asserts the order that proves it.
