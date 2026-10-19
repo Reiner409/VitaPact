@@ -172,3 +172,5 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
 - **G9.13** · F3-NB-02 · A filter whose choices come from the user's data stops applying a chosen
   value once that value is no longer among the choices, so a list never stays narrowed with no way to
   clear it.
+- **G9.14** · F4-04 · A workflow starts at `permissions: contents: read` and passes a called
+  workflow only the secrets it declares. Only the job that publishes gets write access.

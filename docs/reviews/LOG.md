@@ -2,6 +2,17 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-19 · F4-04 · task/release-android · #59 · Approved
+
+- Checks: verify ✔ at 698997e (run by the reviewer); e2e ✔ at 39b365a (44 passed). 698997e
+  changes only the two workflows, so the earlier e2e run still holds.
+- Findings: both blocking findings of the entry below are fixed in 698997e. `release.yml` defaults
+  to `contents: read` and only `publish` has `contents: write`. `mobile.yml` caps itself at
+  `contents: read`. `workflow_call` declares the two optional signing secrets, and Release passes
+  exactly those two. The branch name (G2.3) is left as it is, so the open PR is not disturbed.
+- Covered: RF-29 (Android build shipped with the release), D29.
+- New rule: G9.14.
+
 ## 2026-10-19 · F4-04 · task/release-android · #59 · Changes requested
 
 - Checks: verify ✔, e2e ✔ (44 passed), both run by the reviewer at 39b365a.
