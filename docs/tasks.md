@@ -650,6 +650,13 @@ Common dependencies: the lane table in section 3a.
 - **Acceptance criteria:** installation without administrator rights on Windows 10 22H2 and 11; Rei approves the publication (gate 4).
 - **Tests to write:** CI check that LICENSE is present and of the installer size.
 
+#### F4-04 · Android APK in the release
+
+- **Agent:** Release · **Depends on:** F4-03 · **Requirements:** RF-29, D29
+- **Goal:** the release workflow builds the Windows installer, the portable and the Android APK and publishes the three files as one GitHub release, only when every build passed; iOS waits for an Apple licence.
+- **Acceptance criteria:** the v0.2.0 release lists the installer, the portable and the APK.
+- **Tests to write:** none beyond CI; the release run itself is the check.
+
 ---
 
 ## 4. Dependency graph in short
@@ -672,14 +679,14 @@ Parallel lanes after Gate 2: Core (F2-01 … F2-15, F2-21), UI (F2-16 … F2-19)
 
 ## 5. Count
 
-| Phase     | Tasks                                    |
-| --------- | ---------------------------------------- |
-| F0        | 3                                        |
-| F1        | 7                                        |
-| F2        | 21                                       |
-| F3        | 40 (ON 3, TD 10, WK 6, FR 9, NB 6, ST 6) |
-| F4        | 3                                        |
-| **Total** | **74**                                   |
+| Phase     | Tasks                                     |
+| --------- | ----------------------------------------- |
+| F0        | 3                                         |
+| F1        | 7                                         |
+| F2        | 21                                        |
+| F3        | 41 (ON 3, TD 10, WK 6, FR 10, NB 6, ST 6) |
+| F4        | 4                                         |
+| **Total** | **76**                                    |
 
 ## 6. Differences from the document's T00-T22 list
 
