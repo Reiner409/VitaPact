@@ -11,10 +11,18 @@ on:
   workflow_dispatch:
   # The release workflow reuses this job to put the APK in the release.
   workflow_call:
+    secrets:
+      ANDROID_KEYSTORE:
+        required: false
+      ANDROID_KEYSTORE_PASSWORD:
+        required: false
   pull_request:
     paths:
       - .github/workflows/mobile.yml
       - src-tauri/**
+
+permissions:
+  contents: read
 
 # Called from Release, github.workflow is "Release", so a push to main never cancels a release.
 concurrency:

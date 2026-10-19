@@ -2,6 +2,31 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-19 · F4-04 · task/release-android · #59 · Changes requested
+
+- Checks: verify ✔, e2e ✔ (44 passed), both run by the reviewer at 39b365a.
+- Checked and correct: in a called workflow `github.*` is the caller's context, so
+  `vitapact-android-${{ github.sha }}` matches between `mobile.yml` and `release.yml:86`, and the
+  concurrency group becomes `mobile-Release-<ref>`, apart from Mobile's own runs on `main`;
+  upload/download-artifact are both v6 and share the run; `mv android/vitapact.apk` matches the
+  single-artifact layout; `publish` needs both builds, so no partial release; the tag and version
+  move to job outputs correctly; all versions read 0.2.0 (11 `package.json`, Cargo, lock, Tauri).
+- Findings:
+  - `.github/workflows/release.yml:13-14` → `contents: write` applies to all jobs, and a called
+    workflow gets the caller's token, so the Android build (`pnpm install`, Gradle, third-party
+    actions) now runs with a token that can write to the repository. Mobile never had that before. Set the top level to
+    `permissions: { contents: read }` and give only `publish` (line 66) `permissions: { contents: write }`.
+    Also add `permissions: { contents: read }` at the top of `mobile.yml`: a called workflow can
+    only lower the caller's permissions, so that caps the job however it is called.
+  - `.github/workflows/release.yml:20` → `secrets: inherit` hands every repository secret to the
+    build. Declare the two that are used under `workflow_call:` in `mobile.yml:13`
+    (`secrets: { ANDROID_KEYSTORE: { required: false }, ANDROID_KEYSTORE_PASSWORD: { required: false } }`)
+    and pass exactly those from `release.yml`.
+  - Non-blocking: the branch name does not follow G2.3 (`task/F4-04-release-android`). Renaming it
+    on GitHub keeps the PR.
+- New rules: none until approval (candidate: workflows default to `contents: read`, and only the
+  job that publishes is given write access).
+
 ## 2026-10-18 · mobile (Android APK, phone layout) · #55 · Changes requested
 
 - Checks: verify ✔ (b13bf95, run by the reviewer); e2e ✔ (run by the author).
