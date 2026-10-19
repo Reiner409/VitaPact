@@ -55,3 +55,13 @@ describe('Reduced motion', () => {
     );
   });
 });
+
+describe('Focus ring', () => {
+  const css = buildGlobalCss(tokens);
+
+  it("RNF-10 draws the token ring on text fields too, over Mantine's own focus rule", () => {
+    expect(css).toMatch(
+      /\.mantine-Input-input\.mantine-Input-input:focus-visible \{\s*outline: 2px solid/,
+    );
+  });
+});

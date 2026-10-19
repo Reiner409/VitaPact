@@ -66,7 +66,10 @@ export const vitaPactTheme = createTheme({
     xl: '88em',
   },
   respectReducedMotion: true,
-  focusRing: 'never',
+  // Mantine's own focus classes would hide or recolour the ring; this class has no rules, so the
+  // global :focus-visible ring from the tokens shows on buttons and links. Text fields get the
+  // same ring from a stronger rule in buildGlobalCss (RNF-10).
+  focusClassName: 'vp-focus',
   cursorType: 'pointer',
 });
 

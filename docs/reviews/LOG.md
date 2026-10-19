@@ -2,6 +2,79 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-19 · F4-02 · task/F4-02-accessibility · #61 · Approved after changes
+
+- Checks at 0c2c77d (run by the reviewer):
+  - verify ✔ (exit 0).
+  - `e2e/a11y/screens.spec.ts` ✔: 39 passed, run on a private port.
+  - The author reports the full e2e suite green (87 passed).
+- Both findings of the entry below are fixed:
+  - Each screen and each dialog now has its own keyboard pass at 360 and 1024 px. It presses Tab
+    until focus comes back round, checks the ring at every stop, then checks that every visible,
+    enabled control was reached. The navigation test no longer calls `body.focus()`.
+  - Text fields get the token ring from `.mantine-Input-input.mantine-Input-input:focus-visible`
+    (specificity 0,3,0), and a unit test checks it.
+- Mutation check by the reviewer: with `cssVariables.ts` from `main`, the keyboard pass fails on
+  Today, Settings and three dialogs at both widths, on the NumberInput among others.
+- Small, not blocking: the three `describe` blocks repeat the same `beforeEach` (reduced motion and
+  the frozen clock). A single top-level `beforeEach` would do.
+- Follow-up for the lane owners (G9.15, G2.2): `e2e/friends/add-report.spec.ts:111` and
+  `e2e/week/sunday-evening.spec.ts:88` repeat the sideways-scroll check. When they change, move
+  `horizontalOverflow` to `e2e/support/` and have all three specs import it.
+- PR title is 87 characters (G6.7 allows 72). Suggested:
+  `Check every screen with axe and show the keyboard focus ring (F4-02)` (68).
+- Covered: RNF-10, RF-29 (added to the matrix by the reviewer).
+- New rule: G9.17.
+
+## 2026-10-19 · F4-02 · task/F4-02-accessibility · #61 · Changes requested
+
+- Checks: verify ✔ at f1114bb. The reviewer's first `pnpm verify` had 1 unit test fail, with
+  Playwright running on the same machine at the time. The rerun of `pnpm test` passed 1309/1309,
+  and `check:i18n` and `check:matrix` passed. `e2e/a11y/screens.spec.ts` ✔ (21 passed, run by the
+  reviewer on a private port). The author reports the full e2e suite green (65 passed).
+- Checked and correct:
+  - axe is injected with `page.evaluate`, so the CSP is untouched. The tags cover WCAG 2.1 A and AA,
+    with colour contrast on.
+  - `axe-core` was already approved for `@vitapact/ui`. Declaring it at the root is right for
+    `e2e/` (G3.8, G9.12).
+  - `focusClassName` replaces only the class Mantine adds to focusable controls. `theme.focusRing`
+    falls back to `auto`, and only SegmentedControl and ColorSlider read it; neither is used.
+  - A mouse click on a button does not match `:focus-visible`. So the only visible change is the
+    token ring on keyboard focus.
+  - The unit test fails on `main`, where `mantine-focus-never` is present.
+  - Editing `shared/ui/src/theme/theme.ts` is outside QA's files (G2.1). It is accepted as a
+    reviewer exception: the e2e check depends on it and the change is tested.
+- Findings:
+  - `e2e/a11y/screens.spec.ts:142-166` → the keyboard pass only ever focuses the navigation buttons.
+    - In a traced run, focus went Today, Week, then straight from Week to Friends, and so on.
+      `page.locator('body').focus()` (line 147) has no effect, because `body` cannot take focus, so
+      each loop starts on the previous navigation button.
+    - No control inside any screen or dialog gets keyboard focus or a ring check.
+    - Write one test per screen and one per dialog in `DIALOGS`, at both `WIDTHS`. Each test opens
+      the screen, then presses Tab until focus comes back to the first focused element, with a named
+      upper bound.
+    - On every Tab, assert that the focused element shows the ring. At the end, assert that every
+      visible, enabled
+      `button, input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])` was focused at
+      least once.
+    - Keep "reaches every screen with Enter" as its own test, and remove the `body.focus()` call.
+  - `shared/ui/src/theme/theme.ts:69-71` → "shows on every control" does not hold for text-like
+    fields.
+    - Mantine's `.m_8fb7ebe7:focus { outline: none }` (specificity 0,2,0) beats the token
+      `:focus-visible` rule (0,1,0). So `TextInput`, `NumberInput`, `PasswordInput`, `Select` and
+      `Textarea` show only a border-colour change and no 2 px ring.
+    - Traced on Today (the number field) and Settings (nickname and number field). The requirements
+      (Layout table, Focus row) ask for the ring on every keyboard-focusable element.
+    - Add a rule in `shared/ui` (`buildGlobalCss` or the theme's `Input` styles) that gives
+      `.mantine-Input-input:focus-visible` the token outline, with enough specificity to win.
+    - Add a unit test for it, either next to the `:focus-visible` test in `cssVariables.test.ts` or
+      in `VitaPactProvider.test.tsx`. The rewritten keyboard pass then checks it end to end.
+  - Optional: `horizontalOverflow` repeats `e2e/friends/add-report.spec.ts:111`. Moving it and
+    `axeViolations` into `e2e/support/` would let later QA work reuse them. Leave the lane specs
+    unchanged.
+- Covered at merge: RNF-10, RF-29. The matrix is updated when the PR is approved.
+- New rules: none yet. Decided when the PR is approved.
+
 ## 2026-10-19 · F4-01 · task/F4-01-e2e-scenarios · #60 · Approved
 
 - Checks: verify ✔ at bcb2937 (run by the reviewer, with the matrix update); e2e ✔ at bcb2937

@@ -39,6 +39,11 @@ export function buildGlobalCss(tokens: Tokens): string {
   outline: ${px(tokens.focus.width)} solid ${tokens.focus.color};
   outline-offset: ${px(tokens.focus.offset)};
 }
+/* Mantine's text fields remove the outline with a two-class rule; this one outranks it. */
+.mantine-Input-input.mantine-Input-input:focus-visible {
+  outline: ${px(tokens.focus.width)} solid ${tokens.focus.color};
+  outline-offset: ${px(tokens.focus.offset)};
+}
 @keyframes vp-pop {
   0% { opacity: 0; transform: scale(0.6); }
   70% { opacity: 1; transform: scale(1.12); }
