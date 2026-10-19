@@ -2,6 +2,30 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-19 · F4-02 · task/F4-02-accessibility · #61 · Approved after changes
+
+- Checks at 0c2c77d (run by the reviewer):
+  - verify ✔ (exit 0).
+  - `e2e/a11y/screens.spec.ts` ✔: 39 passed, run on a private port.
+  - The author reports the full e2e suite green (87 passed).
+- Both findings of the entry below are fixed:
+  - Each screen and each dialog now has its own keyboard pass at 360 and 1024 px. It presses Tab
+    until focus comes back round, checks the ring at every stop, then checks that every visible,
+    enabled control was reached. The navigation test no longer calls `body.focus()`.
+  - Text fields get the token ring from `.mantine-Input-input.mantine-Input-input:focus-visible`
+    (specificity 0,3,0), and a unit test checks it.
+- Mutation check by the reviewer: with `cssVariables.ts` from `main`, the keyboard pass fails on
+  Today, Settings and three dialogs at both widths, on the NumberInput among others.
+- Small, not blocking: the three `describe` blocks repeat the same `beforeEach` (reduced motion and
+  the frozen clock). A single top-level `beforeEach` would do.
+- Follow-up for the lane owners (G9.15, G2.2): `e2e/friends/add-report.spec.ts:111` and
+  `e2e/week/sunday-evening.spec.ts:88` repeat the sideways-scroll check. When they change, move
+  `horizontalOverflow` to `e2e/support/` and have all three specs import it.
+- PR title is 87 characters (G6.7 allows 72). Suggested:
+  `Check every screen with axe and show the keyboard focus ring (F4-02)` (68).
+- Covered: RNF-10, RF-29 (added to the matrix by the reviewer).
+- New rule: G9.17.
+
 ## 2026-10-19 · F4-02 · task/F4-02-accessibility · #61 · Changes requested
 
 - Checks: verify ✔ at f1114bb. The reviewer's first `pnpm verify` had 1 unit test fail, with

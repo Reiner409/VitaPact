@@ -178,3 +178,6 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
   and every spec imports it instead of keeping a local copy.
 - **G9.16** · F4-01 · A test of an exclusion rule sets up its data so that the excluded person would
   be chosen without the rule, and asserts the order that proves it.
+- **G9.17** · F4-02 · A keyboard test presses Tab until focus comes back round, checks the focus ring
+  at every stop and then checks that every visible, enabled control was reached. Tabbing until one
+  target has focus is not a keyboard pass.
