@@ -38,6 +38,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitapact/core": "workspace:*",
     "@vitejs/plugin-react": "^6.1.2",
+    "axe-core": "^4.14.0",
     "eslint": "^10.12.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-hooks": "^7.1.1",
