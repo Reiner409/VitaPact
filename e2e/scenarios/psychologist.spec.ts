@@ -1,22 +1,20 @@
 import { expect, test } from '../fixtures';
-import { startWithProfile } from '../support/localData';
-import { GOOD_DAY, logDay, readSavedReport, saveWeeklyReport } from '../support/scenario';
+import {
+  GOOD_DAY,
+  logDay,
+  openScreen,
+  readSavedReport,
+  saveWeeklyReport,
+  startOnSundayEvening,
+  writeNote,
+} from '../support/scenario';
 
-const SUNDAY_EVENING = new Date('2026-10-18T21:00:00');
-const PRIVATE_TEXT = 'Talked about my brother';
-
-test.describe('F4-01 the session with the psychologist (section 3, scenario 8, RF-17)', () => {
-  test('keeps the notes out of the weekly report and its QR code', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.clock.setFixedTime(SUNDAY_EVENING);
-    await startWithProfile(page);
+test.describe('F4-01 the session with the psychologist (section 3, scenario 8)', () => {
+  test('RNF-02 keeps the notes out of the weekly report and its QR code', async ({ page }) => {
+    await startOnSundayEvening(page);
     await logDay(page, GOOD_DAY);
-    await page.getByRole('navigation').getByRole('button', { name: 'Noteboard' }).click();
-    await page.getByRole('button', { name: 'New note' }).first().click();
-    await page.getByRole('textbox', { name: 'Title' }).fill('Session');
-    await page.getByRole('textbox', { name: 'Text' }).fill(PRIVATE_TEXT);
-    await page.getByRole('textbox', { name: 'Tag' }).fill('Psychologist');
-    await page.getByRole('button', { name: 'Save' }).click();
+    await openScreen(page, 'Noteboard');
+    await writeNote(page, 'Session', 'Talked about my brother', 'Psychologist');
     await expect(page.getByRole('button', { name: /Session/ })).toBeVisible();
 
     const { raw, report } = await readSavedReport(page, await saveWeeklyReport(page));

@@ -2,6 +2,66 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-19 · F4-01 · task/F4-01-e2e-scenarios · #60 · Changes requested
+
+- Checks: verify ✔ at d080218 (run by the reviewer, 1308 unit tests, matrix ✔); e2e ✔ at d080218
+  (48 passed, run by the coordinator).
+- Covered: scenarios 1-6 by the lane specs already on `main` (onboarding, friends/groups,
+  today/evening-check-in, app/weigh-in, week/sunday-evening, friends/add-report); 7, 8, the
+  two-device scenario and startup by `e2e/scenarios/`. Requirement ids once the findings are fixed:
+  RF-26, RF-27, RNF-02, RNF-06 (RF-17 stays on F3-NB-01/02).
+- Checked and correct: `friendPage` has its own context and storage and the same network guard
+  (RNF-01); the two-device test really swaps the saved PNGs and compares ranking and payer on both
+  devices; the psychologist test decodes the saved QR and would fail if any note field leaked.
+- Findings:
+  - `e2e/scenarios/comeback.spec.ts:27` → the test passes without the comeback rule. With one
+    logged day Rei scores 15 (logging 15/7 + weigh-in 5 + sleep 25/7 + food 20/7 + sun 10/7), below
+    Giulia's 20, so Rei is the lowest and pays anyway. Make Rei's week beat Giulia's: for example,
+    give `DayAnswers` in `e2e/support/scenario.ts` an optional training answer and log a training
+    day in this test (Rei 23 > 20). Then assert the order before the weekend card, e.g. the first
+    item of "Week 42 ranking" contains "Rei". Check it by setting `prevScore: 10`
+    (no comeback): Giulia must then be the payer and the test must fail.
+  - `e2e/scenarios/startup.spec.ts:10-13` → flaky on a busy CI runner, and it reads the Node clock.
+    `toBeVisible` polls after 0, 100, 250, 500 and 1000 ms, so an app ready after 0.9 s is only
+    seen at about 1.85 s. Add the `reload()` round trip and the test fails at 2 s. `retries: 1`
+    hides this, it does not fix it. Measure in the page from its own navigation start:
+    `await page.reload(); await page.getByRole('button', { name: 'Save day' }).waitFor();
+const readyAfterMs = await page.evaluate(() => performance.now());
+expect(readyAfterMs).toBeLessThan(STARTUP_LIMIT_MS);` (`waitFor` polls at 0-500 ms steps, and
+    `performance.now()` starts at navigation). Also fix line 4: the comment says the CI runner is
+    slower, but the limit gives it no extra margin. Say instead that this is the web build in
+    Chromium, standing in for the Windows window (RNF-06).
+  - `e2e/scenarios/comeback.spec.ts:11-38,49-61` → the pixels→PNG→paste code is a third copy
+    (`add-report.spec.ts:28-49`, `scenario.ts:58` `pastePng`). Move it into `e2e/support/scenario.ts`
+    as `signedReportImage(input: WeekReportInput)` (signs, draws, returns the pixels) and
+    `pasteReportImage(page, image)` (encodes to PNG in the page, then dispatches the paste through
+    the same code as `pastePng`). The comeback spec keeps only Giulia's `WeekReportInput`.
+  - `e2e/scenarios/psychologist.spec.ts:15-20` → copy of `writeNote` in
+    `e2e/noteboard/notes.spec.ts:6-12`. Add `writeNote` to `e2e/support/scenario.ts` and use it.
+  - `e2e/scenarios/*.spec.ts` (`SUNDAY_EVENING` lines 5/8/14, and the `emulateMedia` +
+    `setFixedTime` + `startWithProfile` opening) → export `SUNDAY_EVENING` and a
+    `startOnSundayEvening(page, options?)` from `e2e/support/scenario.ts`. Also add
+    `openScreen(page, name)` there for the sidebar click repeated in comeback:47, psychologist:14,
+    `saveWeeklyReport` and `openFriends`.
+  - `e2e/scenarios/psychologist.spec.ts:8` → what this test checks is RNF-02 (notes never reach the
+    report or the QR code), not RF-17 (G9.1). Put RNF-02 in the title.
+  - `docs/traceability-matrix.json` → revert (G7.1: task branches do not edit the matrix). The PR body
+    already lists the ids; the reviewer adds F4-01 to RF-26, RF-27, RNF-02 and RNF-06 at merge.
+  - `e2e/fixtures.ts:30-33` → take `viewport` from the built-in fixture
+    (`async ({ browser, baseURL, viewport }, provide)` → `newContext({ baseURL, viewport })`)
+    instead of copying `1280 × 800` from `playwright.config.ts`.
+- Follow-up for the lane owners (G2.2, not this PR): once the helpers live in
+  `e2e/support/scenario.ts`, the friends, noteboard, week and today lanes can drop their local
+  copies (`createGroup`, `pasteImage`, `giuliaImage`, `writeNote`, the check-in steps in
+  `sunday-evening.spec.ts` and `evening-check-in.spec.ts`). The PR body says the steps "move"; they
+  were copied, so reword it.
+- Non-blocking: the scenarios run on the web build in Chromium, not the Windows build the goal
+  mentions. That is fine until a Tauri driver exists, and the PR body should say so. `friendPage`
+  records no trace on failure.
+- New rules: none until approval (candidates: a shared e2e step lives once in `e2e/support/`, and lane
+  specs import it; a test of an exclusion rule sets up the data so that the excluded person would
+  be chosen without the rule).
+
 ## 2026-10-19 · F4-04 · task/release-android · #59 · Approved
 
 - Checks: verify ✔ at 698997e (run by the reviewer); e2e ✔ at 39b365a (44 passed). 698997e

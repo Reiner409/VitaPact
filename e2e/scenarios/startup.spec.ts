@@ -1,15 +1,16 @@
 import { expect, test } from '../fixtures';
 import { startWithProfile } from '../support/localData';
 
-/** F4-01 acceptance: the app is ready in under 2 s; the CI runner is slower than a home PC. */
+/** RNF-06: ready in under 2 s. The web build in Chromium stands in for the Windows window. */
 const STARTUP_LIMIT_MS = 2000;
 
-test.describe('F4-01 startup time (RNF-06)', () => {
-  test('shows Today, ready to log, in under 2 seconds', async ({ page }) => {
+test.describe('F4-01 startup time', () => {
+  test('RNF-06 shows Today, ready to log, in under 2 seconds', async ({ page }) => {
     await startWithProfile(page);
-    const started = Date.now();
     await page.reload();
-    await expect(page.getByRole('button', { name: 'Save day' })).toBeVisible();
-    expect(Date.now() - started).toBeLessThan(STARTUP_LIMIT_MS);
+    await page.getByRole('button', { name: 'Save day' }).waitFor();
+    // Measured by the page itself from the start of the navigation, not by the test's polling.
+    const readyAfterMs = await page.evaluate(() => performance.now());
+    expect(readyAfterMs).toBeLessThan(STARTUP_LIMIT_MS);
   });
 });

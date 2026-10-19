@@ -27,11 +27,8 @@ export const test = base.extend<{ networkGuard: void; friendPage: Page }>({
     },
     { auto: true },
   ],
-  friendPage: async ({ browser, baseURL }, provide) => {
-    const context = await browser.newContext({
-      baseURL: baseURL!,
-      viewport: { width: 1280, height: 800 },
-    });
+  friendPage: async ({ browser, baseURL, viewport }, provide) => {
+    const context = await browser.newContext({ baseURL: baseURL!, viewport });
     const forbiddenRequests = await guardNetwork(context, baseURL!);
     await provide(await context.newPage());
     await context.close();
