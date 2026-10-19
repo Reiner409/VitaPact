@@ -138,24 +138,103 @@ test.describe('F4-02 dialogs and error states pass axe and fit the window (RNF-1
   }
 });
 
-test.describe('F4-02 keyboard pass (RNF-10)', () => {
-  test('RNF-10 reaches every screen from the navigation with Tab and Enter, focus always visible', async ({
-    page,
-  }) => {
+/** More presses than any screen has controls; reaching it means focus never came back round. */
+const TAB_LIMIT = 150;
+
+interface TabStop {
+  kind: 'page' | 'new' | 'again';
+  ring: boolean;
+  html: string;
+}
+
+/** Marks the focused element as reached and reports whether it shows the focus ring. */
+function readTabStop(): TabStop {
+  const active = document.activeElement;
+  if (!active || active === document.body) return { kind: 'page', ring: true, html: '' };
+  const again = active.hasAttribute('data-vp-tabbed');
+  active.setAttribute('data-vp-tabbed', '');
+  const { outlineStyle, outlineWidth } = getComputedStyle(active);
+  const ring = outlineStyle !== 'none' && outlineWidth !== '0px';
+  return { kind: again ? 'again' : 'new', ring, html: active.outerHTML.slice(0, 160) };
+}
+
+/** Visible, enabled controls in the open dialog, or the page, that Tab never reached. */
+function controlsNotReached(): string[] {
+  const root = document.querySelector('[role="dialog"]') ?? document;
+  const selector = 'button, input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])';
+  const reachedRadioGroups = new Set(
+    [...root.querySelectorAll('input[type="radio"][data-vp-tabbed]')].map(
+      (radio) => (radio as HTMLInputElement).name,
+    ),
+  );
+  return (
+    [...root.querySelectorAll<HTMLElement>(selector)]
+      .filter(
+        (control) => control.checkVisibility() && !control.matches(':disabled, [tabindex="-1"]'),
+      )
+      .filter((control) => !control.hasAttribute('data-vp-tabbed'))
+      // Tab stops once per group of radio buttons; the arrows move inside it.
+      .filter(
+        (control) => !(control instanceof HTMLInputElement && reachedRadioGroups.has(control.name)),
+      )
+      .map((control) => control.outerHTML.slice(0, 160))
+  );
+}
+
+/** Presses Tab until focus comes back round, checking the ring at every stop. */
+async function tabThroughEverything(page: Page) {
+  let pageStops = 0;
+  for (let presses = 0; presses < TAB_LIMIT; presses += 1) {
+    await page.keyboard.press('Tab');
+    const stop = await page.evaluate(readTabStop);
+    if (stop.kind === 'again') return;
+    if (stop.kind === 'page' && (pageStops += 1) > 1) return;
+    expect(stop.ring, `focus ring on ${stop.html}`).toBe(true);
+  }
+  throw new Error(`Focus did not come back round within ${TAB_LIMIT} presses of Tab`);
+}
+
+test.describe('F4-02 keyboard pass on every screen and dialog (RNF-10)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.clock.setFixedTime(MONDAY_EVENING);
+  });
+
+  for (const width of WIDTHS) {
+    for (const screen of SCREENS) {
+      test(`RNF-10 tabs through ${screen.id} at ${width} px with the ring always shown`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await startWithProfile(page, screen.hash);
+        await expect(
+          page.getByRole('heading', { level: 1, name: new RegExp(screen.heading) }),
+        ).toBeVisible();
+        await tabThroughEverything(page);
+        expect(await page.evaluate(controlsNotReached)).toEqual([]);
+      });
+    }
+
+    for (const dialog of DIALOGS) {
+      test(`RNF-10 tabs through ${dialog.id} at ${width} px with the ring always shown`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await startWithProfile(page, dialog.hash);
+        await dialog.open(page);
+        await tabThroughEverything(page);
+        expect(await page.evaluate(controlsNotReached)).toEqual([]);
+      });
+    }
+  }
+
+  test('RNF-10 opens every screen from the navigation with Tab and Enter', async ({ page }) => {
     await startWithProfile(page);
     for (const screen of SCREENS.slice(1)) {
-      await page.locator('body').focus();
       const target = page.getByRole('navigation').getByRole('button', { name: screen.heading });
-      for (let presses = 0; presses < 60; presses += 1) {
+      for (let presses = 0; presses < TAB_LIMIT; presses += 1) {
         if (await target.evaluate((element) => element === document.activeElement)) break;
         await page.keyboard.press('Tab');
-        const ring = await page.evaluate(() => {
-          const active = document.activeElement;
-          if (!active || active === document.body) return 'none needed';
-          const { outlineStyle, outlineWidth } = getComputedStyle(active);
-          return outlineStyle === 'none' || outlineWidth === '0px' ? active.outerHTML : 'shown';
-        });
-        expect(ring, 'the focused element shows a focus ring').toMatch(/^(none needed|shown)$/);
       }
       await expect(target).toBeFocused();
       await page.keyboard.press('Enter');
