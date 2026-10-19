@@ -2,6 +2,22 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-19 · F4-01 · task/F4-01-e2e-scenarios · #60 · Approved
+
+- Checks: verify ✔ at bcb2937 (run by the reviewer, with the matrix update); e2e ✔ at bcb2937
+  (48 passed, run by the coordinator).
+- Findings: all blocking findings of the entry below are fixed in bcb2937. Rei now trains on
+  `GOOD_DAY` and scores 23, above Giulia's 20. The test asserts Rei first and Giulia last, and with
+  `prevScore: 10` it fails at the payer check. Startup is measured with `performance.now()` after
+  `waitFor`. The steps are shared in `e2e/support/scenario.ts`, the psychologist test carries
+  RNF-02, the matrix was reverted, and `friendPage` uses the `viewport` fixture.
+- Before merge: the PR title is 81 characters, so shorten it to 72 or fewer (G6.7), e.g.
+  `Cover the comeback, private notes and two-friend swap end to end (F4-01)`.
+- Follow-up for the lane owners (G2.2): drop the local copies of `createGroup`, `pasteImage`,
+  `giuliaImage`, `writeNote` and the check-in steps in favour of `e2e/support/scenario.ts`.
+- Covered: RF-26, RF-27, RNF-02, RNF-06 (added to the matrix by the reviewer).
+- New rules: G9.15, G9.16.
+
 ## 2026-10-19 · F4-01 · task/F4-01-e2e-scenarios · #60 · Changes requested
 
 - Checks: verify ✔ at d080218 (run by the reviewer, 1308 unit tests, matrix ✔); e2e ✔ at d080218

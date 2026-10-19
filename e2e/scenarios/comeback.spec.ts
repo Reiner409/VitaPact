@@ -14,7 +14,7 @@ import {
  * Giulia's week after a hard one: 20 points, up from 5, so her report is a comeback. Her 20 is
  * below Rei's day, so without the comeback rule she would be the one who pays.
  */
-const giuliaComeback = signedReportImage({
+const giuliaComeback = {
   userId: '3f2a9c1e-5b7d-4e8a-9c21-7d4e5f6a8b91',
   nickname: 'Giulia',
   hideWeight: false,
@@ -30,7 +30,7 @@ const giuliaComeback = signedReportImage({
   sunOk: 0,
   score: 20,
   prevScore: 5,
-});
+};
 
 test.describe('F4-01 the comeback (section 3, scenario 7, RF-27)', () => {
   test('RF-27 marks the friend back from a hard week and keeps them from paying', async ({
@@ -40,7 +40,7 @@ test.describe('F4-01 the comeback (section 3, scenario 7, RF-27)', () => {
     await logDay(page, GOOD_DAY);
     await openScreen(page, 'Friends');
     await createGroup(page, 'Pact', 'the pizza');
-    await pasteReportImage(page, await giuliaComeback);
+    await pasteReportImage(page, await signedReportImage(giuliaComeback));
     await addPastedReport(page, 'Giulia', 'Pact');
 
     const ranking = page.getByRole('list', { name: 'Week 42 ranking' });
