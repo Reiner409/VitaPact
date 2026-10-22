@@ -12,7 +12,7 @@ No server, no account, no cloud, no telemetry: everything stays on your device.
 
 [![Watch the trailer](docs/media/trailer-poster.png)](docs/media/vitapact-trailer.mp4)
 
-_Watch the 50-second trailer (Italian captions): [docs/media/vitapact-trailer.mp4](docs/media/vitapact-trailer.mp4)._
+_Watch the 50-second trailer (1080p, Italian captions): [docs/media/vitapact-trailer.mp4](docs/media/vitapact-trailer.mp4)._
 
 ## What it does
 
