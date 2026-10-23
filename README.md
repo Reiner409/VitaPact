@@ -10,9 +10,10 @@ weekend.
 
 No server, no account, no cloud, no telemetry: everything stays on your device.
 
-[![Watch the trailer](docs/media/trailer-poster.png)](docs/media/vitapact-trailer.mp4)
+![VitaPact trailer: the four habits, the week, the QR report, the friends' ranking and the private notes](docs/media/vitapact-trailer.gif)
 
-_Watch the 50-second trailer (1080p, Italian captions): [docs/media/vitapact-trailer.mp4](docs/media/vitapact-trailer.mp4)._
+_The 50-second trailer. For the sharp 1080p version, download
+[docs/media/vitapact-trailer.mp4](docs/media/vitapact-trailer.mp4)._
 
 ## What it does
 
