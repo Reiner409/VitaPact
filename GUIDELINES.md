@@ -181,3 +181,6 @@ Enforced by the `vitapact/package-boundaries` lint rule (`tools/boundaries/bound
 - **G9.17** · F4-02 · A keyboard test presses Tab until focus comes back round, checks the focus ring
   at every stop and then checks that every visible, enabled control was reached. Tabbing until one
   target has focus is not a keyboard pass.
+- **G9.18** · F4-05 · A workflow step that needs optional secrets runs on one flag, set in one
+  step only when all of those secrets are present. Its fallback step runs on the negation of that
+  same flag, so every combination of secrets produces exactly one artifact.

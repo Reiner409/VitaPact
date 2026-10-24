@@ -2,6 +2,25 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-24 · F4-05 · claude/project-thread-c9svex · #64 · Approved after changes
+
+- Checks at 3f1ff08 (run by the reviewer):
+  - verify ✔ (exit 0, 1315 unit tests, matrix 33/33).
+  - e2e not rerun: the fix touches only the workflow, a test title and the matrix. It was 87/87
+    at 2037f8b.
+  - CI at 3f1ff08 was still running when this entry was written. It must be green before the
+    merge.
+- All three findings of the entry below are fixed:
+  - "Apple team" writes `SIGNED=yes` only when the certificate, the profile and the team are all
+    there. The signed build, TestFlight (`SIGNED` plus the App Store key) and the unsigned build
+    (`SIGNED != 'yes'`) all read it, so exactly one IPA is built for any set of secrets.
+  - The `describe` titles name F4-05.
+  - The `workflow_call` comment mentions the APK and the IPA.
+- Covered: RF-29 (F4-05 is in the matrix), D27.
+- PR title `Release 1.0.0 for Windows, Android and iOS (F4-05)` follows G6.7. Ready for "Squash
+  and merge" once CI is green. Rei approves the v1.0.0 tag afterwards.
+- New rule: G9.18.
+
 ## 2026-10-24 · F4-05 · claude/project-thread-c9svex · #64 · Changes requested
 
 - Checks at 2037f8b (run by the reviewer):
