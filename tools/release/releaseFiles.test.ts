@@ -7,7 +7,7 @@ const readRepoFile = (path: string) => readFileSync(join(REPO_ROOT, path), 'utf8
 
 const appVersion = (): string => JSON.parse(readRepoFile('src-tauri/tauri.conf.json')).version;
 
-describe('F4-03 D27 the repository carries the GPL-3.0 licence', () => {
+describe('F4-05 D27 the repository carries the GPL-3.0 licence', () => {
   it('LICENSE holds the full GNU GPL version 3 text', () => {
     const licence = readRepoFile('LICENSE');
     expect(licence).toContain('GNU GENERAL PUBLIC LICENSE');
@@ -23,7 +23,7 @@ describe('F4-03 D27 the repository carries the GPL-3.0 licence', () => {
   });
 });
 
-describe('F4-03 every part of the app carries the release version', () => {
+describe('F4-05 every part of the app carries the release version', () => {
   it('each package.json matches the Tauri version', () => {
     const manifests = listRepoFiles(['.'], (path) => path.endsWith('package.json'));
     expect(manifests.length).toBeGreaterThan(1);

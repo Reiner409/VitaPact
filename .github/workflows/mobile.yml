@@ -10,7 +10,7 @@ on:
   push:
     branches: [main, mobile]
   workflow_dispatch:
-  # The release workflow reuses this job to put the APK in the release.
+  # The release workflow reuses these jobs to put the APK and the IPA in the release.
   workflow_call:
     secrets:
       ANDROID_KEYSTORE:
@@ -143,18 +143,24 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Apple team
         # Tauri refuses an empty team. The unsigned build never signs, so a placeholder will do.
-        run: echo "APPLE_DEVELOPMENT_TEAM=${TEAM_SECRET:-UNSIGNED00}" >> "$GITHUB_ENV"
+        # Signing needs the certificate, the profile and the team together; with any of them
+        # missing the job builds the unsigned IPA, so the release always gets one.
+        run: |
+          echo "APPLE_DEVELOPMENT_TEAM=${TEAM_SECRET:-UNSIGNED00}" >> "$GITHUB_ENV"
+          if [ -n "$IOS_CERTIFICATE" ] && [ -n "$IOS_MOBILE_PROVISION" ] && [ -n "$TEAM_SECRET" ]; then
+            echo "SIGNED=yes" >> "$GITHUB_ENV"
+          fi
       - name: Generate the Xcode project
         run: pnpm tauri ios init --ci
       - name: Signed build
-        if: env.IOS_CERTIFICATE != '' && env.IOS_MOBILE_PROVISION != '' && env.TEAM_SECRET != ''
+        if: env.SIGNED == 'yes'
         run: |
           set -euo pipefail
           pnpm tauri ios build --export-method app-store-connect
           ipa=$(find src-tauri/gen/apple/build -name '*.ipa' | head -n 1)
           cp "$ipa" vitapact.ipa
       - name: Upload to TestFlight
-        if: env.IOS_CERTIFICATE != '' && env.APP_STORE_CONNECT_KEY != ''
+        if: env.SIGNED == 'yes' && env.APP_STORE_CONNECT_KEY != ''
         run: |
           set -euo pipefail
           mkdir -p ~/.appstoreconnect/private_keys
@@ -166,7 +172,7 @@ jobs:
         # Sideloadly sign it with the user's own Apple ID on install. Xcode's "Build Rust Code"
         # phase needs a running `tauri ios build`, so the Rust library is built here and that
         # phase is skipped.
-        if: env.IOS_CERTIFICATE == ''
+        if: env.SIGNED != 'yes'
         run: |
           set -euo pipefail
           pnpm web:build
