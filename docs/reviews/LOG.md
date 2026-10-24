@@ -2,6 +2,39 @@
 
 Newest first. One entry per review, written by the reviewer agent (`.claude/agents/reviewer.md`).
 
+## 2026-10-24 · F4-05 · claude/project-thread-c9svex · #64 · Changes requested
+
+- Checks at 2037f8b (run by the reviewer):
+  - verify ✔ (exit 0, 1315 unit tests, matrix 33/33).
+  - e2e ✔ (87 passed).
+  - CI on the PR: "iOS app" ✔ through the unsigned path (signed and TestFlight steps skipped,
+    IPA uploaded), "Lint, types and tests" ✔. Windows and Android were still running.
+- Checked and fine:
+  - The awk extraction gives exactly the 1.0.0 section, and also stops at the next heading for
+    0.2.0.
+  - Every secret the release passes is declared under `workflow_call`, so G9.14 holds.
+  - The artifact names match between `mobile.yml` and `release.yml`.
+  - The unsigned build only swaps the simulator target of a16b730 for `aarch64-apple-ios` and
+    `-sdk iphoneos` and adds `CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=`. The `Payload/` zip
+    is a valid layout for an IPA to sideload.
+  - All 13 version fields are at 1.0.0, and the test fails when one of them differs.
+- Findings:
+  - `.github/workflows/mobile.yml:150,157,169` → the three signing conditions do not cover the
+    same cases. A certificate without a profile, a team or an App Store key (for example while
+    Rei adds the Apple secrets one at a time) skips both builds, so the upload of the artifact
+    fails and the release with it. In the "Apple team" step, write `SIGNED=yes` to
+    `$GITHUB_ENV` only when the certificate, the profile and the team are all present. Then use
+    `env.SIGNED == 'yes'` for the signed build, `env.SIGNED != 'yes'` for the unsigned build,
+    and `env.SIGNED == 'yes' && env.APP_STORE_CONNECT_KEY != ''` for TestFlight.
+  - `tools/release/releaseFiles.test.ts:10,26` → both `describe` titles say `F4-03`, but these
+    tests belong to F4-05. Rename them to `F4-05 D27 …` and `F4-05 …` (G9.1).
+  - `.github/workflows/mobile.yml:13` → the comment still says the release reuses this job "to
+    put the APK in the release". Say the APK and the IPA.
+- Note for the merge: `docs/traceability-matrix.json` has no F4-05 yet (RF-29 lists F2-16,
+  F4-02 and F4-04). The reviewer adds it when approving.
+- PR title `Release 1.0.0 for Windows, Android and iOS (F4-05)` follows G6.7.
+- New rules: none until approval.
+
 ## 2026-10-19 · F4-02 · task/F4-02-accessibility · #61 · Approved after changes
 
 - Checks at 0c2c77d (run by the reviewer):
