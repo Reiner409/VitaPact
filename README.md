@@ -46,8 +46,11 @@ The [latest release](https://github.com/Reiner409/vitapact/releases/latest) has:
   administrator rights needed.
 - `VitaPact_<version>_x64-portable.exe`: the same app as a single file, nothing to install.
 - `VitaPact_<version>_android.apk`: the Android app (allow installs from unknown sources).
+- `VitaPact_<version>_ios.ipa`: the iPhone app. It is not on the App Store yet: install it with
+  [AltStore](https://altstore.io) or [Sideloadly](https://sideloadly.io), which sign it with your
+  own Apple ID. With a free Apple ID the app must be refreshed every 7 days.
 
-An iOS version waits for an Apple developer licence.
+What changed in each version is in the [changelog](CHANGELOG.md).
 
 ## Run it locally
 
@@ -114,7 +117,8 @@ it cannot download its own, point it to one with `PLAYWRIGHT_CHROMIUM_EXECUTABLE
 | `e2e/`            | Playwright tests with the network guard                                                        |
 | `docs/`           | [Requirements](docs/requirements.md), [task list](docs/tasks.md), traceability matrix, reviews |
 
-Team rules for contributors are in [GUIDELINES.md](GUIDELINES.md).
+How to contribute is in [CONTRIBUTING.md](CONTRIBUTING.md); the team rules are in
+[GUIDELINES.md](GUIDELINES.md).
 
 ## Privacy
 
@@ -128,4 +132,5 @@ Team rules for contributors are in [GUIDELINES.md](GUIDELINES.md).
 
 ## Licence
 
-VitaPact is free software under the [GNU General Public License v3.0 only](https://www.gnu.org/licenses/gpl-3.0.html).
+VitaPact is free software under the GNU General Public License v3.0 only; the full text is in
+[LICENSE](LICENSE).
