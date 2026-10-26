@@ -657,6 +657,13 @@ Common dependencies: the lane table in section 3a.
 - **Acceptance criteria:** the v0.2.0 release lists the installer, the portable and the APK.
 - **Tests to write:** none beyond CI; the release run itself is the check.
 
+#### F4-05 · Version 1.0.0 on Windows, Android and iOS
+
+- **Agent:** Release · **Depends on:** F4-04 · **Requirements:** RF-29, D27, D29
+- **Goal:** the iOS job is back in the mobile workflow and the release publishes its IPA (unsigned for sideloading until the Apple secrets exist); LICENSE, CONTRIBUTING and a changelog whose section becomes the release notes; every package at 1.0.0.
+- **Acceptance criteria:** the v1.0.0 release lists the Windows installer, the portable, the APK and the IPA; Rei approves the tag.
+- **Tests to write:** LICENSE holds the GPL-3.0 text; every package, the Tauri config and the Rust shell carry the same version; the changelog has a section for it.
+
 ---
 
 ## 4. Dependency graph in short
@@ -685,8 +692,8 @@ Parallel lanes after Gate 2: Core (F2-01 … F2-15, F2-21), UI (F2-16 … F2-19)
 | F1        | 7                                         |
 | F2        | 21                                        |
 | F3        | 41 (ON 3, TD 10, WK 6, FR 10, NB 6, ST 6) |
-| F4        | 4                                         |
-| **Total** | **76**                                    |
+| F4        | 5                                         |
+| **Total** | **77**                                    |
 
 ## 6. Differences from the document's T00-T22 list
 
